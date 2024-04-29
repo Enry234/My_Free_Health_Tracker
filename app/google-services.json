@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "594644692620",
+    "project_id": "my-free-health-tracker",
+    "storage_bucket": "my-free-health-tracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594644692620:android:e6b72466a8aba4d1e0d5a9",
+        "android_client_info": {
+          "package_name": "com.example.myfreehealthtracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhK947XwfrQ1GsBKtUZbkgTHg2ZljAvsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

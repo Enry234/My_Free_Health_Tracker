@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -50,7 +51,10 @@ android {
 }
 
 dependencies {
-
+    //noinspection UseTomlInstead
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    //noinspection UseTomlInstead
+    implementation("com.google.firebase:firebase-analytics")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
