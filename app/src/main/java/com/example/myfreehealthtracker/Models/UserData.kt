@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.Models
 
 import android.os.Build
 import androidx.annotation.RequiresApi
