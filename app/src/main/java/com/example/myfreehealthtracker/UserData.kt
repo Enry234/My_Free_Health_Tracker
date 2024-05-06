@@ -14,13 +14,13 @@ class UserData(
     var sesso: Char = ' ',
     var altezza: Int = 0,
     var posizione: String = " ",
-    var peso: MutableList<Pair<Date, Int>>,
+    var peso: MutableList<Pair<Date, Int>>? = null,
     var image: ImageVector? = null
 ) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addPeso(newPeso: Int) {
-        peso.add(Pair(Date.from(Instant.now()), newPeso))
+        peso!!.add(Pair(Date.from(Instant.now()), newPeso))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
