@@ -1,6 +1,15 @@
 package com.example.myfreehealthtracker
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +30,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -46,6 +57,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,7 +67,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import com.google.android.gms.location.LocationServices
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Objects
 
 @OptIn(ExperimentalMaterial3Api::class)
 class LoginPage {
@@ -66,8 +86,9 @@ class LoginPage {
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(4)
+            mutableIntStateOf(0)
         }
+        getLastKnownLocation(LocalContext.current)
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -655,11 +676,27 @@ class LoginPage {
                                         )
                                         OutlinedButton(
                                             onClick = {
-                                                user
+
+                                            }
+                                        ) {
+                                            Text(text = "Clicca qui per Inserire una tua Foto")
+                                        }
+                                        Spacer(modifier = Modifier.padding(10.dp))
+                                        Text(text = "Oppure")
+                                        Spacer(modifier = Modifier.padding(10.dp))
+                                        var apri by remember {
+                                            mutableStateOf(false)
+                                        }
+                                        OutlinedButton(
+                                            onClick = {
+                                                apri = true
                                             },
                                             modifier = Modifier.hoverable(interactionSource = interactionSource)
                                         ) {
                                             Text(text = "Clicca qui per Inziare")
+                                            if (apri) {
+                                                AppContent()
+                                            }
                                         }
                                     }
 
@@ -675,7 +712,117 @@ class LoginPage {
             }
         }
     }
+
+    fun Context.createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val image = File.createTempFile(
+            imageFileName, /* prefix */
+            ".jpg", /* suffix */
+            externalCacheDir      /* directory */
+        )
+        return image
+    }
+
+    @Composable
+    fun AppContent() {
+        val context = LocalContext.current
+        val file = context.createImageFile()
+        val uri = FileProvider.getUriForFile(
+            Objects.requireNonNull(context),
+            "CIAO.JPG", file
+        )
+
+        var capturedImageUri by remember {
+            mutableStateOf<Uri>(Uri.EMPTY)
+        }
+
+        val cameraLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+                capturedImageUri = uri
+            }
+
+        val permissionLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (it) {
+                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+                cameraLauncher.launch(uri)
+            } else {
+                Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = {
+                val permissionCheckResult =
+                    ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
+                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                    cameraLauncher.launch(uri)
+                } else {
+                    // Request a permission
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }) {
+                Text(text = "Capture Image From Camera")
+            }
+        }
+
+        if (capturedImageUri.path?.isNotEmpty() == true) {
+            Image(
+                modifier = Modifier
+                    .padding(16.dp, 8.dp),
+                painter = rememberImagePainter(capturedImageUri),
+                contentDescription = null
+            )
+        }
+
+
+    }
+
+    private fun rememberImagePainter(capturedImageUri: Uri): Painter {
+        TODO("Not yet implemented")
+    }
+
+    private fun getLastKnownLocation(context: Context) {
+        Log.i("main activity", "entro")
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+        //permission check
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i("main activity", "permessi validi")
+            //permission success
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        user.posizione = location
+                        Log.i("main activity", "location settata")
+                    } else {
+                        Log.i("main activity", "location non settata")
+                    }
+
+                }
+        } else {
+            Log.i("main activity", "permessi non settati")
+        }
+    }
+
+
 }
+
 
 
 

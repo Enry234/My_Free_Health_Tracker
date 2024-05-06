@@ -1,5 +1,6 @@
 package com.example.myfreehealthtracker
 
+import android.location.Location
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -13,7 +14,7 @@ class UserData(
     var dataDiNascita: Date? = null,
     var sesso: Char = ' ',
     var altezza: Int = 0,
-    var posizione: String = " ",
+    var posizione: Location? = null,
     var peso: MutableList<Pair<Date, Int>>? = null,
     var image: ImageVector? = null
 ) {
