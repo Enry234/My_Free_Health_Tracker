@@ -82,14 +82,15 @@ class LoginPage {
     private var user: UserData = UserData()
 
 
-    @SuppressLint("UnrememberedMutableState")
+    @SuppressLint("UnrememberedMutableState", "SimpleDateFormat")
     @Preview
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(0)
+            mutableIntStateOf(4)
         }
-        getLastKnownLocation(LocalContext.current)
+
+
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -177,16 +178,21 @@ class LoginPage {
                                                                 text = "Nome"
                                                             )
                                                         },
-                                                        label = { Text(text = "Inserisci il tuo Nome") },
+                                                        label = {
+                                                            Text(
+                                                                text = "Inserisci il tuo Nome",
+                                                                fontSize = 12.sp
+                                                            )
+                                                        },
                                                         singleLine = true,
                                                         modifier = Modifier.fillMaxWidth(0.8f),
                                                         colors = if (error) {
                                                             TextFieldDefaults.colors(
                                                                 unfocusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 ),
                                                                 focusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 )
                                                             )
                                                         } else {
@@ -203,16 +209,21 @@ class LoginPage {
                                                                 text = "Cognome"
                                                             )
                                                         },
-                                                        label = { Text(text = "Inserisci il tuo Cognome") },
+                                                        label = {
+                                                            Text(
+                                                                text = "Inserisci il tuo Cognome",
+                                                                fontSize = 12.sp
+                                                            )
+                                                        },
                                                         singleLine = true,
                                                         modifier = Modifier.fillMaxWidth(0.8f),
                                                         colors = if (error) {
                                                             TextFieldDefaults.colors(
                                                                 unfocusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 ),
                                                                 focusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 )
                                                             )
                                                         } else {
@@ -280,7 +291,7 @@ class LoginPage {
                                         mutableStateOf("")
                                     }
                                     var dateText by remember {
-                                        mutableStateOf("Clicca qui per inserire la data")
+                                        mutableStateOf("Clicca per inserire la data di nascita")
                                     }
                                     BasicTextField(
                                         value = empty,
@@ -304,22 +315,24 @@ class LoginPage {
                                                 ) {
                                                     OutlinedButton(
                                                         onClick = { openDialog.value = true },
-                                                        modifier = Modifier.fillMaxWidth(0.4f),
+                                                        modifier = Modifier.fillMaxWidth(0.8f),
                                                         colors = if (error) {
                                                             ButtonDefaults.buttonColors(
-                                                                containerColor = Color.Red.copy(0.4f)
+                                                                containerColor = Color.Red.copy(0.2f)
                                                             )
                                                         } else {
                                                             ButtonDefaults.buttonColors(
                                                                 containerColor = Color.Blue.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 )
                                                             )
                                                         }
                                                     ) {
                                                         Text(
                                                             text = dateText,
-                                                            textAlign = TextAlign.Center
+                                                            textAlign = TextAlign.Center,
+                                                            minLines = 2,
+                                                            maxLines = 2
                                                         )
                                                     }
 
@@ -423,15 +436,16 @@ class LoginPage {
                                                     verticalArrangement = Arrangement.Center,
                                                     horizontalAlignment = Alignment.CenterHorizontally
                                                 ) {
-                                                    val radioOptions = listOf("M", "F", "X")
+                                                    val radioOptions = listOf("M", "F")
                                                     val (selectedOption, onOptionSelected) = remember {
                                                         mutableStateOf(
                                                             radioOptions[0]
                                                         )
                                                     }
+                                                    sesso = "M"
 
                                                     Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        horizontalArrangement = Arrangement.SpaceEvenly,
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
@@ -447,14 +461,9 @@ class LoginPage {
                                                                 onOptionSelected("F"); sesso = "F"
                                                             })
 
-                                                        RadioButton(
-                                                            selected = ("X" == selectedOption),
-                                                            onClick = {
-                                                                onOptionSelected("X"); sesso = "X"
-                                                            })
                                                     }
                                                     Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        horizontalArrangement = Arrangement.SpaceEvenly,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
                                                         Text(
@@ -467,10 +476,6 @@ class LoginPage {
                                                             textAlign = TextAlign.Center
                                                         )
 
-                                                        Text(
-                                                            text = "Altro",
-                                                            textAlign = TextAlign.Center
-                                                        )
                                                     }
                                                 }
                                             },
@@ -562,15 +567,16 @@ class LoginPage {
                                                             )
                                                         },
                                                         label = { Text(text = "Inserisci il tuo Peso") },
+                                                        suffix = { Text(text = "Kg") },
                                                         singleLine = true,
                                                         modifier = Modifier.fillMaxWidth(0.8f),
                                                         colors = if (error) {
                                                             TextFieldDefaults.colors(
                                                                 unfocusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 ),
                                                                 focusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 )
                                                             )
                                                         } else {
@@ -596,16 +602,17 @@ class LoginPage {
                                                                 text = "Altezza"
                                                             )
                                                         },
+                                                        suffix = { Text(text = "Cm") },
                                                         label = { Text(text = "Inserisci la tua Altezza") },
                                                         singleLine = true,
                                                         modifier = Modifier.fillMaxWidth(0.8f),
                                                         colors = if (error) {
                                                             TextFieldDefaults.colors(
                                                                 unfocusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 ),
                                                                 focusedContainerColor = Color.Red.copy(
-                                                                    0.4f
+                                                                    0.2f
                                                                 )
                                                             )
                                                         } else {
@@ -794,7 +801,8 @@ class LoginPage {
         TODO("Not yet implemented")
     }
 
-    private fun getLastKnownLocation(context: Context) {
+    private suspend fun getLastKnownLocation(context: Context) {
+
         Log.i("main activity", "entro")
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 

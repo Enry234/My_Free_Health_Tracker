@@ -1,18 +1,14 @@
 package com.example.myfreehealthtracker.Fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
 class HomeFragment : Fragment() {
@@ -46,12 +42,12 @@ class HomeFragment : Fragment() {
         val bottomNav = view.findViewById<NavigationView>(R.id.navigation_view)
 
 
-        bottomNav.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.Logout -> makeCurrentFragment(HomeFragment())
-            }
-            true
-        }
+//        bottomNav.setNavigationItemSelectedListener { menuItem ->
+////            when (menuItem.itemId) {
+////                R.id.Logout -> makeCurrentFragment(HomeFragment())
+////            }
+////            true
+//        }
 
 
         // Inflate the layout for this fragment
