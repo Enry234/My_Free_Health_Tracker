@@ -338,7 +338,8 @@ class LoginPage {
                                                                 }
                                                                 dateResult = date
                                                                 inserted = true
-                                                                val format = "YYYY-MM-DD"
+                                                                val format =
+                                                                    SimpleDateFormat("dd/MM/yyy")
                                                                 dateText = format.format(date)
                                                             }, enabled = confirmEnable.value) {
                                                                 Text(text = "Fatto")
@@ -375,6 +376,8 @@ class LoginPage {
                                                         } else {
                                                             error = true
                                                         }
+                                                    } else {
+                                                        error = true
                                                     }
                                                 }) {
                                                     Icon(
