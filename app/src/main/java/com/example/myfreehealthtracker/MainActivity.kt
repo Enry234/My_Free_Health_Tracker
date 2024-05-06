@@ -18,11 +18,11 @@ class MainActivity : AppCompatActivity() {
         val sportFragment = SportFragment()
         val healthFragment = HealthFragment()
 
-        val bottom_nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         makeCurrentFragment(homeFragment)
 
-        bottom_nav.setOnItemSelectedListener {
+        bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.Home -> makeCurrentFragment(homeFragment)
                 R.id.Health -> makeCurrentFragment(healthFragment)
@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+        val a = LoginPage()
 
     }
 

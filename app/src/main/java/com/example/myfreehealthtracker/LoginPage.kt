@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.example.myfreehealthtracker.Models.UserData
 import com.google.android.gms.location.LocationServices
 import java.io.File
 import java.text.SimpleDateFormat

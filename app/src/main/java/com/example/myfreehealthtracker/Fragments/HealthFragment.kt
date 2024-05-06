@@ -1,11 +1,12 @@
 package com.example.myfreehealthtracker.Fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.myfreehealthtracker.R
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
+import com.example.myfreehealthtracker.LoginPage
 
 class HealthFragment : Fragment() {
 
@@ -14,8 +15,14 @@ class HealthFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val a = LoginPage()
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_health, container, false)
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                a.Login()
+            }
+        }
 
+
+    }
 }
