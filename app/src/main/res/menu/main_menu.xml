@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Home"
+        android:icon="@drawable/rounded_add_home_24"
+        android:title="@string/Home" />
+    <item
+        android:id="@+id/Sport"
+        android:icon="@drawable/baseline_agriculture_24"
+        android:title="@string/Sport" />
+    <item
+        android:id="@+id/Health"
+        android:icon="@drawable/baseline_accessible_forward_24"
+        android:title="@string/Health" />
+</menu>

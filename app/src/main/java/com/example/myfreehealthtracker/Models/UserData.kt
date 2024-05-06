@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.Models
 
 import android.location.Location
 import android.os.Build
