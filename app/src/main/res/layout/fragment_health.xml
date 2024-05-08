@@ -1,41 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.HealthFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/fabContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
+            android:id="@+id/fabExpander"
+            android:contentDescription="Expand Add Action Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
             android:clickable="true"
-            android:contentDescription="Add Cibo"
             android:focusable="true"
-            android:src="@android:drawable/ic_input_add"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.954"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.976" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_add" />
 
-        <TextView
-            android:id="@+id/textView"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabFirstChild"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Health"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginBottom="12dp"
+            android:contentDescription="Perform First Action"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/fabExpander"
+            app:layout_constraintEnd_toEndOf="@id/fabExpander"
+            app:srcCompat="@drawable/ic_fab_child_icon" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabSecondChild"
+            android:contentDescription="Perform Second Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/fabFirstChild"
+            app:layout_constraintEnd_toEndOf="@id/fabFirstChild"
+            app:srcCompat="@drawable/ic_fab_child_icon" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
