@@ -85,7 +85,7 @@ class LoginPage {
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(4)
+            mutableIntStateOf(0)
         }
 
 

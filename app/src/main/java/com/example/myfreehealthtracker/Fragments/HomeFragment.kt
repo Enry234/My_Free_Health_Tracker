@@ -24,30 +24,23 @@ class HomeFragment : Fragment() {
         val navView = view.findViewById<NavigationView>(R.id.navigation_view)
 
         val button: ImageButton = view.findViewById(R.id.btn_open_drawer)
+        button.setImageResource(R.mipmap.pfp)
 
-// Aprire il NavigationView
+
         button.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
-        }
-
-// Chiudere il NavigationView
-        navView.setNavigationItemSelectedListener { menuItem ->
-            // Handle menu item selected
-            // Chiudi il NavigationView
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
         }
 
 
         val bottomNav = view.findViewById<NavigationView>(R.id.navigation_view)
 
 
-//        bottomNav.setNavigationItemSelectedListener { menuItem ->
-////            when (menuItem.itemId) {
-////                R.id.Logout -> makeCurrentFragment(HomeFragment())
-////            }
-////            true
-//        }
+        bottomNav.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                //R.id.Logout -> makeCurrentFragment(HomeFragment())
+            }
+            true
+        }
 
 
         // Inflate the layout for this fragment

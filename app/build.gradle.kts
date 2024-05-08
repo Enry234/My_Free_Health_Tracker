@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.firebase.database.ktx)
     implementation(libs.volley)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.navigation.fragment)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,6 +80,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
     //implementation 'com.google.android.material;material;1.1.0'
 }

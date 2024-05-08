@@ -9,6 +9,14 @@
         android:id="@+id/fl_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/hostFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="677dp"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/navigation_graph" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

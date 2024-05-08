@@ -17,6 +17,7 @@ cameraView = "1.3.3"
 firebaseDatabaseKtx = "21.0.0"
 volley = "1.2.1"
 roomCommon = "2.6.1"
+navigationFragment = "2.7.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,7 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
