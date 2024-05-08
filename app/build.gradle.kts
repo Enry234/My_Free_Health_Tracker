@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.firebase.database.ktx)
     implementation(libs.volley)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
