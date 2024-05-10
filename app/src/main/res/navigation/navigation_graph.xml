@@ -4,37 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
     app:startDestination="@id/homeFragment">
-
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.myfreehealthtracker.Fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/healthFragment"
         android:name="com.example.myfreehealthtracker.Fragments.HealthFragment"
         android:label="fragment_health"
-        tools:layout="@layout/fragment_health" >
-        <action
-            android:id="@+id/action_healthFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_health" />
     <fragment
         android:id="@+id/sportFragment"
         android:name="com.example.myfreehealthtracker.Fragments.SportFragment"
         android:label="fragment_sport"
-        tools:layout="@layout/fragment_sport" >
-        <action
-            android:id="@+id/action_sportFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.HomeFragment"
-        android:label="HomeFragment" >
-        <action
-            android:id="@+id/action_homeFragment_to_healthFragment"
-            app:destination="@id/healthFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_sportFragment"
-            app:destination="@id/sportFragment" />
-        <action
-            android:id="@+id/action_homeFragment_self"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_sport" />
 </navigation>

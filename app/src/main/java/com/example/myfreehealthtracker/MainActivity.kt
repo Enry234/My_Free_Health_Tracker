@@ -1,44 +1,65 @@
 package com.example.myfreehealthtracker
 
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.findNavController
 import com.example.myfreehealthtracker.Fragments.HealthFragment
 import com.example.myfreehealthtracker.Fragments.HomeFragment
 import com.example.myfreehealthtracker.Fragments.SportFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.layout_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_main)
 
-        val homeFragment = HomeFragment()
-        val sportFragment = SportFragment()
-        val healthFragment = HealthFragment()
-
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-
-        makeCurrentFragment(homeFragment)
-
-        bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.Home -> makeCurrentFragment(homeFragment)
-                R.id.Health -> makeCurrentFragment(healthFragment)
-                R.id.Sport -> makeCurrentFragment(sportFragment)
-            }
-            true
-        }
-        val a = LoginPage()
-
+        initializeMainActivityLayout()
     }
 
-    private fun makeCurrentFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fl_wrapper, fragment)
-            commit()
+    private fun initializeMainActivityLayout() {
+        val bottomNavBar = findViewById<BottomNavigationView>(
+            R.id.app_bottom_navigation_bar
+        )
+        val toolbarTitle = findViewById<TextView>(R.id.activity_main_toolbar_title)
+        val drawerLayout = findViewById<DrawerLayout>(R.id.app_drawer_layout)
+        val fragmentContainer = findViewById<FragmentContainerView>(
+            R.id.activity_main_fragment_container
+        )
+
+        findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture)
+            .setOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+
+        bottomNavBar.setOnItemSelectedListener {
+            val navController = fragmentContainer.findNavController()
+            when (it.itemId) {
+                R.id.Home -> {
+                    toolbarTitle.text = getString(R.string.Home)
+                    navController.navigate(R.id.homeFragment)
+                    true
+                }
+                R.id.Sport -> {
+                    toolbarTitle.text = getString(R.string.Sport)
+                    navController.navigate(R.id.sportFragment)
+                    true
+                }
+                R.id.Health -> {
+                    toolbarTitle.text = getString(R.string.Health)
+                    navController.navigate(R.id.healthFragment)
+                    true
+                }
+                else -> false
+            }
         }
+
     }
 }
 
