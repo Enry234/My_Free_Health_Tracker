@@ -1,10 +1,12 @@
 package com.example.myfreehealthtracker
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -14,6 +16,7 @@ import com.example.myfreehealthtracker.Fragments.HealthFragment
 import com.example.myfreehealthtracker.Fragments.HomeFragment
 import com.example.myfreehealthtracker.Fragments.SportFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         super.onCreate(savedInstanceState)
 
         initializeMainActivityLayout()
+
     }
 
     private fun initializeMainActivityLayout() {
@@ -29,6 +33,8 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         )
         val toolbarTitle = findViewById<TextView>(R.id.activity_main_toolbar_title)
         val drawerLayout = findViewById<DrawerLayout>(R.id.app_drawer_layout)
+        val navigationView = findViewById<NavigationView>(R.id.app_drawer_navigation_view)
+
         val fragmentContainer = findViewById<FragmentContainerView>(
             R.id.activity_main_fragment_container
         )
@@ -46,14 +52,29 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     navController.navigate(R.id.homeFragment)
                     true
                 }
+
                 R.id.Sport -> {
                     toolbarTitle.text = getString(R.string.Sport)
                     navController.navigate(R.id.sportFragment)
                     true
                 }
+
                 R.id.Health -> {
                     toolbarTitle.text = getString(R.string.Health)
                     navController.navigate(R.id.healthFragment)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        navigationView.setNavigationItemSelectedListener {
+            val navController = fragmentContainer.findNavController()
+            when (it.itemId) {
+                R.id.Logout -> {
+                    Log.i("Logout", "Entrato condizioner")
+                    navController.navigate(R.id.sportFragment)
                     true
                 }
                 else -> false
