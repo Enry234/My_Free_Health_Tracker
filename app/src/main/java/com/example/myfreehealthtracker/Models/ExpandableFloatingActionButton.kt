@@ -1,5 +1,6 @@
 package com.example.myfreehealthtracker.Models
 
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -8,47 +9,60 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ExpandableFloatingActionButton(
     container: ViewGroup,
-    expanderId: Int,
-    vararg childrenId: Int
+    private val expander: FloatingActionButton,
+    vararg children: FloatingActionButton
 ) {
-
-    private var isExpanded = true
-
-    private val expander = container.findViewById<FloatingActionButton>(expanderId)
-    private val children: List<FloatingActionButton> = childrenId.map {
-        container.findViewById(it)
-    }
-
+    private var isExpanded = false
+    private val children: List<FloatingActionButton> = children.map { it }
     private val expandAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(container.context, R.anim.fab_expand)
+        AnimationUtils.loadAnimation(expander.context, R.anim.fab_expand)
     }
     private val collapseAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(container.context, R.anim.fab_collapse)
+        AnimationUtils.loadAnimation(expander.context, R.anim.fab_collapse)
     }
-    private val rotateClockWiseAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(container.context, R.anim.fab_expander_rotate_clock_wise)
+    private val rotateClockWise: Animation by lazy {
+        AnimationUtils.loadAnimation(expander.context, R.anim.fab_expander_icon_rotate_clock_wise)
     }
-    private val rotateAntiClockWiseAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(container.context, R.anim.fab_expander_rotate_anti_clock_wise)
+    private val rotateAntiClockWise: Animation by lazy {
+        AnimationUtils.loadAnimation(expander.context, R.anim.fab_expander_icon_rotate_anti_clock_wise)
     }
 
-    fun enable() {
+    init {
         expander.setOnClickListener {
             if (isExpanded) collapse() else expand()
         }
+        container.setOnClickListener {
+            collapseIfExpanded()
+        }
     }
 
-    fun getChild(id: Int) = children.find { it.id == id }
+    fun setChildActionListener(child: FloatingActionButton, action: (View) -> Unit) {
+        child.setOnClickListener {
+            action(it)
+            collapse()
+        }
+    }
 
-    private fun collapse() {
-        expander.startAnimation(rotateClockWiseAnimation)
-        children.forEach { it.startAnimation(collapseAnimation) }
+    fun collapseIfExpanded() {
+        if (isExpanded) collapse()
+    }
+    private fun expand() {
+        expander.startAnimation(rotateClockWise)
+        children.forEach {
+            it.startAnimation(expandAnimation)
+            it.isClickable = true
+            it.visibility = View.VISIBLE
+        }
         isExpanded = !isExpanded
     }
 
-    private fun expand() {
-        expander.startAnimation(rotateAntiClockWiseAnimation)
-        children.forEach { it.startAnimation(expandAnimation) }
+    private fun collapse() {
+        expander.startAnimation(rotateAntiClockWise)
+        children.forEach {
+            it.startAnimation(collapseAnimation)
+            it.isClickable = false
+            it.visibility = View.INVISIBLE
+        }
         isExpanded = !isExpanded
     }
 }
