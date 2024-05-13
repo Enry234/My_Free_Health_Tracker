@@ -1,10 +1,9 @@
-package com.example.myfreehealthtracker.Models
+package com.example.myfreehealthtracker
 
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ExpandableFloatingActionButton(

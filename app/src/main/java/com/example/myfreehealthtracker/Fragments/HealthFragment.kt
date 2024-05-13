@@ -2,11 +2,9 @@ package com.example.myfreehealthtracker.Fragments
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.myfreehealthtracker.MainActivity
-import com.example.myfreehealthtracker.Models.ExpandableFloatingActionButton
+import com.example.myfreehealthtracker.ExpandableFloatingActionButton
 import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 

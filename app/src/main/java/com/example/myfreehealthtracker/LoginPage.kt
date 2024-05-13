@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.hoverable
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -85,7 +85,7 @@ class LoginPage {
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(0)
+            mutableIntStateOf(4)
         }
 
 
@@ -678,10 +678,11 @@ class LoginPage {
                                     }
                                     val launcher = rememberLauncherForActivityResult(
                                         contract =
-                                        ActivityResultContracts.GetContent()
-                                    ) { uri: Uri? ->
-                                        imageUri = uri
-                                    }
+                                        ActivityResultContracts.PickVisualMedia(),
+                                        onResult = { uri ->
+                                            imageUri = uri
+                                        }
+                                    )
                                     Column(
                                         modifier = Modifier.fillMaxSize(),
                                         verticalArrangement = Arrangement.Center,
@@ -713,8 +714,7 @@ class LoginPage {
                                                     contentDescription = null,
                                                     modifier = Modifier
                                                         .padding(4.dp)
-                                                        .fillMaxHeight()
-                                                        .width(100.dp)
+                                                        .fillMaxSize()
                                                         .clip(RoundedCornerShape(12.dp)),
                                                     contentScale = ContentScale.Crop,
                                                 )
@@ -730,7 +730,12 @@ class LoginPage {
                                             }
                                             if (openPhoto) {
 
-                                                launcher.launch("image/*")
+                                                launcher.launch(
+                                                    PickVisualMediaRequest(
+                                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                    )
+                                                )
+                                                openPhoto = false
                                                 photoInserted = true
                                             }
 

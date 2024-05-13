@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
