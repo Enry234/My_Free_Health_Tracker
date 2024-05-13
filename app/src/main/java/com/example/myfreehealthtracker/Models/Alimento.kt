@@ -10,8 +10,8 @@ data class Alimento(
     var id: Int,
     @ColumnInfo(name = "nome")
     var nome: String,
-    @ColumnInfo(name = "nutrienti")
-    var nutrienti: List<Pair<String, Int>>,
+//    @ColumnInfo(name = "nutrienti")
+//    var nutrienti: List<Pair<String, Int>>,
     @ColumnInfo(name = "descrizione")
     var descrizione: String
 

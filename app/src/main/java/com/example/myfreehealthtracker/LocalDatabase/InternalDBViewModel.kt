@@ -11,15 +11,10 @@ import kotlinx.coroutines.launch
 class InternalDBViewModel(private val repository: Repository) : ViewModel() {
 
 
-    // Using LiveData and caching what allWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes)
-    //   and only update the the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    val allUser: LiveData<List<UserData>> = repository.user.asLiveData()
+    val allUser: LiveData<List<UserData>> =
+        repository.user.asLiveData(viewModelScope.coroutineContext)
 
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
+
     fun insert(user: UserData) = viewModelScope.launch {
         repository.insert(user)
     }

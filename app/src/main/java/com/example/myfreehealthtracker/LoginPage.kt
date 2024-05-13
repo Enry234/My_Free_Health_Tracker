@@ -383,7 +383,8 @@ class LoginPage {
                                                 IconButton(onClick = {
                                                     if (inserted) {
                                                         if (dateResult < Date()) {
-                                                            user.dataDiNascita = dateResult
+                                                            user.dataDiNascita =
+                                                                dateResult.toString()
                                                             pos += 1
                                                         } else {
                                                             error = true
@@ -644,8 +645,7 @@ class LoginPage {
                                                 IconButton(onClick = {
                                                     if (altezza > 0 && peso > 0) {
                                                         user.altezza = altezza
-                                                        user.peso =
-                                                            mutableListOf(Pair(Date(), peso))
+
                                                         pos += 1
                                                     } else {
                                                         error = true
@@ -809,7 +809,7 @@ class LoginPage {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
-                        user.posizione = location
+                        user.posizione = location.toString()
                         Log.i("main activity", "location settata")
                     } else {
                         Log.i("main activity", "location non settata")

@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.Date
 
 @Database(
     entities = [Alimento::class, Assunzione::class, Attivita::class, Medicine::class, Pasto::class, PastoToCibo::class, Sport::class, UserData::class],
@@ -68,12 +67,12 @@ abstract class InternalDatabase : RoomDatabase() {
         suspend fun populateDatabase(userDao: UserDao) {
 
 
-            // Add sample words.
-            val user = UserData(
-                "nome", "cognome", "asc123", Date("11/11/2022"), 'm', 180, null,
-                mutableListOf(Pair<Date, Int>(Date(), 80)), null
-            )
-            userDao.insertUser(user)
+//            // Add sample words.
+//            val user = UserData(
+//                "nome", "cognome", "asc123", Date("11/11/2022"), 'm', 180, null,
+//                mutableListOf(Pair<Date, Int>(Date(), 80)), null
+//            )
+//            userDao.insertUser(user)
         }
     }
 }

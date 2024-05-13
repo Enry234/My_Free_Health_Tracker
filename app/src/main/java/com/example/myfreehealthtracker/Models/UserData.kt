@@ -1,14 +1,8 @@
 package com.example.myfreehealthtracker.Models
 
-import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.Instant
-import java.util.Date
 
 @Entity(tableName = "User")
 class UserData(
@@ -19,28 +13,28 @@ class UserData(
     @PrimaryKey
     var id: String = "",
     @ColumnInfo(name = "Data_di_nascita")
-    var dataDiNascita: Date? = null,
+    var dataDiNascita: String = "",
     @ColumnInfo(name = "sesso")
     var sesso: Char = ' ',
     @ColumnInfo(name = "altezza")
     var altezza: Int = 0,
     @ColumnInfo(name = "posizione")
-    var posizione: Location? = null,
-    @ColumnInfo(name = "peso")
-    var peso: MutableList<Pair<Date, Int>>? = null,
+    var posizione: String = "",
+//    @ColumnInfo(name = "peso")
+//    var peso: MutableList<Pair<Date, Int>>? = null,
     @ColumnInfo(name = "imageProfile")
-    var image: ImageVector? = null
+    var image: String = ""
 ) {
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun addPeso(newPeso: Int) {
-        peso!!.add(Pair(Date.from(Instant.now()), newPeso))
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun addPeso(newPeso: Int) {
+//        peso!!.add(Pair(Date.from(Instant.now()), newPeso))
+//    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getEta(): Int {
-        return Date.from(Instant.now()).year - dataDiNascita!!.year
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun getEta(): Int {
+//        return Date.from(Instant.now()).year - dataDiNascita!!.year
+//    }
 
 
 }
