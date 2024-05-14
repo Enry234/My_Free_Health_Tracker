@@ -24,4 +24,8 @@
     </string>
     <string name="profile_email">john.doe@gmail.com</string>
     <string name="profile_name">John Doe</string>
+
+    <!-- HEALTH STRINGS -->
+    <string name="fragment_new_meal_title">Inserisci un nuovo pasto</string>
+    <string name="fragment_new_meal_confirm_btn">CONFERMA INSERIMENTO</string>
 </resources>

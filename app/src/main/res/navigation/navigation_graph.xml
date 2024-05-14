@@ -13,10 +13,23 @@
         android:id="@+id/healthFragment"
         android:name="com.example.myfreehealthtracker.Fragments.HealthFragment"
         android:label="fragment_health"
-        tools:layout="@layout/fragment_health" />
+        tools:layout="@layout/fragment_health" >
+        <action
+            android:id="@+id/action_health_fragment_new_meal"
+            app:destination="@id/newMealFragment" />
+    </fragment>
     <fragment
         android:id="@+id/sportFragment"
         android:name="com.example.myfreehealthtracker.Fragments.SportFragment"
         android:label="fragment_sport"
         tools:layout="@layout/fragment_sport" />
+    <fragment
+        android:id="@+id/newMealFragment"
+        android:name="com.example.myfreehealthtracker.NewMealFragment"
+        android:label="fragment_new_meal"
+        tools:layout="@layout/fragment_new_meal" >
+        <action
+            android:id="@+id/action_confirm_new_meal"
+            app:destination="@id/healthFragment" />
+    </fragment>
 </navigation>

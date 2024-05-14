@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/fragment_health_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HEALTH FRAG"
@@ -49,30 +50,30 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/component_expandable_floating_action_button_first_action_child"
-            android:src="@drawable/ic_add_white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:clickable="false"
-            android:focusable="true"
-            android:visibility="invisible"
             android:contentDescription="temp"
-            app:backgroundTint="@color/purple_500"
+            android:focusable="true"
+            android:src="@drawable/ic_add_white"
+            android:visibility="invisible"
+            app:backgroundTint="@color/purple_200"
             app:layout_constraintBottom_toTopOf="@id/component_expandable_floating_action_button_expander"
             app:layout_constraintEnd_toEndOf="@id/component_expandable_floating_action_button_expander"
             app:layout_constraintStart_toStartOf="@id/component_expandable_floating_action_button_expander" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/component_expandable_floating_action_button_second_action_child"
-            android:src="@drawable/ic_add_white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:clickable="false"
-            android:focusable="true"
-            android:visibility="invisible"
             android:contentDescription="temp"
-            app:backgroundTint="@color/purple_500"
+            android:focusable="true"
+            android:src="@drawable/ic_add_white"
+            android:visibility="invisible"
+            app:backgroundTint="@color/purple_200"
             app:layout_constraintBottom_toTopOf="@id/component_expandable_floating_action_button_first_action_child"
             app:layout_constraintEnd_toEndOf="@id/component_expandable_floating_action_button_first_action_child"
             app:layout_constraintStart_toStartOf="@id/component_expandable_floating_action_button_first_action_child" />
