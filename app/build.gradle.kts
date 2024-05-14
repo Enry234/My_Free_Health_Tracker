@@ -83,6 +83,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation ("com.google.zxing:core:3.4.1")
-    implementation ("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("pl.coderion:openfoodfacts-java-wrapper:0.9.3") {
+        exclude(group = "ch.qos.logback", module = "logback-classic")
+        exclude(group = "javax.annotation", module = "javax.annotation-api")
+        exclude(group = "javax.inject", module = "javax.inject")
+        exclude (group="com.google.code.findbugs", module="jsr305")
+        exclude (group="javax.inject", module="javax.inject-1")
+        isTransitive = false
+    }
 }

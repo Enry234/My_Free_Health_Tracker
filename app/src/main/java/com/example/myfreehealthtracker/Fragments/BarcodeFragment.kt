@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.R
 import com.google.zxing.integration.android.IntentIntegrator
-import com.google.zxing.integration.android.IntentResult
+import pl.coderion.service.OpenFoodFactsWrapper
+import pl.coderion.service.impl.OpenFoodFactsWrapperImpl
+
 
 class BarcodeFragment : Fragment() {
 
@@ -21,17 +22,22 @@ class BarcodeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_barcode, container, false)
-        val buttonBarcode = view?.finbarcode dViewById<Button>(R.id.button_barcode)
+        val buttonBarcode = view?.findViewById<Button>(R.id.button_barcode)
 
         buttonBarcode?.setOnClickListener {
             val integrator = IntentIntegrator.forSupportFragment(this)
-            integrator.setOrientationLocked(true) // Permette la rotazione automatica
+            integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
+            integrator.setCameraId(0) // Usa la fotocamera posteriore
+            integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
+            integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
 
             integrator.initiateScan()
         }
+        
 
         return view
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -43,10 +49,15 @@ class BarcodeFragment : Fragment() {
             } else {
                 // Il codice a barre è stato trovato
                 val barcode = result.contents
+                val wrapper: OpenFoodFactsWrapper = OpenFoodFactsWrapperImpl()
+                val productResponse = wrapper.fetchProductByCode("737628064502")
+                //println(productResponse)
                 outputBarcode?.text = barcode
             }
         }
     }
 
 
+
 }
+
