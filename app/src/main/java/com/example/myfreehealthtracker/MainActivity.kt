@@ -5,16 +5,10 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.findNavController
-import com.example.myfreehealthtracker.Fragments.HealthFragment
-import com.example.myfreehealthtracker.Fragments.HomeFragment
-import com.example.myfreehealthtracker.Fragments.SportFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
@@ -43,7 +37,6 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             .setOnClickListener {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
-
         bottomNavBar.setOnItemSelectedListener {
             val navController = fragmentContainer.findNavController()
             when (it.itemId) {

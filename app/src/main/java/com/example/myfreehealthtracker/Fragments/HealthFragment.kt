@@ -1,18 +1,54 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.myfreehealthtracker.Fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
+import com.example.myfreehealthtracker.Models.Assunzione
 import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HealthFragment : Fragment(R.layout.fragment_health) {
 
     private lateinit var expandableFloatingActionButton: ExpandableFloatingActionButton
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_health, container, false)
+        val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
         val expander: FloatingActionButton = view.findViewById(
             R.id.component_expandable_floating_action_button_expander
@@ -37,7 +73,136 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         expandableFloatingActionButton.setChildActionListener(secondChild) {
             Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
         }
+        composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ShowHealth()
 
+            }
+        }
+        return view
+    }
 
+}
+
+val dummyList = listOf<Assunzione>(
+    Assunzione("1", "13052024", 10, 2, "test1"),
+    Assunzione("1", "12052024", 8, 2, "test2"),
+    Assunzione("1", "12052024", 8, 2, "test2"),
+    Assunzione("1", "12052024", 8, 2, "test2"),
+    Assunzione("1", "12052024", 8, 2, "test2"),
+    Assunzione("1", "12052024", 8, 2, "test2")
+)
+
+@Preview
+@Composable
+fun ShowHealth() {
+    Surface(modifier = Modifier.fillMaxSize()) {}
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row {
+            Text(text = "Storico pasti e medicine", modifier = Modifier.padding(20.dp))
+
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .fillMaxHeight()
+        ) {
+            items(dummyList) { assunzione ->
+                MessageRow(assunzione)
+            }
+        }
+    }
+
+}
+
+@Composable
+fun MessageRow(assunzione: Assunzione) {
+    Column {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+
+                .shadow(elevation = 1.dp, shape = RoundedCornerShape(10.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(10.dp),
+                        value = assunzione.date,
+                        onValueChange = {},
+                        readOnly = true,
+                        singleLine = true,
+                        label = {
+                            Text(
+                                text = "Data"
+                            )
+                        })
+                    TextField(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(10.dp),
+                        value = assunzione.idMedicina.toString(),
+                        onValueChange = {},
+                        readOnly = true,
+                        singleLine = true,
+                        label = {
+                            Text(
+                                text = "Medicina"
+                            )
+                        })
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(10.dp),
+                        value = assunzione.note,
+                        onValueChange = {},
+                        readOnly = true,
+                        singleLine = true,
+                        label = {
+                            Text(
+                                text = "Note"
+                            )
+                        })
+                    TextField(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(10.dp),
+                        value = assunzione.quantita.toString(),
+                        onValueChange = {},
+                        readOnly = true,
+                        singleLine = true,
+                        label = {
+                            Text(
+                                text = "Quantita'"
+                            )
+                        })
+                }
+
+            }
+        }
+        Spacer(modifier = Modifier.padding(16.dp))
     }
 }
