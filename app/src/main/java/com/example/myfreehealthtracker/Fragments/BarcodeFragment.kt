@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
+import com.example.myfreehealthtracker.foodOpenFacts.OpenFoodFactEntity
 import com.google.zxing.integration.android.IntentIntegrator
 
 
@@ -46,8 +48,13 @@ class BarcodeFragment : Fragment() {
                 outputBarcode?.text = "Scansione fallita"
             } else {
                 // Il codice a barre è stato trovato
+                callClient(result.contents)
             }
         }
+    }
+
+    private suspend fun callClient(s:String): List<OpenFoodFactEntity>{
+        return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
 
 

@@ -5,6 +5,9 @@ plugins {
     id("com.google.gms.google-services")
     kotlin("kapt")
     //id ("org.jetbrains.kotlin.plugin.serialization")
+    //id("com.android.application") version "8.1.4" apply false
+    //id("org.jetbrains.kotlin.android") version "1.9.20" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20" apply false
 
 }
 
@@ -78,6 +81,7 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.room.ktx)
+    implementation("org.testng:testng:6.9.6")
     kapt("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
