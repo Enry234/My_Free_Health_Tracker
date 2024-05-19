@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.R
 import com.google.zxing.integration.android.IntentIntegrator
-import pl.coderion.service.OpenFoodFactsWrapper
-import pl.coderion.service.impl.OpenFoodFactsWrapperImpl
 
 
 class BarcodeFragment : Fragment() {
@@ -48,11 +46,6 @@ class BarcodeFragment : Fragment() {
                 outputBarcode?.text = "Scansione fallita"
             } else {
                 // Il codice a barre è stato trovato
-                val barcode = result.contents
-                val wrapper: OpenFoodFactsWrapper = OpenFoodFactsWrapperImpl()
-                val productResponse = wrapper.fetchProductByCode("737628064502")
-                //println(productResponse)
-                outputBarcode?.text = barcode
             }
         }
     }

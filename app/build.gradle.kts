@@ -1,8 +1,11 @@
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
     kotlin("kapt")
+    //id ("org.jetbrains.kotlin.plugin.serialization")
+
 }
 
 android {
@@ -85,12 +88,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
-    implementation("pl.coderion:openfoodfacts-java-wrapper:0.9.3") {
-        exclude(group = "ch.qos.logback", module = "logback-classic")
-        exclude(group = "javax.annotation", module = "javax.annotation-api")
-        exclude(group = "javax.inject", module = "javax.inject")
-        exclude (group="com.google.code.findbugs", module="jsr305")
-        exclude (group="javax.inject", module="javax.inject-1")
-        isTransitive = false
-    }
+
+
+    implementation ("io.ktor:ktor-client-core:1.6.3")
+    implementation ("io.ktor:ktor-client-android:1.6.3")
+    implementation ("io.ktor:ktor-client-logging:1.6.3")
+    implementation ("io.ktor:ktor-client-serialization:1.6.3")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+
 }
