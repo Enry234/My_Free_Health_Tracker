@@ -14,7 +14,7 @@ data class Pasto(
     @ColumnInfo(name = "date")
     var date: Date,
     @ColumnInfo(name = "typePasto")
-    var typePasto: Int, //0=colazione,1=pranzo,2=cena,3=spuntino
+    var typePasto: TipoPasto,
     @ColumnInfo(name = "note")
     var note: String
 
