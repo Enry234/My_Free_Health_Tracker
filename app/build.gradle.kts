@@ -3,11 +3,13 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
-    kotlin("kapt") apply false
+    kotlin("kapt")
+    //id ("org.jetbrains.kotlin.plugin.serialization")
+    //id("com.android.application") version "8.1.4" apply false
+    //id("org.jetbrains.kotlin.android") version "1.9.20" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20" apply false
 
-    id("kotlinx-serialization") version "1.4.1"
 }
-
 
 android {
     namespace = "com.example.myfreehealthtracker"
@@ -79,6 +81,7 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.room.ktx)
+    implementation("org.testng:testng:6.9.6")
     kapt("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

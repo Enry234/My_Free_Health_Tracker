@@ -10,18 +10,18 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 
-class clientFoodOpenFacts() {
+class ClientFoodOpenFact() {
 
-    private val client=HttpClient(Android){
-        install(Logging){
-            level=LogLevel.ALL
+    private val client = HttpClient(Android) {
+        install(Logging) {
+            level = LogLevel.ALL
         }
-        install(JsonFeature){
-            serializer=KotlinxSerializer()
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
         }
     }
 
-    private suspend fun getFoodOpenFacts(barcode: String):List<OpenFoodFactEntity> {
+    suspend fun getFoodOpenFacts(barcode: String): List<OpenFoodFactEntity> {
         return client.get {
             url(BASE_URL + GET + barcode)
         }
