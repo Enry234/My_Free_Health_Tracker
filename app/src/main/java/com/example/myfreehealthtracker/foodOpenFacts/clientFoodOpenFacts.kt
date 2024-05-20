@@ -1,5 +1,6 @@
 package com.example.myfreehealthtracker.foodOpenFacts
 
+import com.example.myfreehealthtracker.OpenFoodFactEntity
 import io.ktor.client.*
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.JsonFeature

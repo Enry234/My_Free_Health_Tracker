@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
-    kotlin("kapt")
-    //id ("org.jetbrains.kotlin.plugin.serialization")
+    kotlin("kapt") apply false
 
+    id("kotlinx-serialization") version "1.4.1"
 }
+
 
 android {
     namespace = "com.example.myfreehealthtracker"
