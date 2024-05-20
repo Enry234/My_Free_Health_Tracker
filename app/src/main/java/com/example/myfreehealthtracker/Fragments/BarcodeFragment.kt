@@ -12,6 +12,9 @@ import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodOpenFacts.OpenFoodFactEntity
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class BarcodeFragment : Fragment() {
@@ -32,8 +35,9 @@ class BarcodeFragment : Fragment() {
             integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
 
             integrator.initiateScan()
+
         }
-        
+
 
         return view
     }
@@ -48,15 +52,18 @@ class BarcodeFragment : Fragment() {
                 outputBarcode?.text = "Scansione fallita"
             } else {
                 // Il codice a barre è stato trovato
-                callClient(result.contents)
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    // Call the suspend function
+                    callClient(result.contents)
+                }
             }
         }
     }
 
-    private suspend fun callClient(s:String): List<OpenFoodFactEntity>{
+    private suspend fun callClient(s: String): List<OpenFoodFactEntity> {
         return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
-
 
 
 }

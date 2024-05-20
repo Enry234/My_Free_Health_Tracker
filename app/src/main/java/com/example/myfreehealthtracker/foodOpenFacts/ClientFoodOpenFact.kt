@@ -1,6 +1,5 @@
 package com.example.myfreehealthtracker.foodOpenFacts
 
-import com.example.myfreehealthtracker.OpenFoodFactEntity
 import io.ktor.client.*
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.JsonFeature
@@ -31,4 +30,7 @@ class ClientFoodOpenFact() {
         const val BASE_URL = "https://world.openfoodfacts.net"
         const val GET = "/api/v2/product/"
     }
+
+
+
 }

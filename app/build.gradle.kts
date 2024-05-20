@@ -4,10 +4,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
     kotlin("kapt")
-    //id ("org.jetbrains.kotlin.plugin.serialization")
-    //id("com.android.application") version "8.1.4" apply false
-    //id("org.jetbrains.kotlin.android") version "1.9.20" apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20" apply false
+    id("org.jetbrains.kotlin.plugin.serialization")
 
 }
 
@@ -83,11 +80,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation("org.testng:testng:6.9.6")
     kapt("androidx.room:room-compiler:2.6.1")
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.google.zxing:core:3.4.1")
@@ -100,6 +94,5 @@ dependencies {
     implementation ("io.ktor:ktor-client-serialization:1.6.3")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
 }
