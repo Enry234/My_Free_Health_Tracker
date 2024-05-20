@@ -60,7 +60,7 @@ interface UserDao {
     fun getMedicine(): Flow<List<Medicine>>
 
 
-    @Query("SELECT * FROM Pasto")
+    @Query("SELECT * FROM PastoToCibo")
     fun getPastoToCibo(): Flow<List<PastoToCibo>>
 
 
