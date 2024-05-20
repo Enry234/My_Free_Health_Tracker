@@ -28,4 +28,7 @@
     <!-- HEALTH STRINGS -->
     <string name="fragment_new_meal_title">Inserisci un nuovo pasto</string>
     <string name="fragment_new_meal_confirm_btn">CONFERMA INSERIMENTO</string>
+    <string name="fragment_new_meal_insert_new_btn">AGGIUNGI ALIMENTO</string>
+    <string name="fragment_new_meal_add_food_existing">Aggiungi Esistente</string>
+    <string name="fragment_new_meal_add_food_new">Aggiungi Nuovo</string>
 </resources>

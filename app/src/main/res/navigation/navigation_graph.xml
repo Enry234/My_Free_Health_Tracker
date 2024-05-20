@@ -25,7 +25,7 @@
         tools:layout="@layout/fragment_sport" />
     <fragment
         android:id="@+id/newMealFragment"
-        android:name="com.example.myfreehealthtracker.NewMealFragment"
+        android:name="com.example.myfreehealthtracker.Fragments.NewMealFragment"
         android:label="fragment_new_meal"
         tools:layout="@layout/fragment_new_meal" >
         <action
