@@ -5,8 +5,8 @@ package com.example.myfreehealthtracker.Fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +39,7 @@ import com.example.myfreehealthtracker.ExpandableFloatingActionButton
 import com.example.myfreehealthtracker.Models.Assunzione
 import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Date
 
 class HealthFragment : Fragment(R.layout.fragment_health) {
 
@@ -95,12 +96,12 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 }
 
 val dummyList = listOf<Assunzione>(
-    Assunzione("1", "13052024", 10, 2, "test1"),
-    Assunzione("1", "12052024", 8, 2, "test2"),
-    Assunzione("1", "12052024", 8, 2, "test2"),
-    Assunzione("1", "12052024", 8, 2, "test2"),
-    Assunzione("1", "12052024", 8, 2, "test2"),
-    Assunzione("1", "12052024", 8, 2, "test2")
+    Assunzione("1", Date("13/10/2024"), 10, 2, "test1"),
+    Assunzione("1", Date("13/10/2024"), 8, 2, "test2"),
+    Assunzione("1", Date("13/10/2024"), 8, 2, "test2"),
+    Assunzione("1", Date("13/10/2024"), 8, 2, "test2"),
+    Assunzione("1", Date("13/10/2024"), 8, 2, "test2"),
+    Assunzione("1", Date("13/10/2024"), 8, 2, "test2")
 )
 
 @Preview
@@ -153,10 +154,11 @@ fun MessageRow(assunzione: Assunzione) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     TextField(
+
                         modifier = Modifier
                             .width(150.dp)
                             .padding(10.dp),
-                        value = assunzione.date,
+                        value = assunzione.date.toString(),
                         onValueChange = {},
                         readOnly = true,
                         singleLine = true,

@@ -85,7 +85,7 @@ class LoginPage {
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(4)
+            mutableIntStateOf(0)
         }
 
 
@@ -152,7 +152,7 @@ class LoginPage {
                                         onValueChange = { nome = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -232,7 +232,7 @@ class LoginPage {
                                                     )
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -296,7 +296,7 @@ class LoginPage {
                                         onValueChange = { empty = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -363,7 +363,7 @@ class LoginPage {
                                                 }
 
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -420,7 +420,7 @@ class LoginPage {
                                         onValueChange = { sesso = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -478,7 +478,7 @@ class LoginPage {
                                                     }
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -536,7 +536,7 @@ class LoginPage {
                                         onValueChange = { peso = it.toInt() },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -625,7 +625,7 @@ class LoginPage {
                                                     )
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,

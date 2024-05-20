@@ -2,6 +2,7 @@ package com.example.myfreehealthtracker.Models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import java.util.Date
 
 @Entity(primaryKeys = ["UserId", "IdSport", "Date"])
 data class Attivita(
@@ -10,7 +11,7 @@ data class Attivita(
     @ColumnInfo(name = "IdSport")
     var idSport: String,
     @ColumnInfo(name = "Date")
-    var date: String,
+    var date: Date,
     @ColumnInfo(name = "Note")
     var note: String,
     @ColumnInfo(name = "Calorie")
