@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myfreehealthtracker.Models.Alimento
 import com.example.myfreehealthtracker.Models.Assunzione
@@ -14,6 +15,7 @@ import com.example.myfreehealthtracker.Models.PastoToCibo
 import com.example.myfreehealthtracker.Models.Sport
 import com.example.myfreehealthtracker.Models.UserData
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,10 +25,11 @@ import kotlinx.coroutines.launch
     version = 1,
     exportSchema = false
 )
+@TypeConverters(InternalConverter::class)
 abstract class InternalDatabase : RoomDatabase() {
 
     public abstract fun userDao(): UserDao
-    val ciao = 0
+
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
@@ -34,6 +37,7 @@ abstract class InternalDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: InternalDatabase? = null
 
+        @OptIn(DelicateCoroutinesApi::class)
         fun getDatabase(context: Context): InternalDatabase {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
@@ -42,7 +46,8 @@ abstract class InternalDatabase : RoomDatabase() {
                     context.applicationContext,
                     InternalDatabase::class.java,
                     "word_database"
-                ).addCallback(UserDatabaseCallback(GlobalScope)).build()
+                ).addCallback(UserDatabaseCallback(GlobalScope))
+                    .build()
                 INSTANCE = instance
                 instance
             }

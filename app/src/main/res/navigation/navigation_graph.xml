@@ -13,7 +13,11 @@
         android:id="@+id/healthFragment"
         android:name="com.example.myfreehealthtracker.Fragments.HealthFragment"
         android:label="fragment_health"
-        tools:layout="@layout/fragment_health" />
+        tools:layout="@layout/fragment_health" >
+        <action
+            android:id="@+id/action_health_fragment_new_meal"
+            app:destination="@id/newMealFragment" />
+    </fragment>
     <fragment
         android:id="@+id/sportFragment"
         android:name="com.example.myfreehealthtracker.Fragments.SportFragment"
@@ -24,4 +28,13 @@
         android:name="com.example.myfreehealthtracker.Fragments.BarcodeFragment"
         android:label="fragment_barcode"
         tools:layout="@layout/fragment_barcode" />
+    <fragment
+        android:id="@+id/newMealFragment"
+        android:name="com.example.myfreehealthtracker.Fragments.NewMealFragment"
+        android:label="fragment_new_meal"
+        tools:layout="@layout/fragment_new_meal" >
+        <action
+            android:id="@+id/action_confirm_new_meal"
+            app:destination="@id/healthFragment" />
+    </fragment>
 </navigation>

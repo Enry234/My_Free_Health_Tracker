@@ -3,6 +3,7 @@ package com.example.myfreehealthtracker.Models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "User")
 class UserData(
@@ -20,8 +21,8 @@ class UserData(
     var altezza: Int = 0,
     @ColumnInfo(name = "posizione")
     var posizione: String = "",
-//    @ColumnInfo(name = "peso")
-//    var peso: MutableList<Pair<Date, Int>>? = null,
+    @ColumnInfo(name = "peso")
+    var peso: MutableList<Pair<Date, Int>>? = null,
     @ColumnInfo(name = "imageProfile")
     var image: String = ""
 ) {

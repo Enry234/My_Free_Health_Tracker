@@ -2,10 +2,13 @@ package com.example.myfreehealthtracker
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -71,7 +74,9 @@ import androidx.core.app.ActivityCompat
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Models.UserData
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -79,16 +84,33 @@ import java.util.Date
 class LoginPage {
     private var user: UserData = UserData()
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
+    fun loginUser() {
+
+    }
+
+    fun registerUser(email: String, password: String, activity: Activity) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+            activity
+
+        ) {
+            if (it.isSuccessful) {
+                user.id = firebaseAuth.currentUser?.uid.toString()
+            } else {
+                //TODO errore
+
+            }
+        }
+    }
     @SuppressLint("UnrememberedMutableState", "SimpleDateFormat", "RestrictedApi")
     @Preview
     @Composable
     fun Login() {
         var pos by remember {
-            mutableIntStateOf(4)
+            mutableIntStateOf(0)
         }
-
-
+        val context: Context = LocalContext.current
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -152,7 +174,7 @@ class LoginPage {
                                         onValueChange = { nome = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -232,7 +254,7 @@ class LoginPage {
                                                     )
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -296,7 +318,7 @@ class LoginPage {
                                         onValueChange = { empty = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -363,7 +385,7 @@ class LoginPage {
                                                 }
 
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -420,7 +442,7 @@ class LoginPage {
                                         onValueChange = { sesso = it },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -478,7 +500,7 @@ class LoginPage {
                                                     }
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -536,7 +558,7 @@ class LoginPage {
                                         onValueChange = { peso = it.toInt() },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
-                                        enabled = true,
+                                        enabled = false,
                                         singleLine = true,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -625,7 +647,7 @@ class LoginPage {
                                                     )
                                                 }
                                             },
-                                            enabled = true,
+                                            enabled = false,
                                             singleLine = false,
                                             visualTransformation = VisualTransformation.None,
                                             interactionSource = interactionSource,
@@ -747,14 +769,35 @@ class LoginPage {
                                         }
 
                                         Spacer(modifier = Modifier.padding(10.dp))
-                                        var apri by remember {
+                                        var goToMainActivity by remember {
                                             mutableStateOf(false)
                                         }
                                         OutlinedButton(
                                             onClick = {
-                                                val firebaseRef = FirebaseDatabase.getInstance()
-                                                    .getReference("User")
-                                                user.id = firebaseRef.push().key!!
+//                                                val firebaseRef = FirebaseDatabase.getInstance()
+//                                                    .getReference("User")
+                                                user.id = "testkey"
+                                                val mainApplication =
+                                                    context.applicationContext as MainApplication
+                                                mainApplication.userData = user
+                                                //firebaseRef.child(user.id).setValue(user)
+                                                try {
+                                                    val fileOutputStream: FileOutputStream =
+                                                        context.openFileOutput(
+                                                            "internalData",
+                                                            Context.MODE_PRIVATE
+                                                        )
+                                                    fileOutputStream.write("UserAccessComplete".toByteArray())
+                                                    fileOutputStream.close()
+                                                } catch (e: IOException) {
+                                                    Log.i("loginpage", "error write file")
+                                                    e.printStackTrace()
+                                                }
+                                                val intent =
+                                                    Intent(context, MainActivity::class.java)
+                                                context.startActivity(intent)
+                                                (context as? ComponentActivity)?.finish()
+
 
 
                                             },
