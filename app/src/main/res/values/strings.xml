@@ -39,4 +39,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="fragment_new_meal_insert_new_btn">AGGIUNGI ALIMENTO</string>
+    <string name="fragment_new_meal_add_food_existing">Aggiungi Esistente</string>
+    <string name="fragment_new_meal_add_food_new">Aggiungi Nuovo</string>
 </resources>
