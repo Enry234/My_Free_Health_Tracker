@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 abstract class InternalDatabase : RoomDatabase() {
 
     public abstract fun userDao(): UserDao
-    val ciao = 0
+
 
     companion object {
         // Singleton prevents multiple instances of database opening at the

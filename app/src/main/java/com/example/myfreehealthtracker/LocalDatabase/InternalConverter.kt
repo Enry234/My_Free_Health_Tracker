@@ -6,23 +6,29 @@ import java.util.Date
 
 class InternalConverter {
     @TypeConverter
-    fun DateToString(date: Date): String {
+    fun DateToString(date: Date?): String {
+        if (date == null) return ""
         return date.toString()
     }
 
 
     @TypeConverter
     fun StringToDate(date: String): Date {
+        if (date == "") return Date()
         return Date(date)
     }
 
     @TypeConverter
-    fun ListPairStringIntToString(list: List<Pair<String, Int>>): String {
-        return list.joinToString(",") { "${it.first}:${it.second}" }
+    fun listPairStringIntToString(list: List<Pair<String, Int>>?): String {
+        if (list != null) {
+            return list.joinToString(",") { "${it.first}:${it.second}" }
+        }
+        return ""
     }
 
     @TypeConverter
-    fun StringToListPairStringInt(string: String): List<Pair<String, Int>> {
+    fun stringToListPairStringInt(string: String): List<Pair<String, Int>> {
+        if (string == "") return listOf()
         return string.split(",").map {
             val item = it.split(":")
             item[0] to item[1].toInt()
@@ -30,13 +36,17 @@ class InternalConverter {
     }
 
     @TypeConverter
-    fun ListPairDateIntToString(list: List<Pair<Date, Int>>): String {
-        return list.joinToString(",") { "${it.first.time}:${it.second}" }
+    fun listPairDateIntToString(list: List<Pair<Date, Int>>?): String {
+        if (list != null) {
+            return list.joinToString(",") { "${it.first.time}:${it.second}" }
+        }
+        return ""
 
     }
 
     @TypeConverter
-    fun StringToListPairDateInt(string: String): List<Pair<Date, Int>> {
+    fun stringToListPairDateInt(string: String): List<Pair<Date, Int>> {
+        if (string == "") return listOf()
         return string.split(",").map {
             val item = it.split(":")
             Date(item[0]) to item[1].toInt()

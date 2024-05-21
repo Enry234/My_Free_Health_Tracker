@@ -3,6 +3,7 @@ package com.example.myfreehealthtracker
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
@@ -71,7 +72,8 @@ import androidx.core.app.ActivityCompat
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Models.UserData
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.database.FirebaseDatabase
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -87,8 +89,7 @@ class LoginPage {
         var pos by remember {
             mutableIntStateOf(0)
         }
-
-
+        val context: Context = LocalContext.current
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -747,14 +748,33 @@ class LoginPage {
                                         }
 
                                         Spacer(modifier = Modifier.padding(10.dp))
-                                        var apri by remember {
+                                        var goToMainActivity by remember {
                                             mutableStateOf(false)
                                         }
                                         OutlinedButton(
                                             onClick = {
-                                                val firebaseRef = FirebaseDatabase.getInstance()
-                                                    .getReference("User")
-                                                user.id = firebaseRef.push().key!!
+//                                                val firebaseRef = FirebaseDatabase.getInstance()
+//                                                    .getReference("User")
+                                                user.id = "testkey"
+                                                val mainApplication =
+                                                    context.applicationContext as MainApplication
+                                                mainApplication.userData = user
+                                                //firebaseRef.child(user.id).setValue(user)
+                                                try {
+                                                    val fileOutputStream: FileOutputStream =
+                                                        context.openFileOutput(
+                                                            "internalData",
+                                                            Context.MODE_PRIVATE
+                                                        )
+                                                    fileOutputStream.write("UserAccessComplete".toByteArray())
+                                                    fileOutputStream.close()
+                                                } catch (e: IOException) {
+                                                    Log.i("loginpage", "error write file")
+                                                    e.printStackTrace()
+                                                }
+                                                val intent =
+                                                    Intent(context, MainActivity::class.java)
+                                                context.startActivity(intent)
 
 
                                             },

@@ -3,26 +3,30 @@ package com.example.myfreehealthtracker.Fragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.example.myfreehealthtracker.LocalDatabase.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
-import com.example.myfreehealthtracker.LocalDatabase.InternalViewModelFactory
-import com.example.myfreehealthtracker.LocalDatabase.Repository
+import androidx.lifecycle.lifecycleScope
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.Models.UserData
 import com.example.myfreehealthtracker.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
-    private val db by lazy {
-        InternalDatabase.getDatabase(requireContext())
-    }
-    private val viewModel by viewModels<InternalDBViewModel>(
-        factoryProducer = {
-            InternalViewModelFactory(repository = Repository(db.userDao()))
-        }
-    )
+
+
+    lateinit var mainApplication: MainApplication
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        mainApplication = requireActivity().application as MainApplication
+        lifecycleScope.launch {
+            mainApplication.userDao.getUser().collectLatest { user ->
+                user.forEach {
+                    println(it.id)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            mainApplication.userDao.insertUser(UserData("Test", "test", "98765443231"))
+        }
     }
 }
