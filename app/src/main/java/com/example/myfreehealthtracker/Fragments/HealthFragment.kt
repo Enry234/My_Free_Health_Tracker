@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -28,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -106,16 +110,49 @@ val dummyList = listOf<Assunzione>(
 
 @Preview
 @Composable
+fun HeadBar() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
+        LazyRow {
+            items(listOf("10", "11", "12", "13", "14", "15", "16", "17", "18", "19"))
+            {
+                ItemRow(it)
+            }
+
+        }
+    }
+}
+
+@Composable
+fun ItemRow(string: String) {
+    Box(
+        modifier = Modifier
+            .padding(5.dp)
+            .shadow(2.dp)
+            .clip(shape = CircleShape)
+            .background(color = androidx.compose.ui.graphics.Color.Red)
+    ) {
+        Text(text = string, modifier = Modifier.padding(10.dp))
+    }
+
+}
+@Preview
+@Composable
 fun ShowHealth() {
     Surface(modifier = Modifier.fillMaxSize()) {}
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         Row {
+            HeadBar()
             Text(text = "Storico pasti e medicine", modifier = Modifier.padding(20.dp))
 
         }

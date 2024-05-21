@@ -31,7 +31,7 @@ class UserData(
 //    fun addPeso(newPeso: Int) {
 //        peso!!.add(Pair(Date.from(Instant.now()), newPeso))
 //    }
-
+//
 //    @RequiresApi(Build.VERSION_CODES.O)
 //    fun getEta(): Int {
 //        return Date.from(Instant.now()).year - dataDiNascita!!.year
