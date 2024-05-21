@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
                 R.id.Health -> {
                     toolbarTitle.text = getString(R.string.Health)
-                    navController.navigate(R.id.barcodeFragment)
+                    navController.navigate(R.id.healthFragment)
                     true
                 }
 

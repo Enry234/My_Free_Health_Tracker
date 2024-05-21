@@ -119,6 +119,7 @@ fun Item(string: String) {
             Text(text = string)
             Text(text = "Quantita")
             Text(text = "altro testo")
+
         }
 
     }
