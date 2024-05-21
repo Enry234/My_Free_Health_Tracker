@@ -1,8 +1,11 @@
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
     kotlin("kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
+
 }
 
 android {
@@ -32,15 +35,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -86,11 +88,19 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.6.1")
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+
+
+    implementation ("io.ktor:ktor-client-core:1.6.3")
+    implementation ("io.ktor:ktor-client-android:1.6.3")
+    implementation ("io.ktor:ktor-client-logging:1.6.3")
+    implementation ("io.ktor:ktor-client-serialization:1.6.3")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+
+
 }
