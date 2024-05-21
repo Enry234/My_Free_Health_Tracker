@@ -1,6 +1,7 @@
 package com.example.myfreehealthtracker.foodOpenFacts
 
-import io.ktor.client.*
+import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
@@ -16,11 +17,21 @@ class ClientFoodOpenFact() {
             level = LogLevel.ALL
         }
         install(JsonFeature) {
-            serializer = KotlinxSerializer()
+            serializer = KotlinxSerializer(
+                json = kotlinx.serialization.json.Json {
+                    encodeDefaults = true
+                    isLenient = true
+                    allowSpecialFloatingPointValues = true
+                    allowStructuredMapKeys = true
+                    prettyPrint = false
+                    useArrayPolymorphism = false
+                    ignoreUnknownKeys = true
+                }
+            )
         }
     }
 
-    suspend fun getFoodOpenFacts(barcode: String): List<OpenFoodFactEntity> {
+    suspend fun getFoodOpenFacts(barcode: String): ProductResponse {
         return client.get {
             url(BASE_URL + GET + barcode)
         }
@@ -28,9 +39,8 @@ class ClientFoodOpenFact() {
 
     companion object {
         const val BASE_URL = "https://world.openfoodfacts.net"
-        const val GET = "/api/v2/product/"
+        const val GET = "/api/v0/product/"
     }
-
 
 
 }

@@ -27,5 +27,17 @@
             android:text="TextView"
             tools:layout_editor_absoluteX="176dp"
             tools:layout_editor_absoluteY="290dp" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/compose_view2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="58dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_barcode"
+            app:layout_constraintVertical_bias="0.194" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
