@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -32,7 +33,7 @@ import com.example.myfreehealthtracker.R
 
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
-    private var foodList = mutableListOf<String>()
+    private var foodList = mutableStateListOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,6 +41,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         val confirmMealBtn: Button = view.findViewById(R.id.fragment_new_meal_confirm)
 
         confirmMealBtn.setOnClickListener {
+            //TODO
             view.findNavController().navigate(
                 R.id.action_confirm_new_meal,
                 bundleOf("content" to "placeholder")
