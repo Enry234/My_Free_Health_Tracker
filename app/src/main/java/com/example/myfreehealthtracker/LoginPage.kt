@@ -2,11 +2,13 @@ package com.example.myfreehealthtracker
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -72,6 +74,7 @@ import androidx.core.app.ActivityCompat
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Models.UserData
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -81,7 +84,25 @@ import java.util.Date
 class LoginPage {
     private var user: UserData = UserData()
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
+    fun loginUser() {
+
+    }
+
+    fun registerUser(email: String, password: String, activity: Activity) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+            activity
+
+        ) {
+            if (it.isSuccessful) {
+                user.id = firebaseAuth.currentUser?.uid.toString()
+            } else {
+                //TODO errore
+
+            }
+        }
+    }
     @SuppressLint("UnrememberedMutableState", "SimpleDateFormat", "RestrictedApi")
     @Preview
     @Composable
@@ -775,6 +796,8 @@ class LoginPage {
                                                 val intent =
                                                     Intent(context, MainActivity::class.java)
                                                 context.startActivity(intent)
+                                                (context as? ComponentActivity)?.finish()
+
 
 
                                             },

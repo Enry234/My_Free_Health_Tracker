@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
 
+
             }
         } else {
             Log.i("MAIN_ERROR", "Internal file not found")
