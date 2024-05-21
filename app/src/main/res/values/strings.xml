@@ -43,4 +43,6 @@
     <string name="fragment_new_meal_add_food_existing">Aggiungi Esistente</string>
     <string name="fragment_new_meal_add_food_new">Aggiungi Nuovo</string>
     <string name="fragment_new_meal_add_food_cancel">Annulla Inserimento</string>
+    <string name="fragment_new_meal_add_existing_food_dialog_cancel">Annulla</string>
+    <string name="fragment_new_meal_add_existing_food_dialog_confirm">Conferma</string>
 </resources>
