@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.Models.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

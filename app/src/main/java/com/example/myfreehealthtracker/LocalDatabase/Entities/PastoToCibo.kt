@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker.Models
+package com.example.myfreehealthtracker.LocalDatabase.Entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

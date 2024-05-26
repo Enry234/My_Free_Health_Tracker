@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
-import com.example.myfreehealthtracker.Models.Assunzione
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Assunzione
 import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Date

@@ -1,14 +1,15 @@
-package com.example.myfreehealthtracker.LocalDatabase
+package com.example.myfreehealthtracker.LocalDatabase.ViewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myfreehealthtracker.Models.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import kotlinx.coroutines.launch
 
-class InternalDBViewModel(private val repository: Repository) : ViewModel() {
+class InternalDBViewModel(private val repository: UserRepository) : ViewModel() {
 
 
     val allUser: LiveData<List<UserData>> =
@@ -20,7 +21,7 @@ class InternalDBViewModel(private val repository: Repository) : ViewModel() {
     }
 }
 
-class InternalViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
+class InternalViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(InternalDBViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

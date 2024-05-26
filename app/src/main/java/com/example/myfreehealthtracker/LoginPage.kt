@@ -72,7 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import coil.compose.AsyncImage
-import com.example.myfreehealthtracker.Models.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import java.io.FileOutputStream

@@ -1,10 +1,11 @@
-package com.example.myfreehealthtracker.LocalDatabase
+package com.example.myfreehealthtracker.LocalDatabase.Repositories
 
 import androidx.annotation.WorkerThread
-import com.example.myfreehealthtracker.Models.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Daos.UserDao
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import kotlinx.coroutines.flow.Flow
 
-class Repository(private val userDao: UserDao) {
+class UserRepository(private val userDao: UserDao) {
 
     // Room executes all queries on a separate thread.
     // Observed Flow will notify the observer when the data has changed.
