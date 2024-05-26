@@ -2,7 +2,9 @@
 
 package com.example.myfreehealthtracker.Fragments
 
+import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,6 +82,19 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             //Toast.makeText(view.context, "ACTION1", Toast.LENGTH_SHORT).show()
         }
         expandableFloatingActionButton.setChildActionListener(secondChild) {
+
+//            val dialogAddFood = Dialog(view.context)
+//            dialogAddFood.setContentView(R.layout.dialog_new_food)
+//            dialogAddFood.show()
+//
+//            val composeViewContainer = dialogAddFood.findViewById<ComposeView>(R.id.compose_view)
+//            composeViewContainer.apply {
+//                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+//            }
+
+
+
+
             Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
         }
         val content = arguments?.getString("content")
