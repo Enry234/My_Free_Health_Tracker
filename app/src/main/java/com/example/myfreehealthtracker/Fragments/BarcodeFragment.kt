@@ -49,7 +49,6 @@ private var image :String =""
             integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
 
             integrator.initiateScan()
-
         }
 
         composeView.apply {

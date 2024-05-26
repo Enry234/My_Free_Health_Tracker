@@ -91,7 +91,6 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 ShowHealth()
-
             }
         }
         return view

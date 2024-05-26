@@ -1,11 +1,15 @@
 package com.example.myfreehealthtracker.Fragments
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.example.myfreehealthtracker.Models.Alimento
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
+import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
@@ -86,6 +97,17 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 dialogAddExistingFood.dismiss()
             }
         }
+
+        dialogAddFood.findViewById<Button>(R.id.dialog_food_new_button).setOnClickListener {
+            val integrator = IntentIntegrator.forSupportFragment(this)
+            integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
+            integrator.setCameraId(0) // Usa la fotocamera posteriore
+            integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
+            integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
+
+            integrator.initiateScan()
+        }
+
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
         composeView.apply {
@@ -102,6 +124,34 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val outputBarcode = view?.findViewById<TextView>(R.id.output_barcode)
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null) {
+            if (result.contents == null) {
+                outputBarcode?.text = "Scansione fallita"
+            } else {
+                // Il codice a barre è stato trovato
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    // Call the suspend function
+                    val food = Alimento.convertToAlimento(callClient(result.contents))
+                    Log.i("Test", food.toString())
+                    Toast.makeText(
+                        requireContext(),
+                        food.nome.toString(),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun callClient(s: String): ProductResponse {
+        return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
 }
 
