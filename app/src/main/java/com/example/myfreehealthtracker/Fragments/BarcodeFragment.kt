@@ -10,14 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Models.Alimento
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
@@ -51,18 +45,6 @@ private var image :String =""
             integrator.initiateScan()
         }
 
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                var a = mutableStateOf(image)
-                Log.i("Test", a.value)
-                Surface(modifier = Modifier.fillMaxSize()) {
-
-                }
-                AsyncImage(model = image, contentDescription = "")
-
-            }
-        }
         return view
     }
 

@@ -38,7 +38,7 @@ class ClientFoodOpenFact() {
     }
 
     companion object {
-        const val BASE_URL = "https://world.openfoodfacts.net"
+        const val BASE_URL = "https://world.openfoodfacts.org"
         const val GET = "/api/v0/product/"
     }
 

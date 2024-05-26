@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -128,11 +127,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val outputBarcode = view?.findViewById<TextView>(R.id.output_barcode)
+        //val outputBarcode = view?.findViewById<TextView>(R.id.output_barcode)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
-                outputBarcode?.text = "Scansione fallita"
+                //outputBarcode?.text = "Scansione fallita"
             } else {
                 // Il codice a barre è stato trovato
                 val scope = CoroutineScope(Dispatchers.Main)
