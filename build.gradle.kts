@@ -11,7 +11,8 @@ buildscript {
 
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.20")
+        //noinspection UseTomlInstead
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.24")
     }
 
 

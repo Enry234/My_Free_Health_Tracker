@@ -9,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.IOException
@@ -37,7 +40,24 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
                 fileInputStream.close()
                 if (stringBuilder.toString() == "UserAccessComplete") {
-                    initializeMainActivityLayout()
+                    Log.i("MAIN", "LOG file complete")
+                    lifecycleScope.launch {
+                        Log.i("MAIN", "Coroutine launch")
+                        mainApplication.userDao.getUser().collectLatest { user ->
+                            user.forEach {
+                                Log.i("MAIN", "ciclo caricamento user")
+                                mainApplication.userData = it
+                            }
+                        }
+                        if (mainApplication.userData != null) {
+                            Log.i("MAIN", mainApplication.userData.toString())
+                            initializeMainActivityLayout()
+                        } else {
+                            Log.i("MAIN_ERROR", "Internal user db not found")
+
+                        }
+                    }
+
                 }
 
             } catch (e: IOException) {
@@ -57,17 +77,6 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
     }
 
     private fun initializeMainActivityLayout() {
-
-//        lifecycleScope.launch {
-//            mainApplication.userDao.getUser().collectLatest { user ->
-//                user.forEach {
-//                    println(it.id)
-//                }
-//            }
-//        }
-//        lifecycleScope.launch {
-//             mainApplication.userDao.insertUser(UserData("Test","test","98765443231"))
-//        }
 
         val bottomNavBar = findViewById<BottomNavigationView>(
             R.id.app_bottom_navigation_bar
@@ -96,9 +105,10 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
                 R.id.Sport -> {
                     toolbarTitle.text = getString(R.string.Sport)
-                    navController.navigate(R.id.sportFragment)
+                    navController.navigate(R.id.barcodeFragment)
                     true
                 }
+
 
                 R.id.Health -> {
                     toolbarTitle.text = getString(R.string.Health)

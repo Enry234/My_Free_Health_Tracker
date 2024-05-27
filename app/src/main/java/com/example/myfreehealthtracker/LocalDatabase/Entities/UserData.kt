@@ -16,7 +16,7 @@ class UserData(
     @ColumnInfo(name = "Data_di_nascita")
     var dataDiNascita: String = "",
     @ColumnInfo(name = "sesso")
-    var sesso: Char = ' ',
+    var sesso: String = "",
     @ColumnInfo(name = "altezza")
     var altezza: Int = 0,
     @ColumnInfo(name = "posizione")

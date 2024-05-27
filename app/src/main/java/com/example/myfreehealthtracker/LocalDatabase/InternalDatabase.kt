@@ -72,13 +72,6 @@ abstract class InternalDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(userDao: UserDao) {
 
-
-//            // Add sample words.
-//            val user = UserData(
-//                "nome", "cognome", "asc123", Date("11/11/2022"), 'm', 180, null,
-//                mutableListOf(Pair<Date, Int>(Date(), 80)), null
-//            )
-//            userDao.insertUser(user)
         }
     }
 }

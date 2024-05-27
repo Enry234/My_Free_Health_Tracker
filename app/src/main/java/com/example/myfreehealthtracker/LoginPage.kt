@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,10 +72,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -103,6 +109,7 @@ class LoginPage {
             }
         }
     }
+
     @SuppressLint("UnrememberedMutableState", "SimpleDateFormat", "RestrictedApi")
     @Preview
     @Composable
@@ -111,7 +118,7 @@ class LoginPage {
             mutableIntStateOf(0)
         }
         val context: Context = LocalContext.current
-
+        val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
@@ -519,7 +526,7 @@ class LoginPage {
                                             trailingIcon = {
                                                 IconButton(onClick = {
                                                     if (sesso != " ") {
-                                                        user.sesso = sesso[0]
+                                                        user.sesso = sesso[0].toString()
                                                         pos += 1
                                                     } else {
                                                         error = true
@@ -698,6 +705,7 @@ class LoginPage {
                                     var imageUri by remember {
                                         mutableStateOf<Uri?>(null)
                                     }
+
                                     val launcher = rememberLauncherForActivityResult(
                                         contract =
                                         ActivityResultContracts.PickVisualMedia(),
@@ -774,31 +782,9 @@ class LoginPage {
                                         }
                                         OutlinedButton(
                                             onClick = {
-//                                                val firebaseRef = FirebaseDatabase.getInstance()
-//                                                    .getReference("User")
-                                                user.id = "testkey"
-                                                val mainApplication =
-                                                    context.applicationContext as MainApplication
-                                                mainApplication.userData = user
-                                                //firebaseRef.child(user.id).setValue(user)
-                                                try {
-                                                    val fileOutputStream: FileOutputStream =
-                                                        context.openFileOutput(
-                                                            "internalData",
-                                                            Context.MODE_PRIVATE
-                                                        )
-                                                    fileOutputStream.write("UserAccessComplete".toByteArray())
-                                                    fileOutputStream.close()
-                                                } catch (e: IOException) {
-                                                    Log.i("loginpage", "error write file")
-                                                    e.printStackTrace()
-                                                }
-                                                val intent =
-                                                    Intent(context, MainActivity::class.java)
-                                                context.startActivity(intent)
-                                                (context as? ComponentActivity)?.finish()
 
-
+                                                successLogin(context, lifecycleOwner)
+//
 
                                             },
                                             modifier = Modifier.hoverable(interactionSource = interactionSource)
@@ -821,6 +807,46 @@ class LoginPage {
         }
     }
 
+    private fun successLogin(context: Context, lifecycleOwner: LifecycleOwner) {
+
+
+        val mainApplication =
+            context.applicationContext as MainApplication
+        mainApplication.userData = user
+        val firebaseRef = mainApplication.firebaseDatabaseRef
+        user.id = firebaseRef.push().toString()
+        firebaseRef.setValue(user)
+        lifecycleOwner.lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                mainApplication.userDao.insertUser(user)
+            }
+            if (result != -1L) {
+                Log.i("loginpage", "insert success")
+                try {
+                    val fileOutputStream: FileOutputStream =
+                        context.openFileOutput(
+                            "internalData",
+                            Context.MODE_PRIVATE
+                        )
+                    fileOutputStream.write("UserAccessComplete".toByteArray())
+                    fileOutputStream.close()
+
+                    val intent =
+                        Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                } catch (e: IOException) {
+                    Log.i("loginpage", "error write file")
+                    e.printStackTrace()
+                }
+            } else {
+                Log.i("loginpage", "error insert")
+            }
+
+        }
+
+
+    }
 
     private fun saveImageToInternalStorage(context: Context, uri: Uri) {
         val inputStream = context.contentResolver.openInputStream(uri)
