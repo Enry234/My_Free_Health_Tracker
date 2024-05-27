@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_health_fragment_new_meal"
             app:destination="@id/newMealFragment" />
+        <action
+            android:id="@+id/action_healthFragment_to_newFoodFragment"
+            app:destination="@id/newFoodFragment" />
     </fragment>
     <fragment
         android:id="@+id/sportFragment"
@@ -37,4 +40,9 @@
             android:id="@+id/action_confirm_new_meal"
             app:destination="@id/healthFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/newFoodFragment"
+        android:name="com.example.myfreehealthtracker.Fragments.NewFoodFragment"
+        android:label="fragment_new_food"
+        tools:layout="@layout/fragment_new_food" />
 </navigation>
