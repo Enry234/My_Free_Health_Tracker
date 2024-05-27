@@ -75,8 +75,26 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             dialogAddExistingFood.setContentView(R.layout.dialog_new_food_spinner)
             val spinner = dialogAddExistingFood.findViewById<Spinner>(R.id.dialog_existing_spinner)
 
-            val existingFoodItems = listOf("pizzooooooooooooooooooooooooo", "trette", "calle", "carletto", "pizzo", "trette", "calle", "carletto", "pizzo", "trette", "calle", "carletto", "pizzo", "trette", "calle", "carletto")
-            val foodAdapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_item, existingFoodItems)
+            val existingFoodItems = listOf(
+                "pizzooooooooooooooooooooooooo",
+                "trette",
+                "calle",
+                "carletto",
+                "pizzo",
+                "trette",
+                "calle",
+                "carletto",
+                "pizzo",
+                "trette",
+                "calle",
+                "carletto",
+                "pizzo",
+                "trette",
+                "calle",
+                "carletto"
+            )
+            val foodAdapter =
+                ArrayAdapter(view.context, android.R.layout.simple_spinner_item, existingFoodItems)
             foodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = foodAdapter
 
@@ -86,15 +104,17 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             dialogAddFood.dismiss()
             dialogAddExistingFood.show()
 
-            dialogAddExistingFood.findViewById<Button>(R.id.dialog_existing_spinner_cancel).setOnClickListener {
-                dialogAddExistingFood.dismiss()
-                dialogAddFood.show()
-            }
+            dialogAddExistingFood.findViewById<Button>(R.id.dialog_existing_spinner_cancel)
+                .setOnClickListener {
+                    dialogAddExistingFood.dismiss()
+                    dialogAddFood.show()
+                }
 
-            dialogAddExistingFood.findViewById<Button>(R.id.dialog_existing_spinner_confirm).setOnClickListener {
-                foodList.add(spinner.selectedItem.toString())
-                dialogAddExistingFood.dismiss()
-            }
+            dialogAddExistingFood.findViewById<Button>(R.id.dialog_existing_spinner_confirm)
+                .setOnClickListener {
+                    foodList.add(spinner.selectedItem.toString())
+                    dialogAddExistingFood.dismiss()
+                }
         }
 
         dialogAddFood.findViewById<Button>(R.id.dialog_food_new_button).setOnClickListener {
@@ -138,13 +158,22 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 val scope = CoroutineScope(Dispatchers.Main)
                 scope.launch {
                     // Call the suspend function
-                    val food = Alimento.convertToAlimento(callClient(result.contents))
-                    Log.i("Test", food.toString())
-                    Toast.makeText(
-                        requireContext(),
-                        food.nome.toString(),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val product = callClient(result.contents)
+                    if (product.status == 0) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Prodotto non trovato",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        val food = Alimento.convertToAlimento(product)
+                        Log.i("Test", food.toString())
+                        Toast.makeText(
+                            requireContext(),
+                            food.nome.toString(),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }
