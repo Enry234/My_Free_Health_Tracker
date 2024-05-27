@@ -733,10 +733,17 @@ class LoginPage {
                                         ) {
                                             if (photoInserted) {
                                                 imageUri?.let {
-                                                    saveImageToInternalStorage(
-                                                        LocalContext.current,
-                                                        it
+                                                    Log.i("login", "uri success")
+                                                    val imageController = ImageController()
+                                                    if (imageController.saveImageToInternalStorage(
+                                                            LocalContext.current,
+                                                            it,
+                                                            "pictureProfile.png"
+                                                        )
                                                     )
+                                                        Log.i("login", "image success")
+                                                    else
+                                                        Log.i("login", "image error")
                                                 }
                                                 Log.i("main", imageUri.toString())
                                                 AsyncImage(
@@ -848,16 +855,6 @@ class LoginPage {
 
     }
 
-    private fun saveImageToInternalStorage(context: Context, uri: Uri) {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val outputStream = context.openFileOutput("pictureProfile.jpg", Context.MODE_PRIVATE)
-        inputStream?.use { input ->
-            outputStream.use { output ->
-                input.copyTo(output)
-            }
-        }
-
-    }
 
     private suspend fun getLastKnownLocation(context: Context) {
 

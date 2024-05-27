@@ -94,8 +94,8 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.google.zxing:core:3.4.1")
-    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
 
     implementation ("io.ktor:ktor-client-core:1.6.3")
