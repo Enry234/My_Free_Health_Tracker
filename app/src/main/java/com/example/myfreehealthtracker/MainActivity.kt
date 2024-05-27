@@ -47,15 +47,16 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                             user.forEach {
                                 Log.i("MAIN", "ciclo caricamento user")
                                 mainApplication.userData = it
+                                if (mainApplication.userData != null) {
+                                    Log.i("MAIN", mainApplication.userData.toString())
+                                    initializeMainActivityLayout()
+                                } else {
+                                    Log.i("MAIN_ERROR", "Internal user db not found")
+
+                                }
                             }
                         }
-                        if (mainApplication.userData != null) {
-                            Log.i("MAIN", mainApplication.userData.toString())
-                            initializeMainActivityLayout()
-                        } else {
-                            Log.i("MAIN_ERROR", "Internal user db not found")
 
-                        }
                     }
 
                 }

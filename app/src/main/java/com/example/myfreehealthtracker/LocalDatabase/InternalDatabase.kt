@@ -15,11 +15,6 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
 import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @Database(
     entities = [Alimento::class, Assunzione::class, Attivita::class, Medicine::class, Pasto::class, PastoToCibo::class, Sport::class, UserData::class],
@@ -29,7 +24,7 @@ import kotlinx.coroutines.launch
 @TypeConverters(InternalConverter::class)
 abstract class InternalDatabase : RoomDatabase() {
 
-    public abstract fun userDao(): UserDao
+    abstract fun userDao(): UserDao
 
 
     companion object {
@@ -38,7 +33,6 @@ abstract class InternalDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: InternalDatabase? = null
 
-        @OptIn(DelicateCoroutinesApi::class)
         fun getDatabase(context: Context): InternalDatabase {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
@@ -46,8 +40,8 @@ abstract class InternalDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     InternalDatabase::class.java,
-                    "word_database"
-                ).addCallback(UserDatabaseCallback(GlobalScope))
+                    "main_database"
+                ).addCallback(UserDatabaseCallback())
                     .build()
                 INSTANCE = instance
                 instance
@@ -56,22 +50,16 @@ abstract class InternalDatabase : RoomDatabase() {
     }
 
     private class UserDatabaseCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
+    ) : Callback() {
 
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             // If you want to keep the data through app restarts,
             // comment out the following line.
-            INSTANCE?.let { database ->
-                scope.launch(Dispatchers.IO) {
-                    populateDatabase(database.userDao())
-                }
+            INSTANCE?.let {
             }
         }
 
-        suspend fun populateDatabase(userDao: UserDao) {
 
-        }
     }
 }
