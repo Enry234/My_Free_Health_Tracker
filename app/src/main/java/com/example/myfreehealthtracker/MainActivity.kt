@@ -47,10 +47,11 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                             user.forEach {
                                 Log.i("MAIN", "ciclo caricamento user")
                                 mainApplication.userData = it
-                                if (mainApplication.userData != null) {
+                                if (mainApplication.userData!!.id != "") {
                                     Log.i("MAIN", mainApplication.userData.toString())
                                     initializeMainActivityLayout()
                                 } else {
+
                                     Log.i("MAIN_ERROR", "Internal user db not found")
 
                                 }
@@ -85,8 +86,10 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         val toolbarTitle = findViewById<TextView>(R.id.activity_main_toolbar_title)
         val drawerLayout = findViewById<DrawerLayout>(R.id.app_drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.app_drawer_navigation_view)
+        val toolbarImage = findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture)
+        var a = ImageController()
 
-
+        toolbarImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         val fragmentContainer = findViewById<FragmentContainerView>(
             R.id.activity_main_fragment_container
         )

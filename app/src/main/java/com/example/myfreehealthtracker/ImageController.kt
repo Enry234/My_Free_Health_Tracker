@@ -46,13 +46,16 @@ class ImageController {
     }
 
     fun getImageFromInternalStorage(context: Context, filename: String): Uri? {
+
         val file = File(context.filesDir, filename)
 
         // Check if the file exists
         return if (file.exists()) {
+            Log.i("ImageController", "File found")
             // Get the URI using FileProvider
-            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         } else {
+            Log.i("ImageController", "File not found")
             null
         }
 
