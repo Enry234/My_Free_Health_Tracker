@@ -9,14 +9,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,6 +36,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
@@ -99,40 +106,127 @@ class NewFoodFragment : Fragment() {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
-                    Button(onClick = {
-                        val integrator = IntentIntegrator.forSupportFragment(this)
-                        integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
-                        integrator.setCameraId(0) // Usa la fotocamera posteriore
-                        integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
-                        integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
-
-                        integrator.initiateScan()
-
-                    }) {
-                        Text(text = "Scannerizza")
-                    }
-                    Button(
-                        onClick = {
-                            showDialog = false
-                        }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Conferma")
+                        Button(onClick = {
+                            val integrator =
+                                IntentIntegrator.forSupportFragment(this@NewFoodFragment)
+                            integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
+                            integrator.setCameraId(0) // Usa la fotocamera posteriore
+                            integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
+                            integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
+
+                            integrator.initiateScan()
+
+                        }) {
+                            Text(text = "Scannerizza")
+                        }
+                        Button(
+                            onClick = {
+                                showDialog = false
+                            }
+                        ) {
+                            Text(text = "Conferma")
+                        }
                     }
                 },
                 title = {
-                    Text(text = "Conferma alimento")
+                    Row(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Inserisci alimento")
+
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        AsyncImage(
+                            model = alimentoWrapper.immagine,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(64.dp)
+                                .width(64.dp)
+                        )
+                    }
+
                 },
                 text = {
-                    Text(text = barcode)
-                    TextField(
-                        value = alimentoWrapper.id,
-                        onValueChange = {
-                            alimentoWrapper.id = it
-                        },
-                        label = {
-                            Text(text = "Barcode")
+                    Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        TextField(
+                            enabled = alimentoWrapper.enabled,
+                            value = alimentoWrapper.id,
+                            onValueChange = {
+                                alimentoWrapper.id = it
+                            },
+                            label = {
+                                Text(text = "Barcode")
+                            }
+                        )
+
+                        TextField(
+                            enabled = alimentoWrapper.enabled,
+                            value = alimentoWrapper.nome,
+                            onValueChange = {
+                                alimentoWrapper.nome = it
+                            },
+                            label = {
+                                Text(text = "nome")
+                            }
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Text("Unità valori:")
+
+                            RadioButton(
+                                enabled = alimentoWrapper.enabled,
+                                selected = alimentoWrapper.unit== "100g",
+                                onClick = {
+                                    alimentoWrapper.unit = "100g"
+                                }
+                            )
+
+                            Text("100g")
+
+                            RadioButton(
+                                enabled = alimentoWrapper.enabled,
+                                selected = alimentoWrapper.unit== "unit",
+                                onClick = {
+                                    alimentoWrapper.unit = "unit"
+                                }
+                            )
+                            Text("unit")
+
                         }
-                    )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+
+                        ){
+                            TextField(
+
+                            ){
+
+                            }
+
+                            TextField(
+
+                            ){
+
+                            }
+
+                        }
+
+
+                    }
 
                 }
             )
@@ -163,13 +257,18 @@ class NewFoodFragment : Fragment() {
                         ).show()
                     } else {
                         val food = Alimento.convertToAlimento(product)
-                        alimentoWrapper.convertToWrapper(food)
-                        Log.i("Test", food.toString())
-                        Toast.makeText(
-                            requireContext(),
-                            food.nome.toString(),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Log.i("Stato product", food.nome.toString())
+                        if (food.nome != null) {
+                            alimentoWrapper.enabled = false
+                            alimentoWrapper.convertToWrapper(food)
+                        } else {
+                            Log.i("Test", food.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Prodotto non trovato",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
             }
@@ -204,7 +303,9 @@ class NewFoodFragment : Fragment() {
 
         var descrizione: String by mutableStateOf("")
 
-        fun convertToWrapper(alimento: Alimento){
+        var enabled by mutableStateOf(true)
+
+        fun convertToWrapper(alimento: Alimento) {
             id = alimento.id
             nome = alimento.nome ?: ""
             immagine = alimento.immagine ?: ""
@@ -212,6 +313,8 @@ class NewFoodFragment : Fragment() {
             carboidrati = alimento.carboidrati ?: 0f
             proteine = alimento.proteine ?: 0f
             grassi = alimento.grassi ?: 0f
+            sale = alimento.sale ?: 0f
+            calorie = alimento.calorie ?: 0
             descrizione = alimento.descrizione ?: ""
         }
 
