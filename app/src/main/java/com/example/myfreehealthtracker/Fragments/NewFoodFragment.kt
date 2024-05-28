@@ -40,6 +40,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.PortraitCaptureActivity
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
@@ -62,7 +63,16 @@ class NewFoodFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_food, container, false)
-        mainApplication = requireActivity().application as MainApplication
+        try {
+            mainApplication = requireActivity().application as MainApplication
+        } catch (ex: IllegalStateException) {
+            Log.i("NewFoodFragment", "MainApp error")
+            Toast.makeText(
+                requireContext(),
+                "Errore connessione DB prova a riavviare l'applicazione",
+                Toast.LENGTH_LONG
+            ).show()
+        }
         val composeView = view.findViewById<ComposeView>(R.id.fragment_new_food_ComposeView)
         composeView.apply {
             setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -118,8 +128,16 @@ class NewFoodFragment : Fragment() {
                             integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
                             integrator.setCameraId(0) // Usa la fotocamera posteriore
                             integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
-                            integrator.setBeepEnabled(false) // Disabilita il segnale acustico alla scansione
+                            integrator.setBeepEnabled(true) // Disabilita il segnale acustico alla scansione
+                            integrator.setDesiredBarcodeFormats(
+                                "EAN_13",
+                                "EAN_8"
+                            ) // Mostra l'immagine del codice a barre
+                            integrator.setBarcodeImageEnabled(true) // Mostra l'immagine del codice a barre
 
+                            integrator.setPrompt("Ciao prompt")
+                            integrator.setOrientationLocked(true)  // Lock the orientation
+                            integrator.captureActivity = PortraitCaptureActivity::class.java
                             integrator.initiateScan()
 
                         }) {
@@ -346,9 +364,15 @@ class NewFoodFragment : Fragment() {
                 // Il codice a barre è stato trovato
                 val scope = CoroutineScope(Dispatchers.Main)
                 scope.launch {
+                    var product: ProductResponse? = null
                     // Call the suspend function
-                    val product = callClient(result.contents)
-                    if (product.status == 0) {
+                    try {
+                        product = callClient(result.contents)
+                    } catch (ex: Exception) {
+
+                    }
+
+                    if (product == null || product.status == 0) {
                         Toast.makeText(
                             requireContext(),
                             "Prodotto non trovato",
