@@ -822,7 +822,8 @@ class LoginPage {
         mainApplication.userData = user
         val firebaseRef = mainApplication.firebaseDatabaseRef
         user.id = firebaseRef.push().toString()
-        firebaseRef.setValue(user)
+            .removePrefix("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app/users/")
+        firebaseRef.child(user.id).setValue(user)
         lifecycleOwner.lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
                 mainApplication.userDao.insertUser(user)
