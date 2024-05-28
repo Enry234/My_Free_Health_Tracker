@@ -17,7 +17,10 @@ class MainApplication : Application() {
     }
     val internalDatabaseRef by lazy { InternalDatabase.getDatabase(this) }
     val userDao by lazy { internalDatabaseRef.userDao() }
+    val alimentoDao by lazy { internalDatabaseRef.alimentoDao() }
+
     val internalRepository by lazy { UserRepository(internalDatabaseRef.userDao()) }
     val internalFileData by lazy { File(filesDir, "internalData") }
     var userData: UserData? = null
+
 }

@@ -1,8 +1,10 @@
 package com.example.myfreehealthtracker
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -78,6 +80,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeMainActivityLayout() {
 
         val bottomNavBar = findViewById<BottomNavigationView>(
@@ -85,10 +88,12 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         )
         val toolbarTitle = findViewById<TextView>(R.id.activity_main_toolbar_title)
         val drawerLayout = findViewById<DrawerLayout>(R.id.app_drawer_layout)
+
         val navigationView = findViewById<NavigationView>(R.id.app_drawer_navigation_view)
         val toolbarImage = findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture)
-        var a = ImageController()
-
+        val a = ImageController()
+        val drawerImage = findViewById<ImageView>(R.id.app_side_drawer_profile_pic)
+        drawerImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         toolbarImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         val fragmentContainer = findViewById<FragmentContainerView>(
             R.id.activity_main_fragment_container
@@ -123,7 +128,33 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                 else -> false
             }
         }
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: android.view.View, slideOffset: Float) {
+                // Do nothing
+            }
 
+            override fun onDrawerOpened(drawerView: android.view.View) {
+                Log.i("MAIN", "onDrawerOpened")
+                drawerView.post {
+                    Log.i("DrawerFocus", "Requesting focus on drawer")
+                    drawerView.requestFocus()
+                }
+            }
+
+            override fun onDrawerClosed(drawerView: android.view.View) {
+                // Do nothing
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // Do nothing
+            }
+        })
+        navigationView.setOnTouchListener { view, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                view.requestFocus()
+            }
+            true
+        }
         navigationView.setNavigationItemSelectedListener {
             val navController = fragmentContainer.findNavController()
             when (it.itemId) {
@@ -136,6 +167,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                 else -> false
             }
         }
+
 
     }
 }

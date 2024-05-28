@@ -12,8 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         app:headerLayout="@layout/header_home_drawer"
-        app:menu="@menu/drawer_home_menu"/>
+        app:menu="@menu/drawer_home_menu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_main_container"
@@ -27,9 +29,9 @@
             android:background="@color/purple_200"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/activity_main_toolbar_container"
@@ -54,18 +56,18 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     app:cardCornerRadius="15dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" >
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="1dp">
 
                     <ImageView
                         android:id="@+id/activity_main_toolbar_profile_picture"
-                        android:src="@drawable/img"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:contentDescription="@string/activity_main_toolbar_profile_picture_content_desc" />
+                        android:contentDescription="@string/activity_main_toolbar_profile_picture_content_desc"
+                        android:src="@drawable/img" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -78,12 +80,12 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:padding="10dp"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@id/app_bottom_navigation_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_main_toolbar_root"
-            android:padding="10dp"
             app:navGraph="@navigation/navigation_graph" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView

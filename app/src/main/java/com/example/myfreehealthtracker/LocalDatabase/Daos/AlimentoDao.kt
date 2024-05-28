@@ -1,15 +1,16 @@
 package com.example.myfreehealthtracker.LocalDatabase.Daos
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface AlimentoDao {
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAlimento(alimento: Alimento)
 
 

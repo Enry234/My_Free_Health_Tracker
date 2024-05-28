@@ -36,8 +36,10 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
@@ -52,7 +54,7 @@ class NewFoodFragment : Fragment() {
     private var barcode by mutableStateOf("")
 
     private var alimentoWrapper = AlimentoWrapper()
-
+    private lateinit var mainApplication: MainApplication
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +62,7 @@ class NewFoodFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_food, container, false)
-
+        mainApplication = requireActivity().application as MainApplication
         val composeView = view.findViewById<ComposeView>(R.id.fragment_new_food_ComposeView)
         composeView.apply {
             setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -126,6 +128,13 @@ class NewFoodFragment : Fragment() {
                         Button(
                             onClick = {
                                 showDialog = false
+
+
+                                val food = alimentoWrapper.convertToFood()
+
+                                lifecycleScope.launch {
+                                    mainApplication.alimentoDao.insertAlimento(food)
+                                }
                             }
                         ) {
                             Text(text = "Conferma")
@@ -154,7 +163,7 @@ class NewFoodFragment : Fragment() {
                 },
                 text = {
                     Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         TextField(
                             enabled = alimentoWrapper.enabled,
@@ -188,7 +197,7 @@ class NewFoodFragment : Fragment() {
 
                             RadioButton(
                                 enabled = alimentoWrapper.enabled,
-                                selected = alimentoWrapper.unit== "100g",
+                                selected = alimentoWrapper.unit == "100g",
                                 onClick = {
                                     alimentoWrapper.unit = "100g"
                                 }
@@ -198,7 +207,7 @@ class NewFoodFragment : Fragment() {
 
                             RadioButton(
                                 enabled = alimentoWrapper.enabled,
-                                selected = alimentoWrapper.unit== "unit",
+                                selected = alimentoWrapper.unit == "unit",
                                 onClick = {
                                     alimentoWrapper.unit = "unit"
                                 }
@@ -209,20 +218,110 @@ class NewFoodFragment : Fragment() {
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
 
-                        ){
+                        ) {
                             TextField(
+                                modifier = Modifier.weight(1f),
+                                value = alimentoWrapper.carboidrati.toString(),
+                                onValueChange = {
+                                    try {
+                                        alimentoWrapper.carboidrati = it.toFloat()
+                                    } catch (e: Exception) {
+                                    }
 
-                            ){
-
-                            }
-
+                                },
+                                enabled = alimentoWrapper.enabled,
+                                label = {
+                                    Text(text = "Carboidrati")
+                                }
+                            )
                             TextField(
+                                modifier = Modifier.weight(1f),
+                                enabled = alimentoWrapper.enabled,
+                                value = alimentoWrapper.proteine.toString(),
+                                onValueChange = {
+                                    try {
+                                        alimentoWrapper.proteine = it.toFloat()
+                                    } catch (e: Exception) {
+                                    }
 
-                            ){
+                                },
+                                label = {
+                                    Text(text = "Proteine")
+                                }
+                            )
 
-                            }
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
 
+                        ) {
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                value = alimentoWrapper.calorie.toString(),
+                                onValueChange = {
+                                    try {
+                                        alimentoWrapper.calorie = it.toInt()
+                                    } catch (e: Exception) {
+                                    }
+
+                                },
+                                enabled = alimentoWrapper.enabled,
+                                label = {
+                                    Text(text = "Calorie")
+                                }
+                            )
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                enabled = alimentoWrapper.enabled,
+                                value = alimentoWrapper.grassi.toString(),
+                                onValueChange = {
+                                    try {
+                                        alimentoWrapper.grassi = it.toFloat()
+                                    } catch (e: Exception) {
+                                    }
+
+                                },
+                                label = {
+                                    Text(text = "Grassi")
+                                }
+                            )
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                enabled = alimentoWrapper.enabled,
+                                value = alimentoWrapper.sale.toString(),
+                                onValueChange = {
+                                    try {
+                                        alimentoWrapper.sale = it.toFloat()
+                                    } catch (e: Exception) {
+                                    }
+
+                                },
+                                label = {
+                                    Text(text = "Sale")
+                                }
+                            )
+
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                value = alimentoWrapper.descrizione,
+                                onValueChange = {
+                                    alimentoWrapper.descrizione = it
+                                },
+                                label = {
+                                    Text(text = "Descrizione")
+                                }
+                            )
                         }
 
 
@@ -317,6 +416,21 @@ class NewFoodFragment : Fragment() {
             calorie = alimento.calorie ?: 0
             descrizione = alimento.descrizione ?: ""
         }
+        fun convertToFood(): Alimento {
+            return Alimento(
+                id,
+                nome,
+                immagine,
+                unit,
+                carboidrati,
+                proteine,
+                grassi,
+                sale,
+                calorie,
+                descrizione
+            )
+        }
+
 
     }
 
