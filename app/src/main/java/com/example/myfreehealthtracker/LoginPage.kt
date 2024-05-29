@@ -820,7 +820,7 @@ class LoginPage {
         val mainApplication =
             context.applicationContext as MainApplication
         mainApplication.userData = user
-        val firebaseRef = mainApplication.firebaseDatabaseRef
+        val firebaseRef = mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
         user.id = firebaseRef.push().toString()
             .removePrefix("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app/users/")
         firebaseRef.child(user.id).setValue(user)

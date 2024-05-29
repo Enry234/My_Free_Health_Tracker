@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.myfreehealthtracker.Fragments
 
 import android.content.Intent
@@ -7,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +21,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -28,16 +34,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.PortraitCaptureActivity
@@ -48,6 +59,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class NewFoodFragment : Fragment() {
 
@@ -87,6 +99,7 @@ class NewFoodFragment : Fragment() {
     @Preview(showBackground = true)
     @Composable
     fun NewFoodScreen() {
+        val alimentList by remember { mutableStateOf(mutableListOf<PastoToCiboWrapper>()) }
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -98,9 +111,12 @@ class NewFoodFragment : Fragment() {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 LazyColumn(
-
+                    modifier = Modifier
+                        .padding(8.dp),
                 ) {
-
+                    items(alimentList.size) {
+                        ItemFood(pastoToCiboWrapper = alimentList[it])
+                    }
                 }
                 Button(
                     onClick = {
@@ -114,7 +130,6 @@ class NewFoodFragment : Fragment() {
 
         }
         if (showDialog) {
-
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
@@ -136,7 +151,7 @@ class NewFoodFragment : Fragment() {
                             integrator.setBarcodeImageEnabled(true) // Mostra l'immagine del codice a barre
 
                             integrator.setPrompt("Ciao prompt")
-                            integrator.setOrientationLocked(true)  // Lock the orientation
+                            integrator.setOrientationLocked(false)  // Lock the orientation
                             integrator.captureActivity = PortraitCaptureActivity::class.java
                             integrator.initiateScan()
 
@@ -147,12 +162,32 @@ class NewFoodFragment : Fragment() {
                             onClick = {
                                 showDialog = false
 
+                                if (alimentoWrapper.id.isNotEmpty()) {
+                                    val food = alimentoWrapper.convertToFood()
 
-                                val food = alimentoWrapper.convertToFood()
-
-                                lifecycleScope.launch {
-                                    mainApplication.alimentoDao.insertAlimento(food)
+                                    lifecycleScope.launch {
+                                        mainApplication.alimentoDao.insertAlimento(food)
+                                    }
+                                    alimentList.add(
+                                        PastoToCiboWrapper(
+                                            idAlimento = food.id,
+                                            nomeAlimento = food.nome,
+                                            imageUri = food.immagine
+                                        )
+                                    )
+                                    val mainApplication: MainApplication =
+                                        requireActivity().application as MainApplication
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+                                        .child(food.id).setValue(food)
+                                    //add element to list
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Nessun elemento inserito",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
+
                             }
                         ) {
                             Text(text = "Conferma")
@@ -182,6 +217,7 @@ class NewFoodFragment : Fragment() {
                 text = {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
                         TextField(
                             enabled = alimentoWrapper.enabled,
@@ -246,7 +282,7 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.carboidrati = it.toFloat()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                     }
 
                                 },
@@ -262,7 +298,7 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.proteine = it.toFloat()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                     }
 
                                 },
@@ -284,7 +320,7 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.calorie = it.toInt()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                     }
 
                                 },
@@ -300,7 +336,7 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.grassi = it.toFloat()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                     }
 
                                 },
@@ -315,7 +351,7 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.sale = it.toFloat()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                     }
 
                                 },
@@ -352,6 +388,7 @@ class NewFoodFragment : Fragment() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //val outputBarcode = view?.findViewById<TextView>(R.id.output_barcode)
@@ -362,7 +399,14 @@ class NewFoodFragment : Fragment() {
             } else {
                 barcode = result.contents
                 // Il codice a barre è stato trovato
+                val toast = Toast.makeText(
+                    requireContext(),
+                    "Codice a barre: $barcode, Caricamento dati in corso",
+                    Toast.LENGTH_LONG
+                )
+                toast.show()
                 val scope = CoroutineScope(Dispatchers.Main)
+
                 scope.launch {
                     var product: ProductResponse? = null
                     // Call the suspend function
@@ -371,6 +415,7 @@ class NewFoodFragment : Fragment() {
                     } catch (ex: Exception) {
 
                     }
+                    toast.cancel()
 
                     if (product == null || product.status == 0) {
                         Toast.makeText(
@@ -398,66 +443,129 @@ class NewFoodFragment : Fragment() {
         }
     }
 
-    private suspend fun callClient(s: String): ProductResponse {
-        return ClientFoodOpenFact().getFoodOpenFacts(s)
+
+    @Composable
+    fun ItemFood(pastoToCiboWrapper: PastoToCiboWrapper) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.LightGray)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+                ) {
+                    AsyncImage(
+                        model = pastoToCiboWrapper.imageUri,
+                        contentDescription = null,
+                        modifier = Modifier.weight(1f)
+                    )
+                    pastoToCiboWrapper.nomeAlimento?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    TextField(
+                        modifier = Modifier.weight(1f),
+                        value = pastoToCiboWrapper.quantita.toString(),
+                        onValueChange = {
+                            try {
+                                pastoToCiboWrapper.quantita = it.toInt()
+                            } catch (_: Exception) {
+                            }
+
+                        },
+                        label = {
+                            Text(text = "Quantita'", modifier = Modifier.weight(1f))
+                        }
+                    )
+                    Text(text = "altro")
+                }
+            }
+        }
+    }
+}
+
+private suspend fun callClient(s: String): ProductResponse {
+    return ClientFoodOpenFact().getFoodOpenFacts(s)
+}
+
+data class PastoToCiboWrapper(
+    var idAlimento: String = "",
+    var idDate: Date = Date(),
+    var idUser: String = "",
+    var nomeAlimento: String? = "",
+    var imageUri: String? = "",
+    var quantita: Int = 1
+)
+
+private class AlimentoWrapper {
+
+    var id: String by mutableStateOf("")
+
+    var nome: String by mutableStateOf("")
+
+    var immagine: String by mutableStateOf("")
+
+    var unit: String by mutableStateOf("")
+
+    var carboidrati: Float by mutableFloatStateOf(0f)
+
+    var proteine: Float by mutableFloatStateOf(0f)
+
+    var grassi: Float by mutableFloatStateOf(0f)
+
+    var sale: Float by mutableFloatStateOf(0f)
+
+    var calorie: Int by mutableIntStateOf(0)
+
+    var descrizione: String by mutableStateOf("")
+
+    var enabled by mutableStateOf(true)
+
+    fun convertToWrapper(alimento: Alimento) {
+        id = alimento.id
+        nome = alimento.nome ?: ""
+        immagine = alimento.immagine ?: ""
+        unit = alimento.unit ?: ""
+        carboidrati = alimento.carboidrati ?: 0f
+        proteine = alimento.proteine ?: 0f
+        grassi = alimento.grassi ?: 0f
+        sale = alimento.sale ?: 0f
+        calorie = alimento.calorie ?: 0
+        descrizione = alimento.descrizione ?: ""
     }
 
-    private class AlimentoWrapper(
-
-    ) {
-
-        var id: String by mutableStateOf("")
-
-        var nome: String by mutableStateOf("")
-
-        var immagine: String by mutableStateOf("")
-
-        var unit: String by mutableStateOf("")
-
-        var carboidrati: Float by mutableStateOf(0f)
-
-        var proteine: Float by mutableStateOf(0f)
-
-        var grassi: Float by mutableStateOf(0f)
-
-        var sale: Float by mutableStateOf(0f)
-
-        var calorie: Int by mutableStateOf(0)
-
-        var descrizione: String by mutableStateOf("")
-
-        var enabled by mutableStateOf(true)
-
-        fun convertToWrapper(alimento: Alimento) {
-            id = alimento.id
-            nome = alimento.nome ?: ""
-            immagine = alimento.immagine ?: ""
-            unit = alimento.unit ?: ""
-            carboidrati = alimento.carboidrati ?: 0f
-            proteine = alimento.proteine ?: 0f
-            grassi = alimento.grassi ?: 0f
-            sale = alimento.sale ?: 0f
-            calorie = alimento.calorie ?: 0
-            descrizione = alimento.descrizione ?: ""
-        }
-        fun convertToFood(): Alimento {
-            return Alimento(
-                id,
-                nome,
-                immagine,
-                unit,
-                carboidrati,
-                proteine,
-                grassi,
-                sale,
-                calorie,
-                descrizione
-            )
-        }
-
-
+    fun convertToFood(): Alimento {
+        return Alimento(
+            id,
+            nome,
+            immagine,
+            unit,
+            carboidrati,
+            proteine,
+            grassi,
+            sale,
+            calorie,
+            descrizione
+        )
     }
 
 
 }
+
 
