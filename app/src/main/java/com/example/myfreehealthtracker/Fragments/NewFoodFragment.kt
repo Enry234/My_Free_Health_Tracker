@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -37,12 +38,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -63,21 +66,28 @@ import java.util.Date
 
 class NewFoodFragment : Fragment() {
 
-    private var showDialog by mutableStateOf(false)
     private var barcode by mutableStateOf("")
 
     private var alimentoWrapper = AlimentoWrapper()
     private lateinit var mainApplication: MainApplication
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("alimentoWrapper", alimentoWrapper.toString())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+
         val view = inflater.inflate(R.layout.fragment_new_food, container, false)
         try {
             mainApplication = requireActivity().application as MainApplication
-        } catch (ex: IllegalStateException) {
+            alimentoWrapper.loadFromString(savedInstanceState?.getString("alimentoWrapper"))
+        } catch (ex: Exception) {
             Log.i("NewFoodFragment", "MainApp error")
             Toast.makeText(
                 requireContext(),
@@ -99,7 +109,11 @@ class NewFoodFragment : Fragment() {
     @Preview(showBackground = true)
     @Composable
     fun NewFoodScreen() {
-        val alimentList by remember { mutableStateOf(mutableListOf<PastoToCiboWrapper>()) }
+
+        var showDialog by rememberSaveable {
+            mutableStateOf(false)
+        }
+        val alimentList by rememberSaveable { mutableStateOf(mutableListOf<PastoToCiboWrapper>()) }
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -130,6 +144,7 @@ class NewFoodFragment : Fragment() {
 
         }
         if (showDialog) {
+
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
@@ -227,7 +242,14 @@ class NewFoodFragment : Fragment() {
                             },
                             label = {
                                 Text(text = "Barcode")
-                            }
+                            },
+                            placeholder = {
+                                Text(text = "Inserisci il Barcode")
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            )
                         )
 
                         TextField(
@@ -282,14 +304,21 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.carboidrati = it.toFloat()
-                                    } catch (_: Exception) {
+                                    } catch (ex: Exception) {
                                     }
 
                                 },
                                 enabled = alimentoWrapper.enabled,
                                 label = {
                                     Text(text = "Carboidrati")
-                                }
+                                },
+                                placeholder = {
+                                    Text(text = "Carboidrati")
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                )
                             )
                             TextField(
                                 modifier = Modifier.weight(1f),
@@ -298,13 +327,20 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.proteine = it.toFloat()
-                                    } catch (_: Exception) {
+                                    } catch (ex: Exception) {
                                     }
 
                                 },
                                 label = {
                                     Text(text = "Proteine")
-                                }
+                                },
+                                placeholder = {
+                                    Text(text = "Proteine")
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                )
                             )
 
                         }
@@ -320,14 +356,21 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.calorie = it.toInt()
-                                    } catch (_: Exception) {
+                                    } catch (ex: Exception) {
                                     }
 
                                 },
                                 enabled = alimentoWrapper.enabled,
                                 label = {
                                     Text(text = "Calorie")
-                                }
+                                },
+                                placeholder = {
+                                    Text(text = "Calorie")
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                )
                             )
                             TextField(
                                 modifier = Modifier.weight(1f),
@@ -336,13 +379,20 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.grassi = it.toFloat()
-                                    } catch (_: Exception) {
+                                    } catch (ex: Exception) {
                                     }
 
                                 },
                                 label = {
                                     Text(text = "Grassi")
-                                }
+                                },
+                                placeholder = {
+                                    Text(text = "Grassi")
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                )
                             )
                             TextField(
                                 modifier = Modifier.weight(1f),
@@ -351,13 +401,20 @@ class NewFoodFragment : Fragment() {
                                 onValueChange = {
                                     try {
                                         alimentoWrapper.sale = it.toFloat()
-                                    } catch (_: Exception) {
+                                    } catch (ex: Exception) {
                                     }
 
                                 },
                                 label = {
                                     Text(text = "Sale")
-                                }
+                                },
+                                placeholder = {
+                                    Text(text = "Sale")
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                )
                             )
 
                         }
@@ -485,13 +542,18 @@ class NewFoodFragment : Fragment() {
                         onValueChange = {
                             try {
                                 pastoToCiboWrapper.quantita = it.toInt()
-                            } catch (_: Exception) {
+                            } catch (ex: Exception) {
                             }
 
                         },
                         label = {
                             Text(text = "Quantita'", modifier = Modifier.weight(1f))
-                        }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        )
+
                     )
                     Text(text = "altro")
                 }
@@ -536,6 +598,28 @@ private class AlimentoWrapper {
     var descrizione: String by mutableStateOf("")
 
     var enabled by mutableStateOf(true)
+
+    override fun toString(): String {
+        return "$id|$nome|$immagine|$unit|$carboidrati|$proteine|$grassi|$sale|$calorie|$descrizione"
+    }
+
+    fun loadFromString(s: String?) {
+        if (s != null) {
+
+            val split = s.split("|")
+            id = split[0]
+            nome = split[1]
+            immagine = split[2]
+            unit = split[3]
+            carboidrati = split[4].toFloat()
+            proteine = split[5].toFloat()
+            grassi = split[6].toFloat()
+            sale = split[7].toFloat()
+            calorie = split[8].toInt()
+            descrizione = split[9]
+
+        }
+    }
 
     fun convertToWrapper(alimento: Alimento) {
         id = alimento.id

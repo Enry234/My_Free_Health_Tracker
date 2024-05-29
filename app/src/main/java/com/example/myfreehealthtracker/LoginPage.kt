@@ -553,10 +553,10 @@ class LoginPage {
                                         mutableStateOf(false)
                                     }
                                     var peso by remember {
-                                        mutableStateOf(0)
+                                        mutableIntStateOf(0)
                                     }
                                     var altezza by remember {
-                                        mutableStateOf(0)
+                                        mutableIntStateOf(0)
                                     }
                                     val interactionSource = remember { MutableInteractionSource() }
 
