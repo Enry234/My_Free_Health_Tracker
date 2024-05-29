@@ -1,0 +1,5 @@
+JvmtiExport can_access_local_variables 0
+JvmtiExport can_hotswap_or_post_breakpoint 0
+JvmtiExport can_post_on_exceptions 0
+# 153 ciObject found
+ciInstanceKlass java/lang/Void 1 1 31 10 100 12 1 1 1 8 1 10 7 12 1 1 1 9 7 12 1 1 1 1 1 1 1 1 1 1 1 1 1

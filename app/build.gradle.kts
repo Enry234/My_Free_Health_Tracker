@@ -105,4 +105,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
 
+    implementation ("com.github.tehras:charts:0.2.4-alpha")
+
+
 }
