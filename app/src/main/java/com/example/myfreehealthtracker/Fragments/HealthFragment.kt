@@ -76,7 +76,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         expandableFloatingActionButton.setChildActionListener(firstChild) {
             // NEW MEAL
-            view.findNavController().navigate(R.id.action_health_fragment_new_meal)
+            view.findNavController().navigate(R.id.addMealFragment)
             //Toast.makeText(view.context, "ACTION1", Toast.LENGTH_SHORT).show()
         }
         expandableFloatingActionButton.setChildActionListener(secondChild) {
