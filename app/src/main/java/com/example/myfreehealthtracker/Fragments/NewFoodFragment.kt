@@ -58,6 +58,10 @@ import com.example.myfreehealthtracker.PortraitCaptureActivity
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +136,30 @@ class NewFoodFragment : Fragment() {
                         ItemFood(pastoToCiboWrapper = alimentList[it])
                     }
                 }
+
+                    Box(
+                        modifier = Modifier.height(150.dp).width(150.dp)
+                    ){
+                        PieChart(
+                            pieChartData = PieChartData(
+                                listOf(
+                                    PieChartData.Slice(10F, Color.Red),
+                                    PieChartData.Slice(30F, Color.Green),
+                                    PieChartData.Slice(60F, Color.Blue),
+                                )
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                            animation = simpleChartAnimation(),
+                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 20F)
+                        )
+                        Text(
+                            text = "Calorie: 450",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+
+
                 Button(
                     onClick = {
                         alimentoWrapper = AlimentoWrapper()

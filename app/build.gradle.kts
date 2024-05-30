@@ -105,5 +105,7 @@ dependencies {
     implementation ("io.ktor:ktor-client-serialization:1.6.3")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
+    implementation ("com.github.tehras:charts:0.2.4-alpha")
+
 
 }
