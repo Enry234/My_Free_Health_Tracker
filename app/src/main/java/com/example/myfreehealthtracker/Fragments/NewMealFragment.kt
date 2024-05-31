@@ -745,6 +745,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             if (alimentoWrapper.id.isNotEmpty()) {
                                 val food = alimentoWrapper.convertToFood()
 
+                                currentMealFoodList.add(food)
+
                                 lifecycleScope.launch {
                                     mainApplication.alimentoDao.insertAlimento(food)
                                 }
