@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -81,7 +83,7 @@ import java.util.Date
 
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
-    private val currentMealFoodList by mutableStateOf(mutableListOf<Alimento>())
+    private val currentMealFoodList = mutableStateListOf<Alimento>()
     private var alimentoWrapper = AlimentoWrapper()
     val alimentList by mutableStateOf(mutableListOf<PastoToCiboWrapper>())
 
@@ -149,10 +151,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 }
             }
             LazyColumn(
-
+                modifier = Modifier.weight(1f)
             ) {
                 items(currentMealFoodList) {
-                    ItemFood2(it)
+                    ItemFoodInList(it)
                 }
             }
             Button(
@@ -171,6 +173,186 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         } else if (showNewFoodDialog) {
             NewFoodDialog()
         }
+    }
+
+    private @Composable
+    fun ItemFoodInList(alimento: Alimento) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+//                .border(
+//                    width = 2.dp,
+//                    color = Color.Black,
+//                    shape= RoundedCornerShape(8.dp)
+//                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    //NOME E IMMAGINE ALIMENTO
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+
+                ) {
+                    alimento.nome?.let {
+                        Text(
+                            text = it,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+
+                    AsyncImage(
+                        model = alimento.immagine,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .height(56.dp)
+                            .width(56.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                Row(
+                    //PIECHART CON BOX, E UN ALTRO BOX PER METTERE I VALORI NUTRIZIONALI
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .height(75.dp)
+                            .width(75.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        PieChart(
+                            pieChartData = PieChartData(
+                                listOf(
+                                    PieChartData.Slice(
+                                        alimento.carboidrati ?: 0f,
+                                        Color(0xFFE1E289)
+                                    ),
+                                    PieChartData.Slice(alimento.proteine ?: 0f, Color(0xFFDB504A)),
+                                    PieChartData.Slice(alimento.grassi ?: 0f, Color(0xFF59C3C3)),
+                                    PieChartData.Slice(alimento.fibre ?: 0f, Color(0xFF04724D)),
+                                )
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                            animation = simpleChartAnimation(),
+                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
+                        )
+                        Column(
+
+                        ) {
+
+                            Text(
+                                text = alimento.calorie.toString()
+                            )
+
+                            Text(
+                                text = "kcal",
+                            )
+
+                        }
+
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier.weight(.8f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF59C3C3),
+                                            label = "Grassi",
+                                            value = alimento.grassi?.toInt() ?: 0
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF04724D),
+                                            label = "Fibre",
+                                            value = alimento.fibre?.toInt() ?: 0
+                                        )
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFE1E289),
+                                            label = "Carboidrati",
+                                            value = alimento.carboidrati?.toInt() ?: 0
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFDB504A),
+                                            label = "Proteine",
+                                            value = alimento.proteine?.toInt() ?: 0
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextField(
+                        value = "to fix",
+                        onValueChange = {},
+                    )
+                    IconButton(
+                        onClick = {
+                            currentMealFoodList.remove(alimento)
+                            if (currentMealFoodList.isEmpty()) {
+                                canConfirmMeal = false
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = null)
+                    }
+                }
+            }
+        }
+
+
     }
 
     @Composable
