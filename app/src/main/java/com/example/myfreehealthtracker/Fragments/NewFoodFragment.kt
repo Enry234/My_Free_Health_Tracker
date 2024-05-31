@@ -133,7 +133,7 @@ class NewFoodFragment : Fragment() {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -142,12 +142,11 @@ class NewFoodFragment : Fragment() {
             ) {
                 LazyColumn(
                     modifier = Modifier
-                        .padding(8.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(alimentList.size) {
-                        ItemFood(alimento = alimentList[it])
+                        ItemFood2(alimento = alimentList[it])
                     }
                 }
 
@@ -528,7 +527,7 @@ class NewFoodFragment : Fragment() {
 
 
     @Composable
-    fun ItemFood(alimento: Alimento) {
+    fun ItemFood2(alimento: Alimento) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -564,8 +563,8 @@ class NewFoodFragment : Fragment() {
                         contentDescription = null,
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .height(48.dp)
-                            .width(48.dp),
+                            .height(56.dp)
+                            .width(56.dp),
                         contentScale = ContentScale.Fit
                     )
                 }

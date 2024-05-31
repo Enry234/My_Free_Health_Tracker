@@ -14,44 +14,61 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
-import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.PortraitCaptureActivity
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +78,11 @@ import java.util.Date
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     private var alimentoWrapper = AlimentoWrapper()
     val alimentList by mutableStateOf(mutableListOf<PastoToCiboWrapper>())
+
+    private val alimentoViewModel: InternalDBViewModel by viewModels {
+        InternalViewModelFactory(mainApplication.userRepo, mainApplication.alimentoRepo)
+    }
+
 
     private lateinit var mainApplication: MainApplication
 
@@ -96,6 +118,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     @Composable
     private fun AddMealScreen() {
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
@@ -142,6 +165,230 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         } else if (showNewFoodDialog) {
             NewFoodDialog()
         }
+    }
+
+    @Composable
+    fun ItemFood2(alimento: Alimento) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+//                .border(
+//                    width = 2.dp,
+//                    color = Color.Black,
+//                    shape= RoundedCornerShape(8.dp)
+//                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    //NOME E IMMAGINE ALIMENTO
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+
+                ) {
+                    alimento.nome?.let {
+                        Text(
+                            text = it,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+
+                    AsyncImage(
+                        model = alimento.immagine,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .height(56.dp)
+                            .width(56.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                Row(
+                    //PIECHART CON BOX, E UN ALTRO BOX PER METTERE I VALORI NUTRIZIONALI
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .height(75.dp)
+                            .width(75.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        PieChart(
+                            pieChartData = PieChartData(
+                                listOf(
+                                    PieChartData.Slice(
+                                        alimento.carboidrati ?: 0f,
+                                        Color(0xFFE1E289)
+                                    ),
+                                    PieChartData.Slice(alimento.proteine ?: 0f, Color(0xFFDB504A)),
+                                    PieChartData.Slice(alimento.grassi ?: 0f, Color(0xFF59C3C3)),
+                                    PieChartData.Slice(alimento.fibre ?: 0f, Color(0xFF04724D)),
+                                )
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                            animation = simpleChartAnimation(),
+                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
+                        )
+                        Column(
+
+                        ) {
+
+                            Text(
+                                text = alimento.calorie.toString()
+                            )
+
+                            Text(
+                                text = "kcal",
+                            )
+
+                        }
+
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier.weight(.8f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF59C3C3),
+                                            label = "Grassi",
+                                            value = alimento.grassi?.toInt() ?: 0
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF04724D),
+                                            label = "Fibre",
+                                            value = alimento.fibre?.toInt() ?: 0
+                                        )
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFE1E289),
+                                            label = "Carboidrati",
+                                            value = alimento.carboidrati?.toInt() ?: 0
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFDB504A),
+                                            label = "Proteine",
+                                            value = alimento.proteine?.toInt() ?: 0
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+//                        Column(
+//                            verticalArrangement = Arrangement.spacedBy(16.dp)
+//                        ) {
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//
+//                            ) {
+//                                Box(
+//                                    modifier = Modifier.weight(1f),
+//                                ) {
+//                                    Row(
+//                                        verticalAlignment = Alignment.CenterVertically,
+//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+//                                    ) {
+//
+//                                    }
+//                                }
+//                                Box(
+//                                    modifier = Modifier.weight(1f),
+//                                ) {
+//                                    Row(verticalAlignment = Alignment.CenterVertically,
+//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+//
+//                                    }
+//                                }
+//
+//                                BulletSpan(color = Color.Yellow, label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
+//                                BulletSpan(color = Color.Red, label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
+//
+//                            }
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+//                            ) {
+//                                BulletSpan(color = Color.Blue, label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
+//                                BulletSpan(color = Color.Green, label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
+//                            }
+//                        }
+//                    }
+                }
+            }
+        }
+
+
+    }
+
+    @Composable
+    fun BulletSpan(color: Color, label: String, value: Int) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .width(10.dp)
+                .height(10.dp)
+        ) {
+            //internal circle with icon
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "contentDescription",
+                modifier = Modifier
+                    .width(24.dp)
+                    .background(color, CircleShape)
+                    .padding(2.dp),
+                tint = color
+            )
+        }
+        Text(
+            text = "$label: ${value}g"
+        )
     }
 
     @Composable
@@ -206,6 +453,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     @Composable
     private fun AddFoodDialog() {
+        val existingAllAlimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
+        var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
         AlertDialog(
             onDismissRequest = {
                 showAddFoodDialog = false
@@ -224,17 +473,39 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 Text(text = "Aggiungi Alimento")
             },
             text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Button(
-                        onClick = {
+                Column(
 
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(text = "Esistente")
+                ) {
+                    // SPINNER CON ALIMENTI ESISTENTI DA
+                    Box {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                isDropDownMenuExpanded = !isDropDownMenuExpanded
+                            },
+                        ) {
+                            Text(text = "Seleziona Esistente")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                        }
+                        DropdownMenu(
+                            expanded = isDropDownMenuExpanded,
+                            onDismissRequest = {
+                                isDropDownMenuExpanded = false
+                            }
+                        ) {
+                            existingAllAlimentList.forEach {
+                                DropdownMenuItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = {
+                                        //Text(text = it.nome ?: "ciao", modifier = Modifier.fillMaxWidth())
+                                           ItemFood2(it)
+                                    },
+                                    onClick = {
+                                        isDropDownMenuExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
                     Button(
                         onClick = {
@@ -242,14 +513,19 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             alimentoWrapper = AlimentoWrapper()
                             showNewFoodDialog = true
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = "Nuovo")
                     }
                 }
+
+
             }
         )
     }
+
+
+
 
     @Composable
     private fun NewFoodDialog() {
@@ -292,17 +568,17 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 lifecycleScope.launch {
                                     mainApplication.alimentoDao.insertAlimento(food)
                                 }
-                                alimentList.add(
-                                    PastoToCiboWrapper(
-                                        idAlimento = food.id,
-                                        nomeAlimento = food.nome,
-                                        imageUri = food.immagine
-                                    )
-                                )
-                                val mainApplication: MainApplication =
-                                    requireActivity().application as MainApplication
-                                mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
-                                    .child(food.id).setValue(food)
+//                                    alimentList.add(
+//                                        PastoToCiboWrapper(
+//                                            idAlimento = food.id,
+//                                            nomeAlimento = food.nome,
+//                                            imageUri = food.immagine
+//                                        )
+//                                    )
+//                                    val mainApplication: MainApplication =
+//                                        requireActivity().application as MainApplication
+//                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+//                                        .child(food.id).setValue(food)
                                 //add element to list
                             } else {
                                 Toast.makeText(
@@ -368,7 +644,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             alimentoWrapper.nome = it
                         },
                         label = {
-                            Text(text = "nome")
+                            Text(text = "Nome")
                         }
                     )
 
@@ -408,7 +684,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                     ) {
                         TextField(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1.2f),
                             value = alimentoWrapper.carboidrati.toString(),
                             onValueChange = {
                                 try {
@@ -419,9 +695,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             },
                             enabled = alimentoWrapper.enabled,
                             label = {
-                                Text(text = "Carboidrati")
-                            },
-                            placeholder = {
                                 Text(text = "Carboidrati")
                             },
                             keyboardOptions = KeyboardOptions(
@@ -443,8 +716,25 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             label = {
                                 Text(text = "Proteine")
                             },
-                            placeholder = {
-                                Text(text = "Proteine")
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            )
+                        )
+
+                        TextField(
+                            modifier = Modifier.weight(0.8f),
+                            enabled = alimentoWrapper.enabled,
+                            value = alimentoWrapper.fibre.toString(),
+                            onValueChange = {
+                                try {
+                                    alimentoWrapper.fibre = it.toFloat()
+                                } catch (ex: Exception) {
+                                }
+
+                            },
+                            label = {
+                                Text(text = "Fibre")
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -460,7 +750,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                     ) {
                         TextField(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1.2f),
                             value = alimentoWrapper.calorie.toString(),
                             onValueChange = {
                                 try {
@@ -471,9 +761,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             },
                             enabled = alimentoWrapper.enabled,
                             label = {
-                                Text(text = "Calorie")
-                            },
-                            placeholder = {
                                 Text(text = "Calorie")
                             },
                             keyboardOptions = KeyboardOptions(
@@ -495,16 +782,13 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             label = {
                                 Text(text = "Grassi")
                             },
-                            placeholder = {
-                                Text(text = "Grassi")
-                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
                                 imeAction = ImeAction.Done
                             )
                         )
                         TextField(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(0.8f),
                             enabled = alimentoWrapper.enabled,
                             value = alimentoWrapper.sale.toString(),
                             onValueChange = {
@@ -515,9 +799,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Sale")
-                            },
-                            placeholder = {
                                 Text(text = "Sale")
                             },
                             keyboardOptions = KeyboardOptions(
@@ -550,6 +831,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             }
         )
     }
+
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
