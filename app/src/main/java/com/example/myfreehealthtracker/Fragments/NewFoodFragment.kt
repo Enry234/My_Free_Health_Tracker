@@ -28,9 +28,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -557,16 +559,26 @@ class NewFoodFragment : Fragment() {
                             fontWeight = FontWeight.Bold,
                         )
                     }
-
-                    AsyncImage(
-                        model = alimento.immagine,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .height(56.dp)
-                            .width(56.dp),
-                        contentScale = ContentScale.Fit
-                    )
+                    Row() {
+                        AsyncImage(
+                            model = alimento.immagine,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .height(56.dp)
+                                .width(56.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                        IconButton(
+                            onClick = {
+                                lifecycleScope.launch {
+                                    mainApplication.alimentoDao.deleteAlimento(alimento)
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = null)
+                        }
+                    }
                 }
 
                 Row(

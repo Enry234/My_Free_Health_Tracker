@@ -1,6 +1,7 @@
 package com.example.myfreehealthtracker.LocalDatabase.Daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -23,4 +24,7 @@ interface AlimentoDao {
 
     @Query("DELETE FROM Alimento")
     suspend fun deleteAll()
+
+    @Delete
+    suspend fun deleteAlimento(alimento: Alimento)
 }

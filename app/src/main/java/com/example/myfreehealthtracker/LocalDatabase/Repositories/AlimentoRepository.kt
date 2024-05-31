@@ -19,5 +19,11 @@ class AlimentoRepository(private val AlimentoDao: AlimentoDao) {
         AlimentoDao.getAlimentoById(barcode)
     }
 
+    @WorkerThread
+    suspend fun deleteAlimento(alimento: Alimento){
+        AlimentoDao.deleteAlimento(alimento)
+    }
+
+
 
 }
