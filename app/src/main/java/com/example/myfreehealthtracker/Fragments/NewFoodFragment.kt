@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -44,7 +45,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -535,7 +538,9 @@ class NewFoodFragment : Fragment() {
 //                )
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Row(
@@ -557,7 +562,10 @@ class NewFoodFragment : Fragment() {
                         model = alimento.immagine,
                         contentDescription = null,
                         modifier = Modifier
-                            .height(30.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .height(48.dp)
+                            .width(48.dp),
+                        contentScale = ContentScale.Fit
                     )
                 }
 
@@ -576,7 +584,10 @@ class NewFoodFragment : Fragment() {
                         PieChart(
                             pieChartData = PieChartData(
                                 listOf(
-                                    PieChartData.Slice(alimento.carboidrati ?: 0f, Color(0xFFE1E289)),
+                                    PieChartData.Slice(
+                                        alimento.carboidrati ?: 0f,
+                                        Color(0xFFE1E289)
+                                    ),
                                     PieChartData.Slice(alimento.proteine ?: 0f, Color(0xFFDB504A)),
                                     PieChartData.Slice(alimento.grassi ?: 0f, Color(0xFF59C3C3)),
                                     PieChartData.Slice(alimento.fibre ?: 0f, Color(0xFF04724D)),
@@ -620,13 +631,21 @@ class NewFoodFragment : Fragment() {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                          BulletSpan(color = Color(0xFF59C3C3), label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
+                                        BulletSpan(
+                                            color = Color(0xFF59C3C3),
+                                            label = "Grassi",
+                                            value = alimento.grassi?.toInt() ?: 0
+                                        )
                                     }
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                          BulletSpan(color = Color(0xFF04724D), label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
+                                        BulletSpan(
+                                            color = Color(0xFF04724D),
+                                            label = "Fibre",
+                                            value = alimento.fibre?.toInt() ?: 0
+                                        )
                                     }
                                 }
                             }
@@ -640,13 +659,21 @@ class NewFoodFragment : Fragment() {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        BulletSpan(color = Color(0xFFE1E289), label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
+                                        BulletSpan(
+                                            color = Color(0xFFE1E289),
+                                            label = "Carboidrati",
+                                            value = alimento.carboidrati?.toInt() ?: 0
+                                        )
                                     }
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        BulletSpan(color = Color(0xFFDB504A), label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
+                                        BulletSpan(
+                                            color = Color(0xFFDB504A),
+                                            label = "Proteine",
+                                            value = alimento.proteine?.toInt() ?: 0
+                                        )
                                     }
                                 }
                             }
