@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,11 +26,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -76,6 +80,8 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
+
+    private val currentMealFoodList by mutableStateOf(mutableListOf<Alimento>())
     private var alimentoWrapper = AlimentoWrapper()
     val alimentList by mutableStateOf(mutableListOf<PastoToCiboWrapper>())
 
@@ -145,8 +151,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             LazyColumn(
 
             ) {
-                items(alimentList.size) {
-                    ItemFood(pastoToCiboWrapper = alimentList[it])
+                items(currentMealFoodList) {
+                    ItemFood2(it)
                 }
             }
             Button(
@@ -414,7 +420,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     @Composable
     private fun AddFoodDialog() {
         val existingAllAlimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
-        var selectedFoodItem by rememberSaveable { mutableStateOf("Seleziona Esistente") }
+        var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
+        var selectedFoodItemLabel by rememberSaveable { mutableStateOf("Seleziona Esistente") }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
         AlertDialog(
             onDismissRequest = {
@@ -424,14 +431,36 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
+                        val selectedFood = existingAllAlimentList.find {
+                            it.id == selectedFoodItemBarcode
+                        }
+                        if (selectedFood != null) {
+                            currentMealFoodList.add(selectedFood)
+                            canConfirmMeal = true
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Nessun elemento selezionato",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                         showAddFoodDialog = false
                     }
                 ) {
-                    Text(text = "Annulla")
+                    Text(text = "Conferma")
                 }
             },
             title = {
-                Text(text = "Aggiungi Alimento")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Aggiungi Alimento")
+                    IconButton(onClick = { showAddFoodDialog = false }) {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                    }
+                }
             },
             text = {
                 Column(
@@ -450,7 +479,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = selectedFoodItem)
+                                Text(text = selectedFoodItemLabel)
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                             }
                         }
@@ -468,7 +497,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                            ItemFood2(it)
                                     },
                                     onClick = {
-                                        selectedFoodItem = it.nome ?: "null"
+                                        selectedFoodItemLabel = it.nome ?: ""
+                                        selectedFoodItemBarcode = it.id
                                         isDropDownMenuExpanded = false
                                     }
                                 )
