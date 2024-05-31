@@ -39,6 +39,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -85,7 +86,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     private val currentMealFoodList = mutableStateListOf<Alimento>()
     private var alimentoWrapper = AlimentoWrapper()
-    val alimentList by mutableStateOf(mutableListOf<PastoToCiboWrapper>())
+    val alimentList =  mutableStateListOf<PastoToCiboWrapper>()
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(mainApplication.userRepo, mainApplication.alimentoRepo)
@@ -160,7 +161,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             Button(
                 enabled = canConfirmMeal,
                 onClick = {
-
+                // TODO CONFERMA INSERIMENTO and remove Log
+                    alimentList.forEach {
+                        Log.i("MYDEBUG", it.toString())
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -177,6 +181,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     private @Composable
     fun ItemFoodInList(alimento: Alimento) {
+        val pastoToCiboWrapper = alimentList.find {
+            it.idAlimento == alimento.id
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -335,12 +342,23 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextField(
-                        value = "to fix",
-                        onValueChange = {},
+                        value = pastoToCiboWrapper?.quantita?.value ?: "",
+                        onValueChange = {
+                            pastoToCiboWrapper?.quantita?.value = it
+                        },
+                        label = {
+                            Text(text = "Quantità")
+                        },
+                        keyboardOptions =
+                            KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            )
                     )
                     IconButton(
                         onClick = {
                             currentMealFoodList.remove(alimento)
+                            alimentList.remove(pastoToCiboWrapper)
                             if (currentMealFoodList.isEmpty()) {
                                 canConfirmMeal = false
                             }
@@ -540,66 +558,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     }
 
     @Composable
-    fun ItemFood(pastoToCiboWrapper: PastoToCiboWrapper) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.LightGray)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-
-                ) {
-                    AsyncImage(
-                        model = pastoToCiboWrapper.imageUri,
-                        contentDescription = null,
-                        modifier = Modifier.weight(1f)
-                    )
-                    pastoToCiboWrapper.nomeAlimento?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = pastoToCiboWrapper.quantita.toString(),
-                        onValueChange = {
-                            try {
-                                pastoToCiboWrapper.quantita = it.toInt()
-                            } catch (ex: Exception) {
-                            }
-
-                        },
-                        label = {
-                            Text(text = "Quantita'", modifier = Modifier.weight(1f))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        )
-
-                    )
-                    Text(text = "altro")
-                }
-            }
-        }
-    }
-
-    @Composable
     private fun AddFoodDialog() {
         val existingAllAlimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
         var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
@@ -618,6 +576,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         }
                         if (selectedFood != null) {
                             currentMealFoodList.add(selectedFood)
+                            alimentList.add(
+                                PastoToCiboWrapper(
+                                    idAlimento = selectedFood.id,
+                                    nomeAlimento = selectedFood.nome,
+                                    imageUri = selectedFood.immagine,
+                                    quantita = mutableStateOf("1")
+                                )
+                            )
                             canConfirmMeal = true
                         } else {
                             Toast.makeText(
@@ -750,6 +716,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 lifecycleScope.launch {
                                     mainApplication.alimentoDao.insertAlimento(food)
                                 }
+
+                                alimentList.add(
+                                    PastoToCiboWrapper(
+                                        idAlimento = food.id,
+                                        nomeAlimento = food.nome,
+                                        imageUri = food.immagine,
+                                        quantita = mutableStateOf("1")
+                                    )
+                                )
 //                                    alimentList.add(
 //                                        PastoToCiboWrapper(
 //                                            idAlimento = food.id,
@@ -1081,7 +1056,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         var idUser: String = "",
         var nomeAlimento: String? = "",
         var imageUri: String? = "",
-        var quantita: Int = 1
+        var quantita: MutableState<String> = mutableStateOf("")
     )
 
     private class AlimentoWrapper {
