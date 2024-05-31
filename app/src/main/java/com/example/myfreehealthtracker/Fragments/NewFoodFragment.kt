@@ -584,7 +584,7 @@ class NewFoodFragment : Fragment() {
                             ),
                             modifier = Modifier.fillMaxSize(),
                             animation = simpleChartAnimation(),
-                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 13F)
+                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
                         )
                         Column(
 
@@ -620,13 +620,13 @@ class NewFoodFragment : Fragment() {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                          BulletSpan(color = Color.Blue, label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
+                                          BulletSpan(color = Color(0xFF59C3C3), label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
                                     }
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                          BulletSpan(color = Color.Green, label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
+                                          BulletSpan(color = Color(0xFF04724D), label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
                                     }
                                 }
                             }
@@ -640,13 +640,13 @@ class NewFoodFragment : Fragment() {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        BulletSpan(color = Color.Yellow, label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
+                                        BulletSpan(color = Color(0xFFE1E289), label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
                                     }
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        BulletSpan(color = Color.Red, label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
+                                        BulletSpan(color = Color(0xFFDB504A), label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
                                     }
                                 }
                             }
