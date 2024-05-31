@@ -142,7 +142,8 @@ class NewFoodFragment : Fragment() {
             ) {
                 LazyColumn(
                     modifier = Modifier
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(alimentList.size) {
