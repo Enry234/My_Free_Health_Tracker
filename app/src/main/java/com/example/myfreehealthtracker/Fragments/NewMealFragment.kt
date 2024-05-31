@@ -320,46 +320,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         }
                     }
-//                        Column(
-//                            verticalArrangement = Arrangement.spacedBy(16.dp)
-//                        ) {
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//
-//                            ) {
-//                                Box(
-//                                    modifier = Modifier.weight(1f),
-//                                ) {
-//                                    Row(
-//                                        verticalAlignment = Alignment.CenterVertically,
-//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-//                                    ) {
-//
-//                                    }
-//                                }
-//                                Box(
-//                                    modifier = Modifier.weight(1f),
-//                                ) {
-//                                    Row(verticalAlignment = Alignment.CenterVertically,
-//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-//
-//                                    }
-//                                }
-//
-//                                BulletSpan(color = Color.Yellow, label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
-//                                BulletSpan(color = Color.Red, label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
-//
-//                            }
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-//                            ) {
-//                                BulletSpan(color = Color.Blue, label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
-//                                BulletSpan(color = Color.Green, label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
-//                            }
-//                        }
-//                    }
                 }
             }
         }
@@ -454,6 +414,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     @Composable
     private fun AddFoodDialog() {
         val existingAllAlimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
+        var selectedFoodItem by rememberSaveable { mutableStateOf("Seleziona Esistente") }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
         AlertDialog(
             onDismissRequest = {
@@ -484,8 +445,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 isDropDownMenuExpanded = !isDropDownMenuExpanded
                             },
                         ) {
-                            Text(text = "Seleziona Esistente")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = selectedFoodItem)
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            }
                         }
                         DropdownMenu(
                             expanded = isDropDownMenuExpanded,
@@ -501,6 +468,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                            ItemFood2(it)
                                     },
                                     onClick = {
+                                        selectedFoodItem = it.nome ?: "null"
                                         isDropDownMenuExpanded = false
                                     }
                                 )

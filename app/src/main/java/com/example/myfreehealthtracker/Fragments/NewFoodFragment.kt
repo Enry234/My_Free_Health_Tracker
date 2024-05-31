@@ -679,46 +679,6 @@ class NewFoodFragment : Fragment() {
                             }
                         }
                     }
-//                        Column(
-//                            verticalArrangement = Arrangement.spacedBy(16.dp)
-//                        ) {
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//
-//                            ) {
-//                                Box(
-//                                    modifier = Modifier.weight(1f),
-//                                ) {
-//                                    Row(
-//                                        verticalAlignment = Alignment.CenterVertically,
-//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-//                                    ) {
-//
-//                                    }
-//                                }
-//                                Box(
-//                                    modifier = Modifier.weight(1f),
-//                                ) {
-//                                    Row(verticalAlignment = Alignment.CenterVertically,
-//                                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-//
-//                                    }
-//                                }
-//
-//                                BulletSpan(color = Color.Yellow, label = "Carboidrati", value = alimento.carboidrati?.toInt() ?: 0)
-//                                BulletSpan(color = Color.Red, label = "Proteine", value = alimento.proteine?.toInt() ?: 0)
-//
-//                            }
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-//                            ) {
-//                                BulletSpan(color = Color.Blue, label = "Grassi", value = alimento.grassi?.toInt() ?: 0)
-//                                BulletSpan(color = Color.Green, label = "Fibre", value = alimento.fibre?.toInt() ?: 0)
-//                            }
-//                        }
-//                    }
                 }
             }
         }
