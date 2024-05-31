@@ -3,6 +3,7 @@ package com.example.myfreehealthtracker
 import android.app.Application
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
+import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -24,6 +25,11 @@ class MainApplication : Application() {
     val internalRepository by lazy { UserRepository(internalDatabaseRef.userDao()) }
     val internalFileData by lazy { File(filesDir, "internalData") }
     var userData: UserData? = null
+
+
+    //add database repositories
+    val userRepo by lazy { UserRepository(userDao) }
+    val alimentoRepo by lazy { AlimentoRepository(alimentoDao) }
 
     fun getFirebaseDatabaseRef(firebaseDBTable: FirebaseDBTable): DatabaseReference {
         return firebaseDatabaseRef.child(firebaseDBTable.toString())

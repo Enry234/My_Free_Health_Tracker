@@ -13,7 +13,7 @@ interface UserDao {
     suspend fun insertUser(user: UserData): Long
 
     @Query("SELECT * FROM User")
-    fun getUser(): Flow<List<UserData>>
+    fun getAllUser(): Flow<List<UserData>>
 
     @Upsert
     suspend fun insertPastoToCibo(pastoToCibo: PastoToCibo)

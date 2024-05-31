@@ -25,6 +25,9 @@ data class Alimento(
     @ColumnInfo(name = "proteine")
     var proteine: Float?,
 
+    @ColumnInfo(name = "fibre")
+    var fibre: Float? = null,
+
     @ColumnInfo(name = "grassi")
     var grassi: Float?,
 
@@ -50,6 +53,7 @@ data class Alimento(
             val carboidrati = food.product?.nutriments?.carbohydrates
             val proteine = food.product?.nutriments?.proteins
             val grassi = food.product?.nutriments?.fat
+            val fibre = food.product?.nutriments?.fiber
             val sale = food.product?.nutriments?.salt
             val calorie = food.product?.nutriments?.energyKcal
             val descrizione = food.product?.dataSources
@@ -94,6 +98,7 @@ data class Alimento(
                 unit,
                 carboidrati,
                 proteine,
+                fibre,
                 grassi,
                 sale,
                 calorie,

@@ -633,6 +633,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
         var proteine: Float by mutableFloatStateOf(0f)
 
+        var fibre: Float by mutableFloatStateOf(0f)
+
         var grassi: Float by mutableFloatStateOf(0f)
 
         var sale: Float by mutableFloatStateOf(0f)
@@ -651,6 +653,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             unit = alimento.unit ?: ""
             carboidrati = alimento.carboidrati ?: 0f
             proteine = alimento.proteine ?: 0f
+            fibre = alimento.fibre ?: 0f
             grassi = alimento.grassi ?: 0f
             sale = alimento.sale ?: 0f
             calorie = alimento.calorie ?: 0
@@ -665,6 +668,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 unit,
                 carboidrati,
                 proteine,
+                fibre,
                 grassi,
                 sale,
                 calorie,

@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     Log.i("MAIN", "LOG file complete")
                     lifecycleScope.launch {
                         Log.i("MAIN", "Coroutine launch")
-                        mainApplication.userDao.getUser().collectLatest { user ->
+                        mainApplication.userDao.getAllUser().collectLatest { user ->
                             user.forEach {
                                 Log.i("MAIN", "ciclo caricamento user")
                                 mainApplication.userData = it

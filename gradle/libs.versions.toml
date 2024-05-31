@@ -31,6 +31,7 @@ firebaseAuth = "23.0.0"
 firebaseDatabase = "21.0.0"
 firebaseAuthKtx = "23.0.0"
 core = "1.5.0"
+runtimeLivedata = "1.6.7"
 
 
 
@@ -72,6 +73,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

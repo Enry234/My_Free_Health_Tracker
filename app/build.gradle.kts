@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.core)
     implementation(libs.androidx.junit)
+    implementation(libs.androidx.runtime.livedata)
     //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.6.1")
     androidTestImplementation(libs.androidx.espresso.core)
