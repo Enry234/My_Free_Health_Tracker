@@ -90,7 +90,8 @@ class NewFoodFragment : Fragment() {
         InternalViewModelFactory(
             mainApplication.userRepo,
             mainApplication.alimentoRepo,
-            mainApplication.pastoRepo
+            mainApplication.pastoRepo,
+            mainApplication.pastoToCiboRepo
         )
     }
 

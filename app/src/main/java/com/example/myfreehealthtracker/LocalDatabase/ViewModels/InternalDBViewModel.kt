@@ -10,13 +10,15 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
+import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepo
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class InternalDBViewModel(
     private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
-    private val pastoRepository: PastoRepository
+    private val pastoRepository: PastoRepository,
+    private val pastoToCiboRepo: PastoToCiboRepo
 ) : ViewModel() {
 
 
@@ -39,12 +41,13 @@ class InternalDBViewModel(
 class InternalViewModelFactory(
     private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
-    private val pastoRepository: PastoRepository
+    private val pastoRepository: PastoRepository,
+    private val pastoToCiboRepo: PastoToCiboRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(InternalDBViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return InternalDBViewModel(userRepository, alimentoRepository, pastoRepository) as T
+            return InternalDBViewModel(userRepository, alimentoRepository, pastoRepository, pastoToCiboRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

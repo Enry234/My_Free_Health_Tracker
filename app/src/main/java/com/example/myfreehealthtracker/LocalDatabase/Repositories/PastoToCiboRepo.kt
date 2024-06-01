@@ -12,4 +12,10 @@ class PastoToCiboRepo(private val pastoToCiboDao: PastoToCiboDao) {
     suspend fun insertPastoToCibo(pastoToCibo: PastoToCibo) {
         pastoToCiboDao.insertPastoToCibo(pastoToCibo)
     }
+
+    @WorkerThread
+    suspend fun getAlimentiByPasto(pastoToCibo: PastoToCibo) {
+        pastoToCiboDao.getAlimentiByPasto(pastoToCibo.userID, pastoToCibo.date) //VERY DANGEROUS ;)
+    }
+
 }

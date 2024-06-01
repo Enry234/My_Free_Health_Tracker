@@ -105,7 +105,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         InternalViewModelFactory(
             mainApplication.userRepo,
             mainApplication.alimentoRepo,
-            mainApplication.pastoRepo
+            mainApplication.pastoRepo,
+            mainApplication.pastoToCiboRepo
         )
     }
 
@@ -182,10 +183,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 enabled = canConfirmMeal,
                 onClick = {
                     openInsertDialog = true
-                    // TODO CONFERMA INSERIMENTO and remove Log
-                    pastoToAlimentoWrapperList.forEach {
-                        Log.i("MYDEBUG", it.toString())
-                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -236,7 +233,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             configuration = TimePickerConfiguration.Builder()
                                 .numberOfTimeRowsDisplayed(count = 3)
                                 .selectedTimeScaleFactor(scaleFactor = 1.5f)
-                                .build()
+                                .build(),
+                            is24Hour = true
                         )
                         Box(
                             modifier = Modifier.fillMaxWidth(),

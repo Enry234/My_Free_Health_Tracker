@@ -8,24 +8,43 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HealthFragment : Fragment(R.layout.fragment_health) {
 
     private lateinit var expandableFloatingActionButton: ExpandableFloatingActionButton
+    private lateinit var mainApplication: MainApplication
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        mainApplication = requireActivity().application as MainApplication
+
         val view = inflater.inflate(R.layout.fragment_health, container, false)
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
@@ -77,13 +96,47 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                //ShowHealth()
+                ShowMeal()
             }
         }
         return view
     }
 
+    @Composable
+    private fun ShowMeal() {
+        val allPasto by mainApplication.pastoRepo.allPasto.observeAsState(initial = emptyList())
+
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ){
+            Column(
+
+            ) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(allPasto){
+                        PastoItem(it)
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun PastoItem(pasto: Pasto) {
+        Column {
+            Text(text = pasto.userID)
+            Text(text = pasto.date.toString())
+            Text(text = pasto.note)
+        }
+    }
+
 }
+
+
 
 //val dummyList = listOf<Assunzione>(
 //    Assunzione("1", Date("13/10/2024"), 10, 2, "test1"),
