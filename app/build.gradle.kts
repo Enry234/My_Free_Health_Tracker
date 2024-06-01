@@ -57,7 +57,7 @@ android {
 
 dependencies {
     //noinspection UseTomlInstead
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-analytics")
     implementation(libs.androidx.core.ktx)
@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.junit)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.ui.android)
     //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.6.1")
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,7 +99,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
+    implementation("androidx.compose.ui:ui:1.6.7")
+    implementation("androidx.compose.material:material:1.6.7")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
+    implementation("androidx.activity:activity-compose:1.9.0")
 
     implementation ("io.ktor:ktor-client-core:1.6.3")
     implementation ("io.ktor:ktor-client-android:1.6.3")

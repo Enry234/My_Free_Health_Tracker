@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/Logout"
-        android:title="Logout" />
+        android:id="@+id/other"
+        android:icon="@drawable/rounded_add_home_24"
+        android:title="Altro menu">
+
+    </item>
+
 </menu>

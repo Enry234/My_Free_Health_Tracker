@@ -5,15 +5,15 @@
     android:id="@+id/app_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
+    tools:openDrawer="start">
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/app_drawer_navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         app:headerLayout="@layout/header_home_drawer"
         app:menu="@menu/drawer_home_menu" />
 

@@ -4,10 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.ThumbUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
@@ -25,9 +35,7 @@ import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
     lateinit var mainApplication: MainApplication
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mainApplication = application as MainApplication
+    private fun loadUser() {
         if (mainApplication.internalFileData.exists()) {
             try {
                 val fileInputStream: FileInputStream =
@@ -80,21 +88,39 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mainApplication = application as MainApplication
+        loadUser()
+    }
+
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun initializeMainActivityLayout() {
 
-        val bottomNavBar = findViewById<BottomNavigationView>(
-            R.id.app_bottom_navigation_bar
-        )
+        val bottomNavBar = findViewById<BottomNavigationView>(R.id.app_bottom_navigation_bar)
+        val toolbar =
+            findViewById<androidx.appcompat.widget.Toolbar>(R.id.activity_main_toolbar_root)
         val toolbarTitle = findViewById<TextView>(R.id.activity_main_toolbar_title)
         val drawerLayout = findViewById<DrawerLayout>(R.id.app_drawer_layout)
-
         val navigationView = findViewById<NavigationView>(R.id.app_drawer_navigation_view)
         val toolbarImage = findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture)
-        val a = ImageController()
         val drawerImage = findViewById<ImageView>(R.id.app_side_drawer_profile_pic)
+        val drawerProfileName = findViewById<TextView>(R.id.app_side_drawer_profile_name)
+        val a = ImageController()
+        val composeViewDrawerHeader = findViewById<ComposeView>(R.id.drawer_header_compose_view)
         drawerImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         toolbarImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
+        drawerProfileName.text = "Hello " + mainApplication.userData!!.nome
+
+
+        setSupportActionBar(toolbar)
+        navigationView.bringToFront()
+        val toogle =
+            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.close, R.string.open_drawer)
+        drawerLayout.addDrawerListener(toogle)
+        toogle.syncState()
+
+
         val fragmentContainer = findViewById<FragmentContainerView>(
             R.id.activity_main_fragment_container
         )
@@ -103,6 +129,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             .setOnClickListener {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
+
         bottomNavBar.setOnItemSelectedListener {
             val navController = fragmentContainer.findNavController()
             when (it.itemId) {
@@ -128,47 +155,21 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                 else -> false
             }
         }
-        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
-            override fun onDrawerSlide(drawerView: android.view.View, slideOffset: Float) {
-                // Do nothing
-            }
 
-            override fun onDrawerOpened(drawerView: android.view.View) {
-                Log.i("MAIN", "onDrawerOpened")
-                drawerView.post {
-                    Log.i("DrawerFocus", "Requesting focus on drawer")
-                    drawerView.requestFocus()
+        composeViewDrawerHeader.setContent {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Text(text = "Cartella Clinica")
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text("sesso:")
+                    Text("Poco")
+                    Icon(imageVector = Icons.Sharp.ThumbUp, contentDescription = "")
                 }
             }
 
-            override fun onDrawerClosed(drawerView: android.view.View) {
-                // Do nothing
-            }
-
-            override fun onDrawerStateChanged(newState: Int) {
-                // Do nothing
-            }
-        })
-        navigationView.setOnTouchListener { view, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                view.requestFocus()
-            }
-            true
         }
-        navigationView.setNavigationItemSelectedListener {
-            val navController = fragmentContainer.findNavController()
-            when (it.itemId) {
-                R.id.Logout -> {
-                    Log.i("Logout", "Entrato condizioner")
-                    navController.navigate(R.id.sportFragment)
-                    true
-                }
-
-                else -> false
-            }
-        }
-
-
     }
+
 }
+
+
 
