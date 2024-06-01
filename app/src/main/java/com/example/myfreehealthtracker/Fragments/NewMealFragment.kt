@@ -1,9 +1,12 @@
 package com.example.myfreehealthtracker.Fragments
 
+import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +36,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
@@ -46,6 +50,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -64,7 +70,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.LocalDatabase.Entities.TipoPasto
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
@@ -80,6 +89,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 
 class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
@@ -89,7 +99,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     val alimentList =  mutableStateListOf<PastoToCiboWrapper>()
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
-        InternalViewModelFactory(mainApplication.userRepo, mainApplication.alimentoRepo)
+        InternalViewModelFactory(
+            mainApplication.userRepo,
+            mainApplication.alimentoRepo,
+            mainApplication.pastoRepo
+        )
     }
 
 
@@ -125,8 +139,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AddMealScreen() {
+        var openInsertDialog by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -161,6 +178,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             Button(
                 enabled = canConfirmMeal,
                 onClick = {
+                    openInsertDialog = true
                 // TODO CONFERMA INSERIMENTO and remove Log
                     alimentList.forEach {
                         Log.i("MYDEBUG", it.toString())
@@ -172,11 +190,86 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             }
         }
 
+        if (openInsertDialog) {
+            val context = LocalContext.current
+
+            var pickedHour by remember { mutableIntStateOf(0) }
+            var pickedMinute by remember { mutableIntStateOf(0) }
+            var isTimePickerDialogOpen by remember { mutableStateOf(false) }
+            var tipoPasto: TipoPasto = TipoPasto.Spuntino
+            var openDropDownMenu by remember {
+                mutableStateOf(false)
+            }
+            val calendar = Calendar.getInstance()
+            pickedHour = calendar.get(Calendar.HOUR_OF_DAY)
+            pickedMinute = calendar.get(Calendar.MINUTE)
+            AlertDialog(onDismissRequest = { openInsertDialog = false }, confirmButton = {
+                Button(
+                    onClick = {
+                        openInsertDialog = false
+                        insertFunction(pickedMinute, pickedHour, tipoPasto)
+                    }) {
+                    Text(text = "Conferma Inserimento")
+
+                }
+            }, text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.4f)
+                ) {
+                    Text(text = "Inserisci orario del pasto")
+                    Text(text = String.format("%02d:%02d", pickedHour, pickedMinute))
+                    Button(onClick = { isTimePickerDialogOpen = true }) {
+                        Text("Pick Time")
+                    }
+                    Button(onClick = { openDropDownMenu = true }) {
+                        Text("Seleziona tipo pasto")
+                    }
+                    DropdownMenu(
+                        expanded = openDropDownMenu,
+                        onDismissRequest = { openDropDownMenu = false }
+                    ) {
+                        TipoPasto.entries.forEach { value ->
+                            DropdownMenuItem(text = { Text(text = value.name) }, onClick = {
+                                tipoPasto = value
+                                openDropDownMenu = false
+                            })
+                        }
+                    }
+                    if (isTimePickerDialogOpen) {
+                        TimePickerDialog(
+                            context,
+                            { _: TimePicker, hour: Int, minute: Int ->
+                                pickedHour = hour
+                                pickedMinute = minute
+                                isTimePickerDialogOpen = false
+                            },
+                            pickedHour,
+                            pickedMinute,
+                            true
+                        ).show()
+                    }
+                }
+            })
+        }
+
+
         if (showAddFoodDialog) {
             AddFoodDialog()
         } else if (showNewFoodDialog) {
             NewFoodDialog()
         }
+    }
+
+    private fun insertFunction(pickedMinute: Int, pickedHour: Int, tipoPasto: TipoPasto) {
+        val date = Date()
+        date.hours = pickedHour
+        date.minutes = pickedMinute
+        val pasto = Pasto(mainApplication.userData!!.id, date, tipoPasto, "")
+        alimentoViewModel.insert(pasto)
+        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
+            .child(pasto.userID + pasto.date).setValue(pasto)
     }
 
     private @Composable

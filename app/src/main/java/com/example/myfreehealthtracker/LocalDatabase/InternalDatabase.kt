@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myfreehealthtracker.LocalDatabase.Daos.AlimentoDao
+import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoDao
 import com.example.myfreehealthtracker.LocalDatabase.Daos.UserDao
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Assunzione
@@ -28,6 +29,7 @@ abstract class InternalDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun alimentoDao(): AlimentoDao
 
+    abstract fun pastoDao(): PastoDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the

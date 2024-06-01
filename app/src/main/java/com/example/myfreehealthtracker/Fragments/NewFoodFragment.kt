@@ -61,6 +61,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
@@ -86,7 +87,11 @@ class NewFoodFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
-        InternalViewModelFactory(mainApplication.userRepo, mainApplication.alimentoRepo)
+        InternalViewModelFactory(
+            mainApplication.userRepo,
+            mainApplication.alimentoRepo,
+            mainApplication.pastoRepo
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -212,10 +217,10 @@ class NewFoodFragment : Fragment() {
 //                                            imageUri = food.immagine
 //                                        )
 //                                    )
-//                                    val mainApplication: MainApplication =
-//                                        requireActivity().application as MainApplication
-//                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
-//                                        .child(food.id).setValue(food)
+                                    val mainApplication: MainApplication =
+                                        requireActivity().application as MainApplication
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+                                        .child(food.id).setValue(food)
                                     //add element to list
                                 } else {
                                     Toast.makeText(
