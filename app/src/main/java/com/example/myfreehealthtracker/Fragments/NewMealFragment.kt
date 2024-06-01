@@ -198,7 +198,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
             var pickedHour by remember { mutableIntStateOf(0) }
             var pickedMinute by remember { mutableIntStateOf(0) }
-            var isTimePickerDialogOpen by remember { mutableStateOf(false) }
+            var selectMealType by remember { mutableStateOf("Seleziona tipo pasto") }
             var tipoPasto: TipoPasto = TipoPasto.Spuntino
             var openDropDownMenu by remember {
                 mutableStateOf(false)
@@ -246,7 +246,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = { openDropDownMenu = true }
                             ) {
-                                Text("Seleziona tipo pasto")
+                                Text(selectMealType)
                             }
                             Box(
                                 modifier = Modifier.align(Alignment.Center)
@@ -257,6 +257,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 ) {
                                     TipoPasto.entries.forEach { value ->
                                         DropdownMenuItem(text = { Text(text = value.name) }, onClick = {
+                                            selectMealType = value.name
                                             tipoPasto = value
                                             openDropDownMenu = false
                                         })
