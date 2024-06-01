@@ -11,7 +11,7 @@ data class PastoToCibo(
     @ColumnInfo(name = "idDate")
     var date: Date,
     @ColumnInfo(name = "idAlimentoId")
-    var idAlimento: Int,
+    var idAlimento: String,
     @ColumnInfo(name = "quantity")
-    var quantity: Int
+    var quantity: Float
 )

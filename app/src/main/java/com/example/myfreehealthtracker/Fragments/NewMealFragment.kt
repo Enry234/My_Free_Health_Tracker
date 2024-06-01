@@ -1,12 +1,10 @@
 package com.example.myfreehealthtracker.Fragments
 
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -70,10 +68,12 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.LocalDatabase.Entities.TipoPasto
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
@@ -87,6 +87,8 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.zxing.integration.android.IntentIntegrator
+import com.vsnappy1.timepicker.TimePicker
+import com.vsnappy1.timepicker.ui.model.TimePickerConfiguration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -97,7 +99,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     private val currentMealFoodList = mutableStateListOf<Alimento>()
     private var alimentoWrapper = AlimentoWrapper()
-    val alimentList = mutableStateListOf<PastoToCiboWrapper>()
+    val pastoToAlimentoWrapperList = mutableStateListOf<PastoToAlimentoWrapper>()
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
@@ -181,7 +183,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 onClick = {
                     openInsertDialog = true
                     // TODO CONFERMA INSERIMENTO and remove Log
-                    alimentList.forEach {
+                    pastoToAlimentoWrapperList.forEach {
                         Log.i("MYDEBUG", it.toString())
                     }
                 },
@@ -205,54 +207,75 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             pickedHour = calendar.get(Calendar.HOUR_OF_DAY)
             pickedMinute = calendar.get(Calendar.MINUTE)
             AlertDialog(onDismissRequest = { openInsertDialog = false }, confirmButton = {
-                Button(
-                    onClick = {
-                        openInsertDialog = false
-                        insertFunction(pickedMinute, pickedHour, tipoPasto)
-                    }) {
-                    Text(text = "Conferma Inserimento")
 
-                }
-            }, text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.4f)
-                ) {
-                    Text(text = "Inserisci orario del pasto")
-                    Text(text = String.format("%02d:%02d", pickedHour, pickedMinute))
-                    Button(onClick = { isTimePickerDialogOpen = true }) {
-                        Text("Pick Time")
-                    }
-                    Button(onClick = { openDropDownMenu = true }) {
-                        Text("Seleziona tipo pasto")
-                    }
-                    DropdownMenu(
-                        expanded = openDropDownMenu,
-                        onDismissRequest = { openDropDownMenu = false }
+            }, title = {
+                Text(text = "Inserisci dati del pasto")
+            },
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                            //.fillMaxHeight(0.4f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        TipoPasto.entries.forEach { value ->
-                            DropdownMenuItem(text = { Text(text = value.name) }, onClick = {
-                                tipoPasto = value
-                                openDropDownMenu = false
-                            })
+                        //Text(text = String.format("%02d:%02d", pickedHour, pickedMinute))
+//                        Row() {
+//                            Button(onClick = { isTimePickerDialogOpen = true }) {
+//                            Text("Ins")
+//                         }
+//                        }
+                        Text(text = "Scegli l'orario")
+                        TimePicker(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .background(Color.Transparent, RoundedCornerShape(8.dp)).height(100.dp),
+                            onTimeSelected = { hour, minute ->
+                                pickedMinute = minute
+                                pickedHour = hour
+                            },
+                            configuration = TimePickerConfiguration.Builder()
+                                .numberOfTimeRowsDisplayed(count = 3)
+                                .selectedTimeScaleFactor(scaleFactor = 1.5f)
+                                .build()
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { openDropDownMenu = true }
+                            ) {
+                                Text("Seleziona tipo pasto")
+                            }
+                            Box(
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                DropdownMenu(
+                                    expanded = openDropDownMenu,
+                                    onDismissRequest = { openDropDownMenu = false }
+                                ) {
+                                    TipoPasto.entries.forEach { value ->
+                                        DropdownMenuItem(text = { Text(text = value.name) }, onClick = {
+                                            tipoPasto = value
+                                            openDropDownMenu = false
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                openInsertDialog = false
+                                insertPasto(pickedMinute, pickedHour, tipoPasto)
+                                insertPastoToAlimento(pickedMinute, pickedHour)
+                            }) {
+                            Text(text = "Conferma Inserimento")
+
                         }
                     }
-                    if (isTimePickerDialogOpen) {
-                        TimePickerDialog(
-                            context,
-                            { _: TimePicker, hour: Int, minute: Int ->
-                                pickedHour = hour
-                                pickedMinute = minute
-                                isTimePickerDialogOpen = false
-                            },
-                            pickedHour,
-                            pickedMinute,
-                            true
-                        ).show()
-                    }
-                }
-            })
+                })
         }
 
 
@@ -263,7 +286,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
-    private fun insertFunction(pickedMinute: Int, pickedHour: Int, tipoPasto: TipoPasto) {
+    private fun insertPasto(pickedMinute: Int, pickedHour: Int, tipoPasto: TipoPasto) {
         val date = Date()
         date.hours = pickedHour
         date.minutes = pickedMinute
@@ -273,9 +296,32 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             .child(pasto.userID + pasto.date).setValue(pasto)
     }
 
+    private fun insertPastoToAlimento(pickedMinute: Int, pickedHour: Int) {
+        lifecycleScope.launch {
+            pastoToAlimentoWrapperList.forEach {
+                val foodUnit = currentMealFoodList.find { alimento ->
+                    alimento.id == it.idAlimento
+                }?.unit
+
+                if (foodUnit.equals("100g")) {
+                    it.quantita.value = (it.quantita.value.toFloat() / 100f).toString()
+                }
+                val date = Date()
+                date.minutes = pickedMinute
+                date.hours = pickedHour
+                it.idDate = date
+                val pastoToCibo =
+                    PastoToCibo(it.idUser, it.idDate, it.idAlimento, it.quantita.value.toFloat())
+                mainApplication.pastoToCiboRepo.insertPastoToCibo(pastoToCibo)
+            }
+            view?.findNavController()?.navigate(R.id.healthFragment)
+
+        }
+    }
+
     private @Composable
     fun ItemFoodInList(alimento: Alimento) {
-        val pastoToCiboWrapper = alimentList.find {
+        val pastoToCiboWrapper = pastoToAlimentoWrapperList.find {
             it.idAlimento == alimento.id
         }
         Box(
@@ -455,7 +501,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     IconButton(
                         onClick = {
                             currentMealFoodList.remove(alimento)
-                            alimentList.remove(pastoToCiboWrapper)
+                            pastoToAlimentoWrapperList.remove(pastoToCiboWrapper)
                             if (currentMealFoodList.isEmpty()) {
                                 canConfirmMeal = false
                             }
@@ -463,6 +509,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     ) {
                         Icon(Icons.Default.Delete, contentDescription = null)
                     }
+
                 }
             }
         }
@@ -574,8 +621,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         }
                         if (selectedFood != null) {
                             currentMealFoodList.add(selectedFood)
-                            alimentList.add(
-                                PastoToCiboWrapper(
+                            pastoToAlimentoWrapperList.add(
+                                PastoToAlimentoWrapper(
+                                    idUser = mainApplication.userData!!.id,
                                     idAlimento = selectedFood.id,
                                     nomeAlimento = selectedFood.nome,
                                     imageUri = selectedFood.immagine,
@@ -714,8 +762,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     mainApplication.alimentoDao.insertAlimento(food)
                                 }
 
-                                alimentList.add(
-                                    PastoToCiboWrapper(
+                                pastoToAlimentoWrapperList.add(
+                                    PastoToAlimentoWrapper(
                                         idAlimento = food.id,
                                         nomeAlimento = food.nome,
                                         imageUri = food.immagine,
@@ -1046,7 +1094,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
 
-    data class PastoToCiboWrapper(
+    data class PastoToAlimentoWrapper(
         var idAlimento: String = "",
         var idDate: Date = Date(),
         var idUser: String = "",

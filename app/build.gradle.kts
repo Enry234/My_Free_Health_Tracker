@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -104,13 +103,14 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
     implementation("androidx.activity:activity-compose:1.9.0")
 
-    implementation ("io.ktor:ktor-client-core:1.6.3")
-    implementation ("io.ktor:ktor-client-android:1.6.3")
-    implementation ("io.ktor:ktor-client-logging:1.6.3")
-    implementation ("io.ktor:ktor-client-serialization:1.6.3")
+    implementation("io.ktor:ktor-client-core:1.6.3")
+    implementation("io.ktor:ktor-client-android:1.6.3")
+    implementation("io.ktor:ktor-client-logging:1.6.3")
+    implementation("io.ktor:ktor-client-serialization:1.6.3")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
-    implementation ("com.github.tehras:charts:0.2.4-alpha")
+    implementation("com.github.tehras:charts:0.2.4-alpha")
+    implementation("com.github.vsnappy1:ComposeDatePicker:2.2.0")
 
 
 }

@@ -5,6 +5,7 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
+import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepo
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -22,6 +23,7 @@ class MainApplication : Application() {
     val internalDatabaseRef by lazy { InternalDatabase.getDatabase(this) }
     val userDao by lazy { internalDatabaseRef.userDao() }
     val alimentoDao by lazy { internalDatabaseRef.alimentoDao() }
+    val pastoToCiboDao by lazy { internalDatabaseRef.pastoToCiboDao() }
     val pastoDao by lazy { internalDatabaseRef.pastoDao() }
     val internalRepository by lazy { UserRepository(internalDatabaseRef.userDao()) }
     val internalFileData by lazy { File(filesDir, "internalData") }
@@ -32,6 +34,7 @@ class MainApplication : Application() {
     val userRepo by lazy { UserRepository(userDao) }
     val alimentoRepo by lazy { AlimentoRepository(alimentoDao) }
     val pastoRepo by lazy { PastoRepository(pastoDao) }
+    val pastoToCiboRepo by lazy { PastoToCiboRepo(pastoToCiboDao) }
 
     fun getFirebaseDatabaseRef(firebaseDBTable: FirebaseDBTable): DatabaseReference {
         return firebaseDatabaseRef.child(firebaseDBTable.toString())
