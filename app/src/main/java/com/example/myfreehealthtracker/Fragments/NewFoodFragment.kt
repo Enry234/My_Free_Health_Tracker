@@ -559,6 +559,7 @@ class NewFoodFragment : Fragment() {
                 ) {
                     alimento.nome?.let {
                         Text(
+                            modifier = Modifier.weight(1f),
                             text = it,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
@@ -728,79 +729,9 @@ class NewFoodFragment : Fragment() {
     }
 
 
-//    @Composable
-//    fun ItemFood(pastoToCiboWrapper: PastoToCiboWrapper) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(color = Color.LightGray)
-//        ) {
-//            Column(
-//                modifier = Modifier.fillMaxSize(),
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.spacedBy(8.dp),
-//            ) {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-//
-//                ) {
-//                    AsyncImage(
-//                        model = pastoToCiboWrapper.imageUri,
-//                        contentDescription = null,
-//                        modifier = Modifier.weight(1f)
-//                    )
-//                    pastoToCiboWrapper.nomeAlimento?.let {
-//                        Text(
-//                            text = it,
-//                            modifier = Modifier.weight(1f)
-//                        )
-//                    }
-//                }
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-//                ) {
-//                    TextField(
-//                        modifier = Modifier.weight(1f),
-//                        value = pastoToCiboWrapper.quantita.toString(),
-//                        onValueChange = {
-//                            try {
-//                                pastoToCiboWrapper.quantita = it.toInt()
-//                            } catch (ex: Exception) {
-//                            }
-//
-//                        },
-//                        label = {
-//                            Text(text = "Quantita'", modifier = Modifier.weight(1f))
-//                        },
-//                        keyboardOptions = KeyboardOptions(
-//                            keyboardType = KeyboardType.Number,
-//                            imeAction = ImeAction.Done
-//                        )
-//
-//                    )
-//                    Text(text = "altro")
-//                }
-//            }
-//        }
-//    }
-//}
-
     private suspend fun callClient(s: String): ProductResponse {
         return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
-
-//data class PastoToCiboWrapper(
-//    var idAlimento: String = "",
-//    var idDate: Date = Date(),
-//    var idUser: String = "",
-//    var nomeAlimento: String? = "",
-//    var imageUri: String? = "",
-//    var quantita: Int = 1
-//)
 
     private class AlimentoWrapper {
 
