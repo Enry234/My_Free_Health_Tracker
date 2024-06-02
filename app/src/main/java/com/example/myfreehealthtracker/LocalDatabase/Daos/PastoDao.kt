@@ -14,7 +14,7 @@ interface PastoDao {
     suspend fun insertPasto(pasto: Pasto)
 
 
-    @Query("SELECT * FROM Pasto")
+    @Query("SELECT * FROM Pasto ORDER BY date DESC")
     fun getPasto(): Flow<List<Pasto>>
 
 

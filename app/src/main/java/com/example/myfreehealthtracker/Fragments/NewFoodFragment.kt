@@ -281,7 +281,6 @@ class NewFoodFragment : Fragment() {
                         )
 
                         TextField(
-                            enabled = alimentoWrapper.enabled,
                             value = alimentoWrapper.nome,
                             onValueChange = {
                                 alimentoWrapper.nome = it
@@ -300,7 +299,6 @@ class NewFoodFragment : Fragment() {
                             Text("Unità valori:")
 
                             RadioButton(
-                                enabled = alimentoWrapper.enabled,
                                 selected = alimentoWrapper.unit == "100g",
                                 onClick = {
                                     alimentoWrapper.unit = "100g"
@@ -310,7 +308,6 @@ class NewFoodFragment : Fragment() {
                             Text("100g")
 
                             RadioButton(
-                                enabled = alimentoWrapper.enabled,
                                 selected = alimentoWrapper.unit == "unit",
                                 onClick = {
                                     alimentoWrapper.unit = "unit"
@@ -336,7 +333,6 @@ class NewFoodFragment : Fragment() {
                                     }
 
                                 },
-                                enabled = alimentoWrapper.enabled,
                                 label = {
                                     Text(text = "Carboidrati")
                                 },
@@ -347,7 +343,6 @@ class NewFoodFragment : Fragment() {
                             )
                             TextField(
                                 modifier = Modifier.weight(1f),
-                                enabled = alimentoWrapper.enabled,
                                 value = alimentoWrapper.proteine.toString(),
                                 onValueChange = {
                                     try {
@@ -367,7 +362,6 @@ class NewFoodFragment : Fragment() {
 
                             TextField(
                                 modifier = Modifier.weight(0.8f),
-                                enabled = alimentoWrapper.enabled,
                                 value = alimentoWrapper.fibre.toString(),
                                 onValueChange = {
                                     try {
@@ -402,7 +396,6 @@ class NewFoodFragment : Fragment() {
                                     }
 
                                 },
-                                enabled = alimentoWrapper.enabled,
                                 label = {
                                     Text(text = "Calorie")
                                 },
@@ -413,7 +406,6 @@ class NewFoodFragment : Fragment() {
                             )
                             TextField(
                                 modifier = Modifier.weight(1f),
-                                enabled = alimentoWrapper.enabled,
                                 value = alimentoWrapper.grassi.toString(),
                                 onValueChange = {
                                     try {
@@ -432,7 +424,6 @@ class NewFoodFragment : Fragment() {
                             )
                             TextField(
                                 modifier = Modifier.weight(0.8f),
-                                enabled = alimentoWrapper.enabled,
                                 value = alimentoWrapper.sale.toString(),
                                 onValueChange = {
                                     try {

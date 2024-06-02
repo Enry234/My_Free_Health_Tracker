@@ -8,28 +8,68 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
 import androidx.navigation.findNavController
+import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class HealthFragment : Fragment(R.layout.fragment_health) {
 
@@ -84,8 +124,6 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 //            }
 
 
-
-
             Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
         }
         val content = arguments?.getString("content")
@@ -110,14 +148,14 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-        ){
+        ) {
             Column(
 
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(allPasto){
+                    items(allPasto) {
                         PastoItem(it)
                     }
                 }
@@ -127,15 +165,274 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     @Composable
     private fun PastoItem(pasto: Pasto) {
-        Column {
-            Text(text = pasto.userID)
-            Text(text = pasto.date.toString())
-            Text(text = pasto.note)
+
+        val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepo.getAlimentiByPasto(
+            pasto
+        ).asLiveData().observeAsState()
+
+        var calorie: Int = 0
+        var carboidrati: Int = 0
+        var proteine: Int = 0
+        var grassi: Int = 0
+        var fibre: Int = 0
+
+
+        var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+
+
+        alimentiPasto?.forEach {
+            calorie += it.calorie!!.toInt()
+            carboidrati += it.carboidrati!!.toInt()
+            proteine += it.proteine!!.toInt()
+            grassi += it.grassi!!.toInt()
+            fibre += it.fibre!!.toInt()
         }
+
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    //NOME E IMMAGINE ALIMENTO
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+
+                ) {
+
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+
+                    Text(
+                        text = dateFormat.format(pasto.date),
+                        modifier = Modifier.weight(3f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = pasto.typePasto.toString(),
+                        modifier = Modifier.weight(1f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+
+                    )
+
+                    IconButton(onClick = {
+                        isExpanded = !isExpanded
+                    }) {
+                        val imageVector = if (isExpanded) {
+                            Icons.Default.KeyboardArrowUp
+                        } else {
+                            Icons.Default.KeyboardArrowDown
+                        }
+                        Icon(imageVector, contentDescription = "ToggleExpand")
+                    }
+
+                }
+
+                Row(
+                    //PIECHART CON BOX, E UN ALTRO BOX PER METTERE I VALORI NUTRIZIONALI
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .height(75.dp)
+                            .width(75.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        //piechart con la somma dei valori nutrizionali
+                        PieChart(
+                            pieChartData = PieChartData(
+                                listOf(
+                                    PieChartData.Slice(
+                                        carboidrati.toFloat(),
+                                        Color(0xFFE1E289)
+                                    ),
+                                    PieChartData.Slice(proteine.toFloat(), Color(0xFFDB504A)),
+                                    PieChartData.Slice(grassi.toFloat(), Color(0xFF59C3C3)),
+                                    PieChartData.Slice(fibre.toFloat(), Color(0xFF04724D)),
+                                )
+                            ),
+                            modifier = Modifier.fillMaxSize(),
+                            animation = simpleChartAnimation(),
+                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
+                        )
+                        Column(
+
+                        ) {
+
+                            Text(
+                                text = calorie.toString()
+                            )
+
+                            Text(
+                                text = "kcal",
+                            )
+
+                        }
+
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier.weight(.8f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF59C3C3),
+                                            label = "Grassi",
+                                            value = grassi
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFF04724D),
+                                            label = "Fibre",
+                                            value = fibre
+                                        )
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFE1E289),
+                                            label = "Carboidrati",
+                                            value = carboidrati
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        BulletSpan(
+                                            color = Color(0xFFDB504A),
+                                            label = "Proteine",
+                                            value = proteine
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = fadeIn(animationSpec = tween(500)) + expandVertically(animationSpec = tween(500)),
+            exit = fadeOut(animationSpec = tween(500)) + shrinkVertically(animationSpec = tween(500))
+        ) {
+            Column {
+                alimentiPasto?.forEach {
+                    DisplayAlimento(it)
+                }
+            }
+        }
+
+    }
+
+    private @Composable
+    fun DisplayAlimento(alimento: Alimento) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier.weight(1f)
+            ){
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ){
+                    Text(text = alimento.nome!!, fontWeight = FontWeight.Bold)
+                    Text(text = "Calorie: ${alimento.calorie} kcal")
+                    //Text(text = alimento..toString())
+                }
+            }
+
+            Box() {
+                AsyncImage(
+                    model = alimento.immagine,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .height(56.dp)
+                        .width(56.dp),
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+
+        }
+
+    }
+
+
+    @Composable
+    fun BulletSpan(color: Color, label: String, value: Int) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .width(10.dp)
+                .height(10.dp)
+        ) {
+            //internal circle with icon
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "contentDescription",
+                modifier = Modifier
+                    .width(24.dp)
+                    .background(color, CircleShape)
+                    .padding(2.dp),
+                tint = color
+            )
+        }
+        Text(
+            text = "$label: ${value}g"
+        )
     }
 
 }
-
 
 
 //val dummyList = listOf<Assunzione>(
