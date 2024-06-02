@@ -756,6 +756,16 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 val food = alimentoWrapper.convertToFood()
 
                                 currentMealFoodList.add(food)
+                                pastoToAlimentoWrapperList.add(
+                                    PastoToAlimentoWrapper(
+                                        idUser = mainApplication.userData!!.id,
+                                        idAlimento = food.id,
+                                        nomeAlimento = food.nome,
+                                        imageUri = food.immagine,
+                                        quantita = mutableStateOf("1")
+                                    )
+                                )
+                                canConfirmMeal = true
 
                                 lifecycleScope.launch {
                                     mainApplication.alimentoDao.insertAlimento(food)
