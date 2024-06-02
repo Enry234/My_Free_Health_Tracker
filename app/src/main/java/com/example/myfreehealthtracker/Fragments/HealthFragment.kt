@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
@@ -68,6 +69,8 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -179,14 +182,24 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-
-
         alimentiPasto?.forEach {
-            calorie += it.calorie!!.toInt()
-            carboidrati += it.carboidrati!!.toInt()
-            proteine += it.proteine!!.toInt()
-            grassi += it.grassi!!.toInt()
-            fibre += it.fibre!!.toInt()
+
+            //val qta by mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it).asLiveData().observeAsState(initial = 0f)
+//            val qta = qtaList.value!![0].quantity
+
+            var qta = 0f
+            runBlocking {
+                lifecycleScope.launch {
+                    qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
+                }.join()
+            }
+
+
+            calorie += ((it.calorie!!) * qta).toInt()
+            carboidrati += ((it.carboidrati!!) * qta).toInt()
+            proteine += ((it.proteine!!) * qta).toInt()
+            grassi += ((it.grassi!!) * qta).toInt()
+            fibre += ((it.fibre!!) * qta).toInt()
         }
 
 
@@ -371,19 +384,21 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     private @Composable
     fun DisplayAlimento(alimento: Alimento) {
+
         Row(
             modifier = Modifier
-                .fillMaxWidth().padding(16.dp),
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Box(
                 modifier = Modifier.weight(1f)
-            ){
+            ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
+                ) {
                     Text(text = alimento.nome!!, fontWeight = FontWeight.Bold)
                     Text(text = "Calorie: ${alimento.calorie} kcal")
                     //Text(text = alimento..toString())
