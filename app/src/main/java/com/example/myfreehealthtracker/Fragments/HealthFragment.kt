@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
@@ -69,7 +68,6 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -184,14 +182,11 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         alimentiPasto?.forEach {
 
-            //val qta by mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it).asLiveData().observeAsState(initial = 0f)
-//            val qta = qtaList.value!![0].quantity
 
-            var qta = 0f
+            var qta = 1f
+
             runBlocking {
-                lifecycleScope.launch {
                     qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
-                }.join()
             }
 
 
