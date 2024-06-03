@@ -225,7 +225,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         TimePicker(
                             modifier = Modifier
                                 .padding(16.dp)
-                                .background(Color.Transparent, RoundedCornerShape(8.dp)).height(100.dp),
+                                .background(Color.Transparent, RoundedCornerShape(8.dp))
+                                .height(100.dp),
                             onTimeSelected = { hour, minute ->
                                 pickedMinute = minute
                                 pickedHour = hour
@@ -268,7 +269,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             onClick = {
                                 openInsertDialog = false
                                 insertPasto(pickedMinute, pickedHour, tipoPasto)
-                                insertPastoToAlimento(pickedMinute, pickedHour)
+
                             }) {
                             Text(text = "Conferma Inserimento")
 
@@ -291,11 +292,12 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         date.minutes = pickedMinute
         val pasto = Pasto(mainApplication.userData!!.id, date, tipoPasto, "")
         alimentoViewModel.insert(pasto)
+        insertPastoToAlimento(pasto)
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
             .child(pasto.userID + pasto.date).setValue(pasto)
     }
 
-    private fun insertPastoToAlimento(pickedMinute: Int, pickedHour: Int) {
+    private fun insertPastoToAlimento(pasto: Pasto) {
         lifecycleScope.launch {
             pastoToAlimentoWrapperList.forEach {
                 val foodUnit = currentMealFoodList.find { alimento ->
@@ -305,13 +307,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 if (foodUnit.equals("100g")) {
                     it.quantita.value = (it.quantita.value.toFloat() / 100f).toString()
                 }
-                val date = Date()
-                date.minutes = pickedMinute
-                date.hours = pickedHour
-                it.idDate = date
+                it.idDate = pasto.date
                 val pastoToCibo =
                     PastoToCibo(it.idUser, it.idDate, it.idAlimento, it.quantita.value.toFloat())
+                //push internal db
                 mainApplication.pastoToCiboRepo.insertPastoToCibo(pastoToCibo)
+                //push firebase db
+                mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
+                    .child(pastoToCibo.userID + pastoToCibo.date).child(pastoToCibo.idAlimento)
+                    .setValue(pastoToCibo)
             }
             view?.findNavController()?.navigate(R.id.healthFragment)
 
@@ -484,7 +488,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         modifier = Modifier.weight(1f),
                         value = pastoToCiboWrapper?.quantita?.value ?: "",
                         onValueChange = {
-                            pastoToCiboWrapper?.quantita?.value = it
+                            try {
+                                pastoToCiboWrapper?.quantita?.value = it.toFloat().toString()
+                            } catch (ex: Exception) {
+
+                            }
                         },
                         label = {
                             Text(text = "Quantità (${alimento.unit})")
