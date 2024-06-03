@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -125,7 +124,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 //            }
 
 
-            Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
         }
         val content = arguments?.getString("content")
         view.findViewById<TextView>(R.id.fragment_health_tv).apply {
