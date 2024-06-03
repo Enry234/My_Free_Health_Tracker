@@ -20,6 +20,8 @@ class MainApplication : Application() {
             .getReference()
     }
 
+
+
     val internalDatabaseRef by lazy { InternalDatabase.getDatabase(this) }
     val userDao by lazy { internalDatabaseRef.userDao() }
     val alimentoDao by lazy { internalDatabaseRef.alimentoDao() }

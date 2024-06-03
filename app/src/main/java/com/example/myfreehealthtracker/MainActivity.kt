@@ -35,6 +35,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.IOException
@@ -183,9 +184,11 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             Date(), peso
                                         )
                                     )
-                                    mainApplication.applicationScope.launch {
+                                    //mainApplication.applicationScope.launch {
+                                    runBlocking {
                                         mainApplication.userDao.insertUser(mainApplication.userData!!)//upsert mode
                                     }
+                                    //}
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
                                         .child(mainApplication.userData!!.id)
                                         .setValue(mainApplication.userData!!)

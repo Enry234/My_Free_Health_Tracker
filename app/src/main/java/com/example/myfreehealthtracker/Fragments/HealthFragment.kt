@@ -143,7 +143,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     @Composable
     private fun ShowMeal() {
-        val allPasto by mainApplication.pastoRepo.allPasto.observeAsState(initial = emptyList())
+        val allPasto2 by mainApplication.pastoRepo.allPasto.observeAsState(initial = emptyList())
+        val allPasto = allPasto2.sortedByDescending { it.date }
 
         Surface(
             modifier = Modifier
@@ -186,7 +187,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             var qta = 1f
 
             runBlocking {
-                    qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
+                qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
             }
 
 
@@ -228,7 +229,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     )
                     Text(
                         text = pasto.typePasto.toString(),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1.2f),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
 
@@ -370,7 +371,16 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         ) {
             Column {
                 alimentiPasto?.forEach {
-                    DisplayAlimento(it)
+
+
+                    var qta = 1f
+
+                    runBlocking {
+                        qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
+                    }
+
+
+                    DisplayAlimento(it, qta)
                 }
             }
         }
@@ -378,7 +388,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     }
 
     private @Composable
-    fun DisplayAlimento(alimento: Alimento) {
+    fun DisplayAlimento(alimento: Alimento, qta: Float) {
 
         Row(
             modifier = Modifier
@@ -395,8 +405,17 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(text = alimento.nome!!, fontWeight = FontWeight.Bold)
-                    Text(text = "Calorie: ${alimento.calorie} kcal")
-                    //Text(text = alimento..toString())
+                    Text(text = "Calorie: ${alimento.calorie?.times(qta)?.toInt()} kcal")
+
+                    val amount: String
+
+                    if (alimento.unit.equals("100g")) {
+                        amount = "${(qta * 100).toInt()}g"
+                    } else {
+                        amount = "${qta} unità"
+                    }
+
+                    Text(text = "Quantità: $amount")
                 }
             }
 

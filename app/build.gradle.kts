@@ -102,11 +102,6 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.7")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
     implementation("androidx.activity:activity-compose:1.9.0")
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m2)
-    implementation(libs.vico.compose.m3)
-    implementation(libs.vico.core)
-    implementation(libs.vico.views)
     implementation("io.ktor:ktor-client-core:1.6.3")
     implementation("io.ktor:ktor-client-android:1.6.3")
     implementation("io.ktor:ktor-client-logging:1.6.3")
@@ -115,6 +110,16 @@ dependencies {
 
     implementation("com.github.tehras:charts:0.2.4-alpha")
     implementation("com.github.vsnappy1:ComposeDatePicker:2.2.0")
+
+
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m2)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
+    implementation(libs.vico.views)
+
+//    implementation ("com.patrykandpatrick.vico:core:1.11.1")
+//    implementation ("com.patrykandpatrick.vico:compose-m3:1.11.1")
 
 
 }

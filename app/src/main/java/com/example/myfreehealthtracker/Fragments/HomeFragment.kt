@@ -2,119 +2,75 @@ package com.example.myfreehealthtracker.Fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
-import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.patrykandpatrick.vico.core.entry.entryModelOf
+import java.util.Date
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
+
+
     lateinit var mainApplication: MainApplication
+
+    var user by mutableStateOf<UserData?>(null)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
         mainApplication = requireActivity().application as MainApplication
         composeView.setContent {
-            Box(modifier = Modifier.height(300.dp))
-            {
-                if (mainApplication.userData != null && mainApplication.userData!!.peso!!.isNotEmpty()) {
-
-
-                    val refreshDataset = remember {
-                        mutableIntStateOf(0)
-                    }
-                    val modelProducer = remember { ChartEntryModelProducer() }
-                    val datasetForModel = remember { mutableStateListOf(listOf<FloatEntry>()) }
-                    val datasetLineSpec = remember { arrayListOf<LineChart.LineSpec>() }
-                    val scrollState = rememberChartScrollState()
-
-
-
-
-
-                    LaunchedEffect(key1 = refreshDataset.intValue) {
-
-                        datasetLineSpec.clear()
-                        var xPos = 0f
-                        val dataPoints = arrayListOf<FloatEntry>()
-                        datasetLineSpec.add(
-                            LineChart.LineSpec(
-                                lineColor = R.color.purple_200,
-                                lineBackgroundShader = DynamicShaders.fromBrush(
-                                    brush = Brush.Companion.verticalGradient(
-                                        listOf(
-                                            Red.copy(0.5f), Red.copy(0.8f)
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                        mainApplication.userData!!.peso!!.sortBy { it.first }
-                        mainApplication.userData!!.peso!!.forEach {
-                            val y = it.second.toFloat()
-                            dataPoints.add(FloatEntry(xPos, y))
-                            xPos += 1f
-                        }
-
-                        datasetForModel.add(dataPoints)
-                        modelProducer.setEntries(datasetForModel)
-                    }
-                    if (datasetForModel.isNotEmpty()) {
-                        ProvideChartStyle {
-                            Chart(
-                                chart = lineChart(
-                                    lines = datasetLineSpec,
-                                ),
-                                startAxis = rememberStartAxis(
-                                    title = "peso",
-                                    tickLength = 0.dp,
-                                    valueFormatter = { value, _ ->
-                                        (value.toInt()).toString()
-                                    },
-                                    itemPlacer = AxisItemPlacer.Vertical.default(
-                                        maxItemCount = 10
-                                    )
-
-                                ),
-                                bottomAxis = rememberBottomAxis(
-                                    title = "Date",
-                                    tickLength = 0.dp,
-                                    valueFormatter = { value, _ ->
-                                        (value.toInt()).toString()
-                                    }
-                                ),
-                                chartModelProducer = modelProducer,
-                                chartScrollState = scrollState,
-                                isZoomEnabled = true
-                            )
-                        }
-                    }
-
-                }
-            }
-
-
+            //WeightChart()
         }
+    }
+
+
+    @Composable
+    private fun WeightChart() {
+
+        val userList by mainApplication.userDao.getAllUser().asLiveData()
+            .observeAsState(initial = emptyList())
+        //val user = mainApplication.userData!!
+
+
+        if (userList == null) return
+
+        val user = userList?.get(0)
+
+        val pairList = user?.peso
+        val weights = Array<Double>(pairList?.size!!) { 0.0 }
+        val currentDate = Date()
+        val dates = Array<Date>(pairList.size) { currentDate }
+
+//        var entries = Array<Pair<Date, Double>>(pairList?.size!!) { Pair(currentDate, 0.0) }
+
+        pairList.forEachIndexed { index, pair ->
+            weights[index] = pair.second
+            dates[index] = pair.first
+
+            //entries[index] = pair
+        }
+
+
+        val chartEntryModel = entryModelOf(*weights)
+
+        Chart(
+            chart = lineChart(),
+            model = chartEntryModel,
+            startAxis = rememberStartAxis(),
+            //bottomAxis = rememberBottomAxis(),
+        )
+
     }
 }

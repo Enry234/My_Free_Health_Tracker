@@ -3,7 +3,6 @@ package com.example.myfreehealthtracker.LocalDatabase.Daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import kotlinx.coroutines.flow.Flow
 
@@ -12,11 +11,10 @@ interface UserDao {
     @Upsert
     suspend fun insertUser(user: UserData): Long
 
-    @Query("SELECT * FROM User")
+    @Query("SELECT * FROM User LIMIT 1")
     fun getAllUser(): Flow<List<UserData>>
 
-    @Upsert
-    suspend fun insertPastoToCibo(pastoToCibo: PastoToCibo)
+
 
 
     //@Upsert
@@ -42,10 +40,6 @@ interface UserDao {
 
     //@Query("SELECT * FROM Medicine")
     //fun getMedicine(): Flow<List<Medicine>>
-
-
-    @Query("SELECT * FROM PastoToCibo")
-    fun getPastoToCibo(): Flow<List<PastoToCibo>>
 
 
     //@Query("SELECT * FROM Sport")
