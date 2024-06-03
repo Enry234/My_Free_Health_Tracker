@@ -6,18 +6,26 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.ThumbUp
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
@@ -31,6 +39,7 @@ import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import java.util.Date
 
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
@@ -157,12 +166,49 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         }
 
         composeViewDrawerHeader.setContent {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Text(text = "Cartella Clinica")
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text("sesso:")
-                    Text("Poco")
-                    Icon(imageVector = Icons.Sharp.ThumbUp, contentDescription = "")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White)
+                    .padding(10.dp)
+            ) {
+                Column {
+                    Box() {
+                        Row() {
+                            var peso by remember { mutableStateOf(0.0) }
+                            Button(onClick = {
+                                if (peso != 0.0) {
+                                    mainApplication.userData!!.peso!!.add(
+                                        Pair(
+                                            Date(), peso
+                                        )
+                                    )
+                                    mainApplication.applicationScope.launch {
+                                        mainApplication.userDao.insertUser(mainApplication.userData!!)//upsert mode
+                                    }
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                        .child(mainApplication.userData!!.id)
+                                        .setValue(mainApplication.userData!!)
+                                } else {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "Impossibile inserire 0 come peso",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            ) {
+                                Text(text = "Aggiorna peso")
+                            }
+                            TextField(value = peso.toString(), onValueChange = {
+                                try {
+                                    peso = it.toDouble()
+                                } catch (ex: Exception) {
+                                }
+                            })
+                        }
+                    }
+
                 }
             }
 

@@ -22,7 +22,7 @@ class UserData(
     @ColumnInfo(name = "posizione")
     var posizione: String = "",
     @ColumnInfo(name = "peso")
-    var peso: MutableList<Pair<Date, Int>>? = null,
+    var peso: MutableList<Pair<Date, Double>>? = mutableListOf(),
     @ColumnInfo(name = "imageProfile")
     var image: String = ""
 ) {

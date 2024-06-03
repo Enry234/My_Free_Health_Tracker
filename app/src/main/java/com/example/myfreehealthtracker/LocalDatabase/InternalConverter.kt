@@ -36,7 +36,7 @@ class InternalConverter {
     }
 
     @TypeConverter
-    fun listPairDateIntToString(list: List<Pair<Date, Int>>?): String {
+    fun listPairDateDoubleToString(list: List<Pair<Date, Double>>?): String {
         if (list != null) {
             return list.joinToString(",") { "${it.first.time}:${it.second}" }
         }
@@ -45,11 +45,11 @@ class InternalConverter {
     }
 
     @TypeConverter
-    fun stringToListPairDateInt(string: String): List<Pair<Date, Int>> {
+    fun stringToListPairDateDouble(string: String): List<Pair<Date, Double>> {
         if (string == "") return listOf()
         return string.split(",").map {
             val item = it.split(":")
-            Date(item[0]) to item[1].toInt()
+            Date(item[0].toLong()) to item[1].toDouble()
         }
     }
 }

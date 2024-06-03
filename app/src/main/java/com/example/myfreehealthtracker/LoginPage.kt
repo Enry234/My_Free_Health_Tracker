@@ -553,7 +553,7 @@ class LoginPage {
                                         mutableStateOf(false)
                                     }
                                     var peso by remember {
-                                        mutableIntStateOf(0)
+                                        mutableStateOf(0.0)
                                     }
                                     var altezza by remember {
                                         mutableIntStateOf(0)
@@ -562,7 +562,7 @@ class LoginPage {
 
                                     BasicTextField(
                                         value = peso.toString(),
-                                        onValueChange = { peso = it.toInt() },
+                                        onValueChange = { peso = it.toDouble() },
                                         // internal implementation of the BasicTextField will dispatch focus events
                                         interactionSource = interactionSource,
                                         enabled = false,
@@ -585,7 +585,7 @@ class LoginPage {
                                                         value = peso.toString(),
                                                         onValueChange = {
                                                             try {
-                                                                peso = it.toInt()
+                                                                peso = it.toDouble()
                                                             } catch (ex: NumberFormatException) {
                                                             }
                                                         },
@@ -674,6 +674,7 @@ class LoginPage {
                                                 IconButton(onClick = {
                                                     if (altezza > 0 && peso > 0) {
                                                         user.altezza = altezza
+                                                        user.peso!!.add(Pair(Date(), peso))
 
                                                         pos += 1
                                                     } else {
