@@ -116,11 +116,13 @@ dependencies {
     implementation("com.github.vsnappy1:ComposeDatePicker:2.2.0")
 
 
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m2)
-    implementation(libs.vico.compose.m3)
-    implementation(libs.vico.core)
-    implementation(libs.vico.views)
+//    implementation(libs.vico.compose)
+//    implementation(libs.vico.compose.m2)
+//    implementation(libs.vico.compose.m3)
+//    implementation(libs.vico.core)
+//    implementation(libs.vico.views)
+
+    implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
 
 //    implementation ("com.patrykandpatrick.vico:core:1.11.1")
 //    implementation ("com.patrykandpatrick.vico:compose-m3:1.11.1")
