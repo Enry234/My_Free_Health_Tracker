@@ -290,7 +290,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         val date = Date()
         date.hours = pickedHour
         date.minutes = pickedMinute
-        val pasto = Pasto(mainApplication.userData!!.id, date, tipoPasto, "")
+        val pasto = Pasto(mainApplication.userData!!.userData.value!!.id, date, tipoPasto, "")
         alimentoViewModel.insert(pasto)
         insertPastoToAlimento(pasto)
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
@@ -630,7 +630,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             currentMealFoodList.add(selectedFood)
                             pastoToAlimentoWrapperList.add(
                                 PastoToAlimentoWrapper(
-                                    idUser = mainApplication.userData!!.id,
+                                    idUser = mainApplication.userData!!.userData.value!!.id,
                                     idAlimento = selectedFood.id,
                                     nomeAlimento = selectedFood.nome,
                                     imageUri = selectedFood.immagine,
@@ -772,7 +772,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                                 pastoToAlimentoWrapperList.add(
                                     PastoToAlimentoWrapper(
-                                        idUser = mainApplication.userData!!.id,
+                                        idUser = mainApplication.userData!!.userData.value!!.id,
                                         idAlimento = food.id,
                                         nomeAlimento = food.nome,
                                         imageUri = food.immagine,

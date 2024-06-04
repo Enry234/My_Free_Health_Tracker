@@ -1,7 +1,6 @@
 package com.example.myfreehealthtracker
 
 import android.app.Application
-import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
@@ -29,8 +28,9 @@ class MainApplication : Application() {
     val pastoDao by lazy { internalDatabaseRef.pastoDao() }
     val internalRepository by lazy { UserRepository(internalDatabaseRef.userDao()) }
     val internalFileData by lazy { File(filesDir, "internalData") }
-    var userData: UserData? = null
 
+
+    var userData: UserDataViewModel? = null
 
     //add database repositories
     val userRepo by lazy { UserRepository(userDao) }

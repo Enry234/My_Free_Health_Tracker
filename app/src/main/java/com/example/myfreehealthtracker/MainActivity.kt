@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -45,7 +46,9 @@ import java.util.Date
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
     lateinit var mainApplication: MainApplication
+
     private fun loadUser() {
+
         if (mainApplication.internalFileData.exists()) {
             try {
                 val fileInputStream: FileInputStream =
@@ -66,8 +69,9 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                         mainApplication.userDao.getAllUser().collectLatest { user ->
                             user.forEach {
                                 Log.i("MAIN", "ciclo caricamento user")
-                                mainApplication.userData = it
-                                if (mainApplication.userData!!.id != "") {
+
+                                mainApplication.userData!!.setUserData(it)
+                                if (mainApplication.userData!!.userData.value!!.id != "") {
                                     Log.i("MAIN", mainApplication.userData.toString())
                                     initializeMainActivityLayout()
                                 } else {
@@ -101,6 +105,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainApplication = application as MainApplication
+        mainApplication.userData = ViewModelProvider(this).get(UserDataViewModel::class.java)
         loadUser()
     }
 
@@ -120,7 +125,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         val composeViewDrawerHeader = findViewById<ComposeView>(R.id.drawer_header_compose_view)
         drawerImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         toolbarImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
-        drawerProfileName.text = "Hello " + mainApplication.userData!!.nome
+        drawerProfileName.text = "Hello " + mainApplication.userData!!.userData.value!!.nome
 
 
         setSupportActionBar(toolbar)
@@ -179,18 +184,18 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                             var peso by remember { mutableStateOf(0.0) }
                             Button(onClick = {
                                 if (peso != 0.0) {
-                                    mainApplication.userData!!.peso!!.add(
+                                    mainApplication.userData!!.userData.value!!.peso!!.add(
                                         Pair(
                                             Date(), peso
                                         )
                                     )
                                     //mainApplication.applicationScope.launch {
                                     runBlocking {
-                                        mainApplication.userDao.insertUser(mainApplication.userData!!)//upsert mode
+                                        mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
                                     }
                                     //}
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
-                                        .child(mainApplication.userData!!.id)
+                                        .child(mainApplication.userData!!.userData.value!!.id)
                                         .setValue(mainApplication.userData!!)
                                 } else {
                                     Toast.makeText(
