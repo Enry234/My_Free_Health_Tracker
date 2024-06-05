@@ -35,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.MainApplication
@@ -196,15 +198,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         sliceDrawer = SimpleSliceDrawer(sliceThickness = 10F)
                     )
                     Column(
-
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
 
                         Text(
-                            text = calorie.toString()
+                            text = "Riepilogo Giornaliero",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = calorie.toString(),
+                            fontSize = 18.sp
                         )
 
                         Text(
                             text = "kcal",
+                            fontSize = 18.sp
                         )
 
                     }
