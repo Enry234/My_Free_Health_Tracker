@@ -3,28 +3,47 @@ package com.example.myfreehealthtracker.Fragments
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
 import ir.ehsannarmani.compose_charts.models.DividerProperties
@@ -35,6 +54,7 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -45,6 +65,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
     lateinit var mainApplication: MainApplication
+
+    var proteine = 0f
+    var carboidrati = 0f
+    var grassi = 0f
+    var fibre = 0f
+    var calorie = 0f
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +93,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 //                    horizontalAlignment = Alignment.CenterHorizontally,
 //                    verticalArrangement = Arrangement.Center
                     ) {
+
                         Surface(
+                            Modifier.fillMaxWidth(),
                             tonalElevation = 16.dp,
                             shadowElevation = 16.dp,
                             shape = RoundedCornerShape(16.dp),
@@ -75,11 +103,241 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             Box(
                                 modifier = Modifier.padding(8.dp)
                             ) {
+                                dailyReport()
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            tonalElevation = 16.dp,
+                            shadowElevation = 16.dp,
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(8.dp)
+                                    //.fillMaxWidth()
+                            ) {
                                 WeightChart()
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun dailyReport() {
+        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo().observeAsState()
+
+        // Ottenere la data e l'ora corrente
+        val today = Date()
+
+        // Impostare l'ora a mezzanotte
+        today.hours = 0
+        today.minutes = 0
+        today.seconds = 0
+
+        var filterededPastoToCibo = allPastoToCibo?.filter {
+            it.date.compareTo(today) >= 0
+        }
+
+        var dailyFoods: MutableList<Pair<Alimento, Float>> = mutableListOf()
+
+        if (filterededPastoToCibo != null) {
+            filterededPastoToCibo.forEach {
+                var alimento: Alimento
+                runBlocking {
+                    alimento = mainApplication.alimentoRepo.getAlimentoById(it.idAlimento)
+                }
+
+                dailyFoods.add(Pair(alimento, it.quantity))
+                Log.i("FILTERED", "LOOP")
+
+            }
+
+            dailyFoods.forEach {
+                proteine += it.first.proteine!!.times(it.second)
+                carboidrati += it.first.carboidrati!!.times(it.second)
+                grassi += it.first.grassi!!.times(it.second)
+                fibre += it.first.fibre!!.times(it.second)
+                calorie += it.first.calorie!!.times(it.second)
+
+                Log.i("DAILY", "LOOP")
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(300.dp)
+                        .width(300.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    //piechart con la somma dei valori nutrizionali
+                    PieChart(
+                        pieChartData = PieChartData(
+                            listOf(
+                                PieChartData.Slice(
+                                    carboidrati,
+                                    Color(0xFFE1E289)
+                                ),
+                                PieChartData.Slice(proteine, Color(0xFFDB504A)),
+                                PieChartData.Slice(grassi, Color(0xFF59C3C3)),
+                                PieChartData.Slice(fibre, Color(0xFF04724D)),
+                            )
+                        ),
+                        modifier = Modifier.fillMaxSize(),
+                        animation = simpleChartAnimation(),
+                        sliceDrawer = SimpleSliceDrawer(sliceThickness = 10F)
+                    )
+                    Column(
+
+                    ) {
+
+                        Text(
+                            text = calorie.toString()
+                        )
+
+                        Text(
+                            text = "kcal",
+                        )
+
+                    }
+
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BulletSpan1(
+                                        color = Color(0xFF59C3C3),
+                                        label = "Grassi",
+                                        value = grassi.toInt()
+                                    )
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BulletSpan1(
+                                        color = Color(0xFF04724D),
+                                        label = "Fibre",
+                                        value = fibre.toInt()
+                                    )
+                                }
+                            }
+                        }
+                        Box(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BulletSpan2(
+                                        color = Color(0xFFE1E289),
+                                        label = "Carboidrati",
+                                        value = carboidrati.toInt()
+                                    )
+                                }
+                                Row(
+
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BulletSpan2(
+                                        color = Color(0xFFDB504A),
+                                        label = "Proteine",
+                                        value = proteine.toInt()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+    @Composable
+    fun BulletSpan1(color: Color, label: String, value: Int) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .width(10.dp)
+                .height(10.dp)
+        ) {
+            //internal circle with icon
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "contentDescription",
+                modifier = Modifier
+                    .width(24.dp)
+                    .background(color, CircleShape)
+                    .padding(2.dp),
+                tint = color
+            )
+        }
+        Text(
+            text = "$label: ${value}g"
+        )
+    }
+
+    @Composable
+    fun BulletSpan2(color: Color, label: String, value: Int) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "$label: ${value}g"
+            )
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(10.dp)
+                    .height(10.dp)
+            ) {
+                //internal circle with icon
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "contentDescription",
+                    modifier = Modifier
+                        .width(24.dp)
+                        .background(color, CircleShape)
+                        .padding(2.dp),
+                    tint = color
+                )
             }
         }
     }
@@ -99,10 +357,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("d/MM")
         val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
 
-        pairList!!.subList(maxOf(0, pairList.size - 7), pairList.size).forEachIndexed { index, pair ->
-            weights[index] = pair.second
-            dates[index] = formatter.format(pair.first)
-        }
+        pairList!!.subList(maxOf(0, pairList.size - 7), pairList.size)
+            .forEachIndexed { index, pair ->
+                weights[index] = pair.second
+                dates[index] = formatter.format(pair.first)
+            }
 
 
 
@@ -143,66 +402,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     animationEnabled = true,
                     animationSpec = tween(500)
                 ),
-                dividerProperties = DividerProperties (
+                dividerProperties = DividerProperties(
                     enabled = true,
-            xAxisProperties = LineProperties(
-                enabled = false
-            ),
-            yAxisProperties = LineProperties(
-                enabled = false
-            )
-            ),
+                    xAxisProperties = LineProperties(
+                        enabled = false
+                    ),
+                    yAxisProperties = LineProperties(
+                        enabled = false
+                    )
+                ),
 
-            gridProperties = GridProperties(
-                enabled = false,
-            ),
+                gridProperties = GridProperties(
+                    enabled = false,
+                ),
 
-            labelProperties = LabelProperties(
-                enabled = true,
-                textStyle = MaterialTheme.typography.labelSmall,
-                //verticalPadding = 16.dp,
-                labels = dates
-            )
+                labelProperties = LabelProperties(
+                    enabled = true,
+                    textStyle = MaterialTheme.typography.labelSmall,
+                    //verticalPadding = 16.dp,
+                    labels = dates
+                )
             )
         }
-
-
-//        val chartEntryModel = entryModelOf(*weights)
-//
-
-//
-//        //val xValuesToDates = data.associateBy { it.to.toFloat() }
-//        //val chartEntryModel = entryModelOf(xValuesToDates.keys.zip(data.values, ::entryOf))
-//        //val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
-//        val horizontalAxisValueFormatter =
-//            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
-//                formatter.format(dates[value.toInt()])
-//            }
-//
-//
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//
-//        ) {
-//
-//            ProvideChartStyle(
-//                ChartStyle.Axis()
-//            ){
-//                Chart(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    chart = lineChart(
-//
-//                    ),
-//                    model = chartEntryModel,
-//                    startAxis = rememberStartAxis(valueFormatter = DecimalFormatAxisValueFormatter(),
-//                        itemPlacer = AxisItemPlacer.Vertical.default(maxItemCount = 10, true) ),
-//                    bottomAxis = rememberBottomAxis(valueFormatter = horizontalAxisValueFormatter),
-//                    autoScaleUp = AutoScaleUp.Full,
-//                    chartScrollState = rememberChartScrollState(),
-//
-//                    )
-//    }
 
 
     }

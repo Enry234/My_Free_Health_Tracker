@@ -15,9 +15,7 @@ class AlimentoRepository(private val alimentoDao: AlimentoDao) {
     }
 
     @WorkerThread
-    suspend fun getAlimentoById(barcode: String){
-        alimentoDao.getAlimentoById(barcode)
-    }
+    suspend fun getAlimentoById(barcode: String) = alimentoDao.getAlimentoById(barcode)
 
     @WorkerThread
     suspend fun deleteAlimento(alimento: Alimento){

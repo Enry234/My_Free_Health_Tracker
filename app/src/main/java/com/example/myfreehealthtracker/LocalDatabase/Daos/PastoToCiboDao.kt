@@ -15,6 +15,9 @@ interface PastoToCiboDao {
     @Upsert
     suspend fun insertPastoToCibo(pastoToCibo: PastoToCibo)
 
+    @Query("SELECT * FROM PastoToCibo ")
+    fun getAllPastoToCibo(): Flow<List<PastoToCibo>>
+
 
     @Query("SELECT * FROM Alimento WHERE Alimento.id IN (SELECT idAlimentoId FROM PastoToCibo WHERE idUserID =:userId AND idDate=:date)")
     fun getAlimentiByPasto(userId: String, date: Date): Flow<List<Alimento>>
