@@ -106,7 +106,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             mainApplication.userRepo,
             mainApplication.alimentoRepo,
             mainApplication.pastoRepo,
-            mainApplication.pastoToCiboRepo
+            mainApplication.pastoToCiboRepo,
+            mainApplication.sportRepo,
+            mainApplication.attivitaRepo
         )
     }
 

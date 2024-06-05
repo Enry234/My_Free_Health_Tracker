@@ -91,7 +91,9 @@ class NewFoodFragment : Fragment() {
             mainApplication.userRepo,
             mainApplication.alimentoRepo,
             mainApplication.pastoRepo,
-            mainApplication.pastoToCiboRepo
+            mainApplication.pastoToCiboRepo,
+            mainApplication.sportRepo,
+            mainApplication.attivitaRepo
         )
     }
 

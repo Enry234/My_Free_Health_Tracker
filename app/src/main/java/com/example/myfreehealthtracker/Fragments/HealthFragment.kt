@@ -153,11 +153,16 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             Column(
 
             ) {
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(allPasto) {
-                        PastoItem(it)
+                if (allPasto.isEmpty()) {
+                    Text(text = "Nessun Pasto presente")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f)
+                    ) {
+
+                        items(allPasto) {
+                            PastoItem(it)
+                        }
                     }
                 }
             }
@@ -166,7 +171,6 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     @Composable
     private fun PastoItem(pasto: Pasto) {
-
         val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepo.getAlimentiByPasto(
             pasto
         ).asLiveData().observeAsState()

@@ -5,23 +5,23 @@ import com.example.myfreehealthtracker.LocalDatabase.Daos.AlimentoDao
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import kotlinx.coroutines.flow.Flow
 
-class AlimentoRepository(private val AlimentoDao: AlimentoDao) {
+class AlimentoRepository(private val alimentoDao: AlimentoDao) {
 
-    val allAlimento: Flow<List<Alimento>> = AlimentoDao.getAllAlimento()
+    val allAlimento: Flow<List<Alimento>> = alimentoDao.getAllAlimento()
 
     @WorkerThread
     suspend fun insertAlimento(alimento: Alimento){
-        AlimentoDao.insertAlimento(alimento)
+        alimentoDao.insertAlimento(alimento)
     }
 
     @WorkerThread
     suspend fun getAlimentoById(barcode: String){
-        AlimentoDao.getAlimentoById(barcode)
+        alimentoDao.getAlimentoById(barcode)
     }
 
     @WorkerThread
     suspend fun deleteAlimento(alimento: Alimento){
-        AlimentoDao.deleteAlimento(alimento)
+        alimentoDao.deleteAlimento(alimento)
     }
 
 
