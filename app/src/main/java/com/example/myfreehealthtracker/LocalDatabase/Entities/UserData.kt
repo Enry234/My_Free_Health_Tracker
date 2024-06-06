@@ -24,18 +24,18 @@ class UserData(
     @ColumnInfo(name = "peso")
     var peso: MutableList<Pair<Date, Double>>? = mutableListOf(),
     @ColumnInfo(name = "imageProfile")
-    var image: String = ""
+    var image: String = "",
+    @ColumnInfo(name = "calorieObiettivo")
+    var calorie: Int = 0,
+    @ColumnInfo(name = "proteine")
+    var proteine: Int = 0,
+    @ColumnInfo(name = "carboidrati")
+    var carboidrati: Int = 0,
+    @ColumnInfo(name = "grassi")
+    var grassi: Int = 0,
+    @ColumnInfo(name = "fibre")
+    var fibre: Int = 0,
 ) {
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun addPeso(newPeso: Int) {
-//        peso!!.add(Pair(Date.from(Instant.now()), newPeso))
-//    }
-//
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun getEta(): Int {
-//        return Date.from(Instant.now()).year - dataDiNascita!!.year
-//    }
 
 
 }

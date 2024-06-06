@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -77,6 +80,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 } else {
 
                                     Log.i("MAIN_ERROR", "Internal user db not found")
+
 
                                 }
                             }
@@ -174,47 +178,274 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         composeViewDrawerHeader.setContent {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .height(500.dp)
                     .background(color = Color.White)
                     .padding(10.dp)
             ) {
-                Column {
+                Column(modifier = Modifier.fillMaxSize()) {
                     Box() {
-                        Row() {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
                             var peso by remember { mutableStateOf(0.0) }
-                            Button(onClick = {
-                                if (peso != 0.0) {
-                                    mainApplication.userData!!.userData.value!!.peso!!.add(
-                                        Pair(
-                                            Date(), peso
+                            Button(
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    if (peso != 0.0) {
+                                        mainApplication.userData!!.userData.value!!.peso!!.add(
+                                            Pair(
+                                                Date(), peso
+                                            )
                                         )
-                                    )
-                                    //mainApplication.applicationScope.launch {
-                                    runBlocking {
-                                        mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
+                                        //mainApplication.applicationScope.launch {
+                                        runBlocking {
+                                            mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
+                                        }
+                                        //}
+                                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                            .child(mainApplication.userData!!.userData.value!!.id)
+                                            .setValue(mainApplication.userData!!)
+                                    } else {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            "Impossibile inserire 0 come peso",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
-                                    //}
-                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
-                                        .child(mainApplication.userData!!.userData.value!!.id)
-                                        .setValue(mainApplication.userData!!)
-                                } else {
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        "Impossibile inserire 0 come peso",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 }
-                            }
                             ) {
                                 Text(text = "Aggiorna peso")
                             }
-                            TextField(value = peso.toString(), onValueChange = {
-                                try {
-                                    peso = it.toDouble()
-                                } catch (ex: Exception) {
-                                }
-                            })
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                value = peso.toString(), onValueChange = {
+                                    try {
+                                        peso = it.toDouble()
+                                    } catch (ex: Exception) {
+                                    }
+                                })
                         }
+                    }
+                    Box() {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            var calorie by remember { mutableStateOf(0) }
+                            Button(
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    if (calorie != 0) {
+                                        mainApplication.userData!!.userData.value!!.calorie =
+                                            calorie
+                                        //mainApplication.applicationScope.launch {
+                                        runBlocking {
+                                            mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
+                                        }
+                                        //}
+                                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                            .child(mainApplication.userData!!.userData.value!!.id)
+                                            .setValue(mainApplication.userData!!)
+                                    } else {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            "Impossibile inserire 0",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            ) {
+                                Text(text = "Aggiorna Obiettio Calorie")
+                            }
+                            TextField(
+                                modifier = Modifier.weight(1f),
+                                value = calorie.toString(), onValueChange = {
+                                    try {
+                                        calorie = it.toInt()
+                                    } catch (ex: Exception) {
+                                    }
+                                })
+                        }
+                    }
+                    Box() {
+                        Column {
+                            Text(text = "Aggiorna obiettivi")
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .weight(1f)
+                            ) {
+                                //Carbo
+                                Column(modifier = Modifier.weight(1f)) {
+                                    var carboidrati by remember { mutableIntStateOf(0) }
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        onClick = {
+                                            if (carboidrati != 0) {
+                                                mainApplication.userData!!.userData.value!!.carboidrati =
+                                                    carboidrati
+                                                runBlocking {
+                                                    mainApplication.userDao.insertUser(
+                                                        mainApplication.userData!!.userData.value!!
+                                                    )//upsert mode
+                                                }
+                                                mainApplication.getFirebaseDatabaseRef(
+                                                    FirebaseDBTable.USERS
+                                                )
+                                                    .child(mainApplication.userData!!.userData.value!!.id)
+                                                    .setValue(mainApplication.userData!!)
+                                            } else {
+                                                Toast.makeText(
+                                                    this@MainActivity,
+                                                    "Impossibile inserire 0",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    ) {
+                                        Text(text = "Aggiorna Obiettivo Carboidrati")
+                                    }
+                                    TextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = carboidrati.toString(), onValueChange = {
+                                            try {
+                                                carboidrati = it.toInt()
+                                            } catch (ex: Exception) {
+                                            }
+                                        })
+                                }
+                                //proteine
+                                Column(modifier = Modifier.weight(1f)) {
+                                    var proteine by remember { mutableIntStateOf(0) }
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        onClick = {
+                                            if (proteine != 0) {
+                                                mainApplication.userData!!.userData.value!!.proteine =
+                                                    proteine
+                                                runBlocking {
+                                                    mainApplication.userDao.insertUser(
+                                                        mainApplication.userData!!.userData.value!!
+                                                    )//upsert mode
+                                                }
+                                                mainApplication.getFirebaseDatabaseRef(
+                                                    FirebaseDBTable.USERS
+                                                )
+                                                    .child(mainApplication.userData!!.userData.value!!.id)
+                                                    .setValue(mainApplication.userData!!)
+                                            } else {
+                                                Toast.makeText(
+                                                    this@MainActivity,
+                                                    "Impossibile inserire 0",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    ) {
+                                        Text(text = "Aggiorna Obiettivo Proteine")
+                                    }
+                                    TextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = proteine.toString(), onValueChange = {
+                                            try {
+                                                proteine = it.toInt()
+                                            } catch (ex: Exception) {
+                                            }
+                                        })
+                                }
+
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .weight(1f)
+                            ) {
+                                //Fibre
+                                Column(modifier = Modifier.weight(1f)) {
+                                    var fibre by remember { mutableIntStateOf(0) }
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        onClick = {
+                                            if (fibre != 0) {
+                                                mainApplication.userData!!.userData.value!!.fibre =
+                                                    fibre
+                                                runBlocking {
+                                                    mainApplication.userDao.insertUser(
+                                                        mainApplication.userData!!.userData.value!!
+                                                    )//upsert mode
+                                                }
+                                                mainApplication.getFirebaseDatabaseRef(
+                                                    FirebaseDBTable.USERS
+                                                )
+                                                    .child(mainApplication.userData!!.userData.value!!.id)
+                                                    .setValue(mainApplication.userData!!)
+                                            } else {
+                                                Toast.makeText(
+                                                    this@MainActivity,
+                                                    "Impossibile inserire 0",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    ) {
+                                        Text(text = "Aggiorna Obiettivo Fibre")
+                                    }
+                                    TextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = fibre.toString(), onValueChange = {
+                                            try {
+                                                fibre = it.toInt()
+                                            } catch (ex: Exception) {
+                                            }
+                                        })
+                                }
+                                //grassi
+                                Column(modifier = Modifier.weight(1f)) {
+                                    var grassi by remember { mutableIntStateOf(0) }
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        onClick = {
+                                            if (grassi != 0) {
+                                                mainApplication.userData!!.userData.value!!.grassi =
+                                                    grassi
+                                                runBlocking {
+                                                    mainApplication.userDao.insertUser(
+                                                        mainApplication.userData!!.userData.value!!
+                                                    )//upsert mode
+                                                }
+                                                mainApplication.getFirebaseDatabaseRef(
+                                                    FirebaseDBTable.USERS
+                                                )
+                                                    .child(mainApplication.userData!!.userData.value!!.id)
+                                                    .setValue(mainApplication.userData!!)
+                                            } else {
+                                                Toast.makeText(
+                                                    this@MainActivity,
+                                                    "Impossibile inserire 0",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    ) {
+                                        Text(text = "Aggiorna Obiettivo Grassi")
+                                    }
+                                    TextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = grassi.toString(), onValueChange = {
+                                            try {
+                                                grassi = it.toInt()
+                                            } catch (ex: Exception) {
+                                            }
+                                        })
+                                }
+                            }
+                        }
+
                     }
 
                 }
