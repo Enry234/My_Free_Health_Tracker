@@ -15,9 +15,8 @@ class SportRepository(private val sportDao: SportDao) {
     }
 
     @WorkerThread
-    suspend fun getSportById(id: String) {
-        sportDao.getSportById(id)
-    }
+    fun getSportById(id: String) = sportDao.getSportById(id)
+
 
     @WorkerThread
     suspend fun deleteSport(sport: Sport) {

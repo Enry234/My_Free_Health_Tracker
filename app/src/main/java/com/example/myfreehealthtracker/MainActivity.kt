@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
                 R.id.Sport -> {
                     toolbarTitle.text = getString(R.string.Sport)
-                    navController.navigate(R.id.barcodeFragment)
+                    navController.navigate(R.id.sportFragment)
                     true
                 }
 
