@@ -173,7 +173,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val calendar = Calendar.getInstance()
 
         // Sottrai 5 giorni dalla data corrente
-        calendar.add(Calendar.DAY_OF_YEAR, -5)
+        calendar.add(Calendar.DAY_OF_YEAR, -3)
 
         // Imposta l'ora a mezzanotte (00:00:00)
         calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -185,7 +185,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val date = calendar.time
 
 
-        var filterededPastoToCibo = allPastoToCibo?.filter {
+        var filteredPastoToCibo = allPastoToCibo?.filter {
             it.date >= date
         }?.sortedBy { it.date }
 
@@ -196,7 +196,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         */
         val listMacro = LinkedHashMap<Int, Macros>()
 
-        filterededPastoToCibo?.forEach {
+        filteredPastoToCibo?.forEach {
             val alimento: Alimento
 
             runBlocking {
@@ -204,12 +204,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             if (listMacro.containsKey(it.date.day)) {
-                listMacro[it.date.day] = Macros(
+                listMacro[it.date.day]?.add(Macros(
                     it.quantity * alimento.proteine!!,
                     it.quantity * alimento.carboidrati!!,
                     it.quantity * alimento.grassi!!,
                     it.quantity * alimento.fibre!!
-                )
+                ))
             } else listMacro[it.date.day] = Macros(
                 it.quantity * alimento.proteine!!,
                 it.quantity * alimento.carboidrati!!,
@@ -223,28 +223,30 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val fats = mutableListOf<Double>()
         val fibers = mutableListOf<Double>()
 
-        if (allPastoToCibo != null) {
 
 
-            listMacro.forEach {
-                proteins.add(it.value.proteine.toDouble())
-                carbohydrates.add(it.value.carboidrati.toDouble())
-                fats.add(it.value.grassi.toDouble())
-                fibers.add(it.value.fibre.toDouble())
-            }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            ) {
+        listMacro.forEach {
+            proteins.add(it.value.proteine.toDouble())
+            carbohydrates.add(it.value.carboidrati.toDouble())
+            fats.add(it.value.grassi.toDouble())
+            fibers.add(it.value.fibre.toDouble())
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
+
+            if (filteredPastoToCibo != null && listMacro.isNotEmpty()) {
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp),
                     data = listOf(
                         Line(
-                            label = "Il tuo peso",
+                            label = "Proteine",
                             values = proteins,
                             color = SolidColor(Color(0xFFDB504A)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -255,7 +257,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
                         ),
                         Line(
-                            label = "Il tuo peso",
+                            label = "Carboidrati",
                             values = carbohydrates,
                             color = SolidColor(Color(0xFFE1E289)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -266,7 +268,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
                         ),
                         Line(
-                            label = "Il tuo peso",
+                            label = "Grassi",
                             values = fats,
                             color = SolidColor(Color(0xFF59C3C3)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -277,7 +279,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
                         ),
                         Line(
-                            label = "Il tuo peso",
+                            label = "Fibre",
                             values = fibers,
                             color = SolidColor(Color(0xFF04724D)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -294,7 +296,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     //minValue = 40.0,
                     //maxValue = 100.0
 //            dotsProperties = DotProperties(
-//                enabled = false,
+//                enabled = true,
 //                radius = 10f,
 //                color = SolidColor(Color(0xFF04724D)),
 //                strokeWidth = 3f,
@@ -312,10 +314,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             enabled = false
                         )
                     ),
-//
-//            gridProperties = GridProperties(
-//                enabled = false,
-//            )
+
+                    gridProperties = GridProperties(
+                        enabled = false,
+                    )
                 )
             }
         }
