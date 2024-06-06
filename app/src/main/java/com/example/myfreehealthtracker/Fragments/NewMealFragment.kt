@@ -60,6 +60,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -87,6 +88,11 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.zxing.integration.android.IntentIntegrator
+import com.vsnappy1.datepicker.DatePicker
+import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
+import com.vsnappy1.datepicker.data.model.DatePickerDate
+import com.vsnappy1.datepicker.data.model.SelectionLimiter
+import com.vsnappy1.datepicker.ui.model.DatePickerConfiguration
 import com.vsnappy1.timepicker.TimePicker
 import com.vsnappy1.timepicker.ui.model.TimePickerConfiguration
 import kotlinx.coroutines.CoroutineScope
@@ -198,6 +204,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             var pickedHour by remember { mutableIntStateOf(0) }
             var pickedMinute by remember { mutableIntStateOf(0) }
             var selectMealType by remember { mutableStateOf("Seleziona tipo pasto") }
+            var pickedYear by remember { mutableIntStateOf(0) }
+            var pickedMonth by remember { mutableIntStateOf(0) }
+            var pickedDay by remember { mutableIntStateOf(0) }
             var tipoPasto: TipoPasto = TipoPasto.Spuntino
             var openDropDownMenu by remember {
                 mutableStateOf(false)
@@ -214,7 +223,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
-                            //.fillMaxHeight(0.4f),
+                        //.fillMaxHeight(0.4f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         //Text(text = String.format("%02d:%02d", pickedHour, pickedMinute))
@@ -223,10 +232,42 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 //                            Text("Ins")
 //                         }
 //                        }
-                        Text(text = "Scegli l'orario")
+
+                        val calendar = Calendar.getInstance()
+
+                        DatePicker(
+                            onDateSelected = { year, month, day ->
+                                    pickedYear= year
+                                    pickedMonth = month
+                                    pickedDay = day
+
+                            },
+                            configuration = DatePickerConfiguration.Builder()
+                                .height(height = 300.dp)
+                                .dateTextStyle(
+                                    DefaultDatePickerConfig.dateTextStyle.copy(
+                                        color = Color(
+                                            0xFF333333
+                                        )
+                                    )
+                                )
+                                .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
+                                .selectedDateBackgroundColor(color = Color(0xFF64DD17))
+                                .numberOfMonthYearRowsDisplayed(5)
+                                .build(),
+                            selectionLimiter = SelectionLimiter(
+
+                                toDate = DatePickerDate(
+                                    year = calendar.get(Calendar.YEAR),
+                                    month = calendar.get(Calendar.MONTH),
+                                    day = calendar.get(Calendar.DAY_OF_MONTH)
+                                )
+                            )
+                        )
+
                         TimePicker(
                             modifier = Modifier
-                                .padding(16.dp)
+                                //.padding(16.dp)
                                 .background(Color.Transparent, RoundedCornerShape(8.dp))
                                 .height(100.dp),
                             onTimeSelected = { hour, minute ->
@@ -238,6 +279,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 .selectedTimeScaleFactor(scaleFactor = 1.5f)
                                 .build(),
                             is24Hour = true
+                        )
+                        Spacer(
+                            modifier = Modifier
+                                .height(16.dp)
                         )
                         Box(
                             modifier = Modifier.fillMaxWidth(),
@@ -257,11 +302,13 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     onDismissRequest = { openDropDownMenu = false }
                                 ) {
                                     TipoPasto.entries.forEach { value ->
-                                        DropdownMenuItem(text = { Text(text = value.name) }, onClick = {
-                                            selectMealType = value.name
-                                            tipoPasto = value
-                                            openDropDownMenu = false
-                                        })
+                                        DropdownMenuItem(
+                                            text = { Text(text = value.name) },
+                                            onClick = {
+                                                selectMealType = value.name
+                                                tipoPasto = value
+                                                openDropDownMenu = false
+                                            })
                                     }
                                 }
                             }
@@ -270,7 +317,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 openInsertDialog = false
-                                insertPasto(pickedMinute, pickedHour, tipoPasto)
+                                insertPasto(pickedMinute, pickedHour, pickedDay, pickedMonth, pickedYear, tipoPasto)
 
                             }) {
                             Text(text = "Conferma Inserimento")
@@ -288,10 +335,12 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
-    private fun insertPasto(pickedMinute: Int, pickedHour: Int, tipoPasto: TipoPasto) {
-        val date = Date()
-        date.hours = pickedHour
-        date.minutes = pickedMinute
+    private fun insertPasto(pickedMinute: Int, pickedHour: Int,pickedDay: Int, pickedMonth: Int, pickedYear: Int, tipoPasto: TipoPasto) {
+        val calendar = Calendar.getInstance()
+        calendar.set(pickedYear, pickedMonth, pickedDay, pickedHour, pickedMinute)
+
+        // Ottieni l'oggetto Date dal Calendar
+        val date = calendar.time
         val pasto = Pasto(mainApplication.userData!!.userData.value!!.id, date, tipoPasto, "")
         alimentoViewModel.insert(pasto)
         insertPastoToAlimento(pasto)

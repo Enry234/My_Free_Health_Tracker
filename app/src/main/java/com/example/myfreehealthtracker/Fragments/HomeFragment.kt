@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -59,6 +61,7 @@ import ir.ehsannarmani.compose_charts.models.StrokeStyle
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -91,7 +94,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         .padding(8.dp)
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
 //                    horizontalAlignment = Alignment.CenterHorizontally,
 //                    verticalArrangement = Arrangement.Center
                     ) {
@@ -119,9 +124,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         ) {
                             Box(
                                 modifier = Modifier.padding(8.dp)
-                                    //.fillMaxWidth()
+                                //.fillMaxWidth()
                             ) {
                                 WeightChart()
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            tonalElevation = 16.dp,
+                            shadowElevation = 16.dp,
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(8.dp)
+                                //.fillMaxWidth()
+                            ) {
+                                displayMacros()
                             }
                         }
                     }
@@ -130,9 +151,83 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    class Macros(
+        var proteine: Float = 0f,
+        var carboidrati: Float = 0f,
+        var grassi: Float = 0f,
+        var fibre: Float = 0f,
+    ) {
+        fun add(macros: Macros) {
+            proteine += macros.proteine
+            carboidrati += macros.carboidrati
+            grassi += macros.grassi
+            fibre += macros.fibre
+        }
+    }
+
+    @Composable
+    private fun displayMacros() {
+
+        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo()
+            .observeAsState()
+
+        val calendar = Calendar.getInstance()
+
+        // Sottrai 5 giorni dalla data corrente
+        calendar.add(Calendar.DAY_OF_YEAR, -5)
+
+        // Imposta l'ora a mezzanotte (00:00:00)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        // Ottieni l'oggetto Date dal Calendar
+        val date = calendar.time
+
+
+        var filterededPastoToCibo = allPastoToCibo?.filter {
+            it.date >= date
+        }?.sortedBy { it.date }
+
+        /*
+        filteredPastoToCibo.forEach {
+            // prendo gli alimenti di quel giorno
+        }
+        */
+        val listMacro = LinkedHashMap<Int, Macros>()
+
+        filterededPastoToCibo?.forEach {
+            val alimento: Alimento
+
+            runBlocking {
+                alimento = mainApplication.alimentoRepo.getAlimentoById(it.idAlimento)
+            }
+
+            if (listMacro.containsKey(it.date.day)) {
+                listMacro[it.date.day]?.add(
+                    Macros(
+                        it.quantity * alimento.proteine!!,
+                        it.quantity *alimento.carboidrati!!,
+                        it.quantity *alimento.grassi!!,
+                        it.quantity *alimento.fibre!!
+                    )
+                )
+            } else listMacro[it.date.day] = Macros(
+                it.quantity *alimento.proteine!!,
+                it.quantity *alimento.carboidrati!!,
+                it.quantity *alimento.grassi!!,
+                it.quantity *alimento.fibre!!
+            )
+        }
+
+    }
+
+
     @Composable
     private fun dailyReport() {
-        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo().observeAsState()
+        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo()
+            .observeAsState()
 
         // Ottenere la data e l'ora corrente
         val today = Date()
@@ -361,7 +456,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val pairList = mainApplication.userData!!.userData.value!!.peso
         val weights = List<Double>(minOf(pairList!!.size, 7)) { 0.0 }.toMutableList()
         val currentDate = Date()
-        val dates = List<String>(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
+        val dates =
+            List<String>(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
 
         val dateTimeFormatter = DateTimeFormatter.ofPattern("d/MM")
         val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())

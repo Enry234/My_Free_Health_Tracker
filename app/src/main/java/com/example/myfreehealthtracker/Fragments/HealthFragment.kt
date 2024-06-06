@@ -240,9 +240,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                 }
 
 
-                if (allPasto.isEmpty()) {
-                    Text(text = "Nessun Pasto presente")
-                } else {
+
                     LazyColumn(
                         modifier = Modifier.weight(1f)
                     ) {
@@ -256,7 +254,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                                 PastoItem(it)
                         }
                     }
-                }
+
             }
         }
     }
