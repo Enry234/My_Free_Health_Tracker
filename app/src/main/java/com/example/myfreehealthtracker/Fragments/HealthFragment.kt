@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,6 +72,7 @@ import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class HealthFragment : Fragment(R.layout.fragment_health) {
@@ -140,10 +144,80 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         return view
     }
 
+    fun getLast30Days(): List<Triple<Int, Int, Int>> {
+        val calendar = Calendar.getInstance()
+        val last30Days = mutableListOf<Triple<Int, Int, Int>>()
+
+        for (i in 0 until 30) {
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val month = calendar.get(Calendar.MONTH) + 1 // Calendar.MONTH is zero-based
+            val year = calendar.get(Calendar.YEAR)
+
+            last30Days.add(Triple(day, month, year))
+
+            // Move to the previous day
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+        }
+
+        return last30Days
+    }
+
+    var selectedData = mutableStateOf(
+        Triple<Int, Int, Int>(
+            getLast30Days()[0].first,
+            getLast30Days()[0].second,
+            getLast30Days()[0].third
+        )
+    )
+
+    @Composable
+    fun ItemRow(date: Triple<Int, Int, Int>) {
+        Box(
+
+        ) {
+            Button(
+                onClick = { selectedData.value = date }, modifier = Modifier
+                    .padding(5.dp)
+                    .clip(shape = CircleShape)
+                    .size(80.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+
+                    Text(text = date.first.toString(), maxLines = 1)
+                    Text(text = intToMonthName(date.second), maxLines = 1)
+                }
+            }
+        }
+
+    }
+
+    private fun intToMonthName(month: Int): String {
+        return when (month) {
+            1 -> "January"
+            2 -> "February"
+            3 -> "March"
+            4 -> "April"
+            5 -> "May"
+            6 -> "June"
+            7 -> "July"
+            8 -> "August"
+            9 -> "September"
+            10 -> "October"
+            11 -> "November"
+            12 -> "December"
+            else -> "Invalid month"
+        }
+    }
     @Composable
     private fun ShowMeal() {
-        val allPasto2 by mainApplication.pastoRepo.allPasto.observeAsState(initial = emptyList())
+        val allPasto2 by mainApplication.pastoRepo.allPasto().observeAsState(initial = emptyList())
         val allPasto = allPasto2.sortedByDescending { it.date }
+        val dates = getLast30Days()
+
 
         Surface(
             modifier = Modifier
@@ -153,15 +227,33 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             Column(
 
             ) {
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    reverseLayout = true
+                ) {
+                    items(dates) {
+                        ItemRow(it)
+                    }
+                }
+
+
                 if (allPasto.isEmpty()) {
                     Text(text = "Nessun Pasto presente")
                 } else {
                     LazyColumn(
                         modifier = Modifier.weight(1f)
                     ) {
-
+                        val calendar = Calendar.getInstance()
                         items(allPasto) {
-                            PastoItem(it)
+                            calendar.time = it.date
+                            if (calendar.get(Calendar.DAY_OF_MONTH) == selectedData.value.first && calendar.get(
+                                    Calendar.MONTH
+                                ) + 1 == selectedData.value.second && calendar.get(Calendar.YEAR) == selectedData.value.third
+                            )
+                                PastoItem(it)
                         }
                     }
                 }
@@ -171,6 +263,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     @Composable
     private fun PastoItem(pasto: Pasto) {
+
         val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepo.getAlimentiByPasto(
             pasto
         ).asLiveData().observeAsState()
@@ -369,8 +462,16 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         AnimatedVisibility(
             visible = isExpanded,
-            enter = fadeIn(animationSpec = tween(500)) + expandVertically(animationSpec = tween(500)),
-            exit = fadeOut(animationSpec = tween(500)) + shrinkVertically(animationSpec = tween(500))
+            enter = fadeIn(animationSpec = tween(500)) + expandVertically(
+                animationSpec = tween(
+                    500
+                )
+            ),
+            exit = fadeOut(animationSpec = tween(500)) + shrinkVertically(
+                animationSpec = tween(
+                    500
+                )
+            )
         ) {
             Column {
                 alimentiPasto?.forEach {
@@ -494,19 +595,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 //    }
 //}
 
-//@Composable
-//fun ItemRow(string: String) {
-//    Box(
-//        modifier = Modifier
-//            .padding(5.dp)
-//            .shadow(2.dp)
-//            .clip(shape = CircleShape)
-//            .background(color = androidx.compose.ui.graphics.Color.Red)
-//    ) {
-//        Text(text = string, modifier = Modifier.padding(10.dp))
-//    }
-//
-//}
+
 //@Preview
 //@Composable
 //fun ShowHealth() {

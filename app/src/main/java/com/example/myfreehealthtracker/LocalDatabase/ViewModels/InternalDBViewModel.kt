@@ -53,7 +53,6 @@ class InternalDBViewModel(
     fun insert(sport: Sport) = viewModelScope.launch {
         sportRepository.insertSport(sport)
     }
-
     fun insert(attivita: Attivita) = viewModelScope.launch {
         attivitaRepository.insertAttivita(attivita)
     }

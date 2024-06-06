@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
 import kotlinx.coroutines.flow.Flow
-
 @Dao
 interface SportDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
