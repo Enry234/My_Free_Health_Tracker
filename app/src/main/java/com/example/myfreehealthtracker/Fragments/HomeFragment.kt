@@ -87,14 +87,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             // Update the UI, in this case, a TextView.
             composeView.setContent {
-                Box(
+                Surface(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(8.dp)
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .verticalScroll(rememberScrollState()),
 //                    horizontalAlignment = Alignment.CenterHorizontally,
 //                    verticalArrangement = Arrangement.Center
@@ -204,21 +204,122 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             if (listMacro.containsKey(it.date.day)) {
-                listMacro[it.date.day]?.add(
-                    Macros(
-                        it.quantity * alimento.proteine!!,
-                        it.quantity *alimento.carboidrati!!,
-                        it.quantity *alimento.grassi!!,
-                        it.quantity *alimento.fibre!!
-                    )
+                listMacro[it.date.day] = Macros(
+                    it.quantity * alimento.proteine!!,
+                    it.quantity * alimento.carboidrati!!,
+                    it.quantity * alimento.grassi!!,
+                    it.quantity * alimento.fibre!!
                 )
             } else listMacro[it.date.day] = Macros(
-                it.quantity *alimento.proteine!!,
-                it.quantity *alimento.carboidrati!!,
-                it.quantity *alimento.grassi!!,
-                it.quantity *alimento.fibre!!
+                it.quantity * alimento.proteine!!,
+                it.quantity * alimento.carboidrati!!,
+                it.quantity * alimento.grassi!!,
+                it.quantity * alimento.fibre!!
             )
         }
+
+        val proteins = mutableListOf<Double>()
+        val carbohydrates = mutableListOf<Double>()
+        val fats = mutableListOf<Double>()
+        val fibers = mutableListOf<Double>()
+
+        if (allPastoToCibo != null) {
+
+
+            listMacro.forEach {
+                proteins.add(it.value.proteine.toDouble())
+                carbohydrates.add(it.value.carboidrati.toDouble())
+                fats.add(it.value.grassi.toDouble())
+                fibers.add(it.value.fibre.toDouble())
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+            ) {
+                LineChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
+                    data = listOf(
+                        Line(
+                            label = "Il tuo peso",
+                            values = proteins,
+                            color = SolidColor(Color(0xFFDB504A)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFFDB504A).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp)
+                        ),
+                        Line(
+                            label = "Il tuo peso",
+                            values = carbohydrates,
+                            color = SolidColor(Color(0xFFE1E289)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFFE1E289).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp)
+                        ),
+                        Line(
+                            label = "Il tuo peso",
+                            values = fats,
+                            color = SolidColor(Color(0xFF59C3C3)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFF59C3C3).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp)
+                        ),
+                        Line(
+                            label = "Il tuo peso",
+                            values = fibers,
+                            color = SolidColor(Color(0xFF04724D)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp)
+                        )
+                    ),
+                    animationMode = AnimationMode.Together(delayBuilder = {
+                        it * 500L
+                    }),
+                    //minValue = 40.0,
+                    //maxValue = 100.0
+//            dotsProperties = DotProperties(
+//                enabled = false,
+//                radius = 10f,
+//                color = SolidColor(Color(0xFF04724D)),
+//                strokeWidth = 3f,
+//                //strokeColor = Color.White,
+//                strokeStyle = StrokeStyle.Normal,
+//                animationEnabled = true,
+//                animationSpec = tween(500)
+//            ),
+                    dividerProperties = DividerProperties(
+                        enabled = true,
+                        xAxisProperties = LineProperties(
+                            enabled = false
+                        ),
+                        yAxisProperties = LineProperties(
+                            enabled = false
+                        )
+                    ),
+//
+//            gridProperties = GridProperties(
+//                enabled = false,
+//            )
+                )
+            }
+        }
+
 
     }
 
@@ -494,7 +595,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 animationMode = AnimationMode.Together(delayBuilder = {
                     it * 500L
                 }),
-                minValue = 40.0,
+                //minValue = 40.0,
                 //maxValue = 100.0
                 dotsProperties = DotProperties(
                     enabled = false,

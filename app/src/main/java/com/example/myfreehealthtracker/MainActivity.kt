@@ -108,9 +108,11 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainApplication = application as MainApplication
-        mainApplication.userData = ViewModelProvider(this).get(UserDataViewModel::class.java)
-        loadUser()
+
+            mainApplication = application as MainApplication
+            mainApplication.userData = ViewModelProvider(this)[UserDataViewModel::class.java]
+            loadUser()
+
     }
 
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
