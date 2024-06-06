@@ -68,7 +68,6 @@ import java.util.Locale
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-
     lateinit var mainApplication: MainApplication
 
     var proteine = 0f

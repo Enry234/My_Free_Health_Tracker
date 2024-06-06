@@ -11,9 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val a = LoginPage()
+        val a = AuthPage()
+        val b = LoginPage()
         setContent {
-            a.Login()
+            a.LoginForm()
+            //b.Login()
         }
     }
 }
