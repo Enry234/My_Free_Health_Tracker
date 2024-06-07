@@ -99,12 +99,12 @@ class SportFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepo,
-            mainApplication.alimentoRepo,
-            mainApplication.pastoRepo,
-            mainApplication.pastoToCiboRepo,
-            mainApplication.sportRepo,
-            mainApplication.attivitaRepo
+            mainApplication.userRepository,
+            mainApplication.alimentoRepository,
+            mainApplication.pastoRepository,
+            mainApplication.pastoToCiboRepository,
+            mainApplication.sportRepository,
+            mainApplication.attivitaRepository
         )
     }
     private var openAddActivityDialog by mutableStateOf(false)
@@ -169,7 +169,7 @@ class SportFragment : Fragment() {
         var durata: Int = activity.durata
         var lunghezza: Int = activity.distanza
         var calorie: Int = activity.calorie
-        val sport by mainApplication.sportRepo.getSportById(activity.idSport).asLiveData()
+        val sport by mainApplication.sportRepository.getSportById(activity.idSport).asLiveData()
             .observeAsState()
         Box(
             modifier = Modifier.fillMaxWidth()

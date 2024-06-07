@@ -2,7 +2,6 @@ package com.example.myfreehealthtracker
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -77,7 +76,6 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -90,25 +88,7 @@ import java.util.Date
 class LoginPage {
     private var user: UserData = UserData()
 
-    private val firebaseAuth = FirebaseAuth.getInstance()
 
-    fun loginUser() {
-
-    }
-
-    fun registerUser(email: String, password: String, activity: Activity) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-            activity
-
-        ) {
-            if (it.isSuccessful) {
-                user.id = firebaseAuth.currentUser?.uid.toString()
-            } else {
-                //TODO errore
-
-            }
-        }
-    }
 
     @SuppressLint("UnrememberedMutableState", "SimpleDateFormat", "RestrictedApi")
     @Preview

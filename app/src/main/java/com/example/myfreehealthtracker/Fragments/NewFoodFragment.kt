@@ -88,12 +88,12 @@ class NewFoodFragment : Fragment() {
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepo,
-            mainApplication.alimentoRepo,
-            mainApplication.pastoRepo,
-            mainApplication.pastoToCiboRepo,
-            mainApplication.sportRepo,
-            mainApplication.attivitaRepo
+            mainApplication.userRepository,
+            mainApplication.alimentoRepository,
+            mainApplication.pastoRepository,
+            mainApplication.pastoToCiboRepository,
+            mainApplication.sportRepository,
+            mainApplication.attivitaRepository
         )
     }
 

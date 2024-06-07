@@ -7,7 +7,7 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
 import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 
-class PastoToCiboRepo(private val pastoToCiboDao: PastoToCiboDao) {
+class PastoToCiboRepository(private val pastoToCiboDao: PastoToCiboDao) {
 
 
 

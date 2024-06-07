@@ -109,12 +109,12 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     private val alimentoViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepo,
-            mainApplication.alimentoRepo,
-            mainApplication.pastoRepo,
-            mainApplication.pastoToCiboRepo,
-            mainApplication.sportRepo,
-            mainApplication.attivitaRepo
+            mainApplication.userRepository,
+            mainApplication.alimentoRepository,
+            mainApplication.pastoRepository,
+            mainApplication.pastoToCiboRepository,
+            mainApplication.sportRepository,
+            mainApplication.attivitaRepository
         )
     }
 
@@ -362,7 +362,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 val pastoToCibo =
                     PastoToCibo(it.idUser, it.idDate, it.idAlimento, it.quantita.value.toFloat())
                 //push internal db
-                mainApplication.pastoToCiboRepo.insertPastoToCibo(pastoToCibo)
+                mainApplication.pastoToCiboRepository.insertPastoToCibo(pastoToCibo)
                 //push firebase db
                 mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
                     .child(pastoToCibo.userID + pastoToCibo.date).child(pastoToCibo.idAlimento)
@@ -666,12 +666,19 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
         var selectedFoodItemLabel by rememberSaveable { mutableStateOf("Seleziona Esistente") }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
+        var enableNewFood by rememberSaveable {
+            mutableStateOf(true)
+        }
+        var enableConferma by rememberSaveable {
+            mutableStateOf(false)
+        }
         AlertDialog(
             onDismissRequest = {
                 showAddFoodDialog = false
             },
             confirmButton = {
                 Button(
+                    enabled = enableConferma,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         val selectedFood = existingAllAlimentList.find {
@@ -753,12 +760,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                         selectedFoodItemLabel = it.nome ?: ""
                                         selectedFoodItemBarcode = it.id
                                         isDropDownMenuExpanded = false
+                                        enableNewFood = false
+                                        enableConferma = true
                                     }
                                 )
                             }
                         }
                     }
                     Button(
+                        enabled = enableNewFood,
                         onClick = {
                             showAddFoodDialog = false
                             alimentoWrapper = AlimentoWrapper()

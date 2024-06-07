@@ -13,7 +13,7 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AttivitaRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepo
+import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.SportRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ class InternalDBViewModel(
     private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
     private val pastoRepository: PastoRepository,
-    private val pastoToCiboRepo: PastoToCiboRepo,
+    private val pastoToCiboRepository: PastoToCiboRepository,
     private val sportRepository: SportRepository,
     private val attivitaRepository: AttivitaRepository
 
@@ -63,7 +63,7 @@ class InternalViewModelFactory(
     private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
     private val pastoRepository: PastoRepository,
-    private val pastoToCiboRepo: PastoToCiboRepo,
+    private val pastoToCiboRepository: PastoToCiboRepository,
     private val sportRepository: SportRepository,
     private val attivitaRepository: AttivitaRepository
 ) : ViewModelProvider.Factory {
@@ -74,7 +74,7 @@ class InternalViewModelFactory(
                 userRepository,
                 alimentoRepository,
                 pastoRepository,
-                pastoToCiboRepo,
+                pastoToCiboRepository,
                 sportRepository,
                 attivitaRepository
             ) as T

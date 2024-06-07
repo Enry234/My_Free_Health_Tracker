@@ -167,7 +167,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Composable
     private fun displayMacros() {
 
-        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo()
+        val allPastoToCibo by (mainApplication).pastoToCiboRepository.getAllPastoToCibo()
             .observeAsState()
 
         val calendar = Calendar.getInstance()
@@ -189,33 +189,35 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             it.date >= date
         }?.sortedBy { it.date }
 
-        /*
-        filteredPastoToCibo.forEach {
-            // prendo gli alimenti di quel giorno
-        }
-        */
+
         val listMacro = LinkedHashMap<Int, Macros>()
 
         filteredPastoToCibo?.forEach {
             val alimento: Alimento
 
             runBlocking {
-                alimento = mainApplication.alimentoRepo.getAlimentoById(it.idAlimento)
+                alimento = mainApplication.alimentoRepository.getAlimentoById(it.idAlimento)
             }
+            //alimento can be null ide error
+            if (alimento != null) {
 
-            if (listMacro.containsKey(it.date.day)) {
-                listMacro[it.date.day]?.add(Macros(
+                //take the week calories
+                if (listMacro.containsKey(it.date.day)) {
+                    listMacro[it.date.day]?.add(
+                        Macros(
+                            it.quantity * alimento.proteine!!,
+                            it.quantity * alimento.carboidrati!!,
+                            it.quantity * alimento.grassi!!,
+                            it.quantity * alimento.fibre!!
+                        )
+                    )
+                } else listMacro[it.date.day] = Macros(
                     it.quantity * alimento.proteine!!,
                     it.quantity * alimento.carboidrati!!,
                     it.quantity * alimento.grassi!!,
                     it.quantity * alimento.fibre!!
-                ))
-            } else listMacro[it.date.day] = Macros(
-                it.quantity * alimento.proteine!!,
-                it.quantity * alimento.carboidrati!!,
-                it.quantity * alimento.grassi!!,
-                it.quantity * alimento.fibre!!
-            )
+                )
+            }
         }
 
         val proteins = mutableListOf<Double>()
@@ -328,7 +330,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Composable
     private fun dailyReport() {
-        val allPastoToCibo by (mainApplication).pastoToCiboRepo.getAllPastoToCibo()
+        val allPastoToCibo by (mainApplication).pastoToCiboRepository.getAllPastoToCibo()
             .observeAsState()
 
         // Ottenere la data e l'ora corrente
@@ -349,7 +351,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             filterededPastoToCibo.forEach {
                 var alimento: Alimento
                 runBlocking {
-                    alimento = mainApplication.alimentoRepo.getAlimentoById(it.idAlimento)
+                    alimento = mainApplication.alimentoRepository.getAlimentoById(it.idAlimento)
                 }
 
                 dailyFoods.add(Pair(alimento, it.quantity))

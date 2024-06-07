@@ -214,7 +214,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     }
     @Composable
     private fun ShowMeal() {
-        val allPasto2 by mainApplication.pastoRepo.allPasto().observeAsState(initial = emptyList())
+        val allPasto2 by mainApplication.pastoRepository.allPasto()
+            .observeAsState(initial = emptyList())
         val allPasto = allPasto2.sortedByDescending { it.date }
         val dates = getLast30Days()
 
@@ -232,7 +233,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(100.dp),
-                    reverseLayout = false
+                    reverseLayout = true
                 ) {
                     items(dates) {
                         ItemRow(it)
@@ -262,7 +263,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     @Composable
     private fun PastoItem(pasto: Pasto) {
 
-        val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepo.getAlimentiByPasto(
+        val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepository.getAlimentiByPasto(
             pasto
         ).asLiveData().observeAsState()
 
@@ -281,7 +282,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             var qta = 1f
 
             runBlocking {
-                qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
+                qta = mainApplication.pastoToCiboRepository.getQuantitaByPasto(pasto, it)
             }
 
 
@@ -478,7 +479,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     var qta = 1f
 
                     runBlocking {
-                        qta = mainApplication.pastoToCiboRepo.getQuantitaByPasto(pasto, it)
+                        qta = mainApplication.pastoToCiboRepository.getQuantitaByPasto(pasto, it)
                     }
 
 
