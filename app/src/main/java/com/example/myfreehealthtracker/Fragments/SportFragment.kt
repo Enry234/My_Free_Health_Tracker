@@ -316,7 +316,7 @@ class SportFragment : Fragment() {
                         val sport = newSportWrapper.convertToSport()
                         lifecycleScope.launch {
                             //insert Room, DB
-                            mainApplication.sportDao.insertSport(sport)
+                            mainApplication.sportRepository.insertSport(sport)
                         }
                         //add firebase push new Sport
                         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT)
@@ -334,10 +334,13 @@ class SportFragment : Fragment() {
         }, title = {
             Row(
                 modifier = Modifier,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Inserisci Sport")
+                IconButton(onClick = { openNewSportDialog = false }) {
+                    Icon(Icons.Default.Close, contentDescription = "Close Dialog")
+                }
             }
         }, text = {
             Column(
@@ -397,7 +400,7 @@ class SportFragment : Fragment() {
                     val activity = newActivityWrapper.convertToAttivita()
                     //room DB push
                     lifecycleScope.launch {
-                        mainApplication.attivitaDao.insertAttivita(activity)
+                        mainApplication.attivitaRepository.insertAttivita(activity)
                     }
                     //firebase push
                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ATTIVITA)

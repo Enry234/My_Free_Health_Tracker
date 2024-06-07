@@ -314,6 +314,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         }
                         Button(
+                            enabled = canConfirmMeal && selectMealType != "Seleziona tipo pasto",
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 openInsertDialog = false
@@ -828,7 +829,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 canConfirmMeal = true
 
                                 lifecycleScope.launch {
-                                    mainApplication.alimentoDao.insertAlimento(food)
+                                    mainApplication.alimentoRepository.insertAlimento(food)
                                 }
 
                                 pastoToAlimentoWrapperList.add(

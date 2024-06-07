@@ -66,7 +66,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
-import io.ktor.utils.io.writer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -531,7 +530,7 @@ class AuthPage {
         firebaseRef.child(user.id).setValue(user)
         lifecycleOwner.lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
-                mainApplication.userDao.insertUser(user)
+                mainApplication.userRepository.insertUser(user)
             }
             if (result != -1L) {
                 Log.i("loginpage", "insert success")

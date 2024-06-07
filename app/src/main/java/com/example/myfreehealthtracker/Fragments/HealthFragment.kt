@@ -223,7 +223,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+
         ) {
             Column(
 
@@ -243,7 +243,9 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
 
                     LazyColumn(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp)
                     ) {
                         val calendar = Calendar.getInstance()
                         items(allPasto) {

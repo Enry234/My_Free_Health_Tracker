@@ -43,7 +43,7 @@ class InternalDBViewModel(
         attivitaRepository.allAttivita.asLiveData(viewModelScope.coroutineContext)
 
     fun insert(user: UserData) = viewModelScope.launch {
-        userRepository.insert(user)
+        userRepository.insertUser(user)
     }
 
     fun insert(pasto: Pasto) = viewModelScope.launch {

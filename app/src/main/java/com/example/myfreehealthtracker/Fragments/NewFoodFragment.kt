@@ -28,11 +28,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -174,7 +172,9 @@ class NewFoodFragment : Fragment() {
 
         }
         if (showDialog) {
-
+            var error by rememberSaveable {
+                mutableStateOf(false)
+            }
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
@@ -204,22 +204,18 @@ class NewFoodFragment : Fragment() {
                             Text(text = "Scannerizza")
                         }
                         Button(
+
                             onClick = {
-                                showDialog = false
+
 
                                 if (alimentoWrapper.id.isNotEmpty()) {
+                                    showDialog = false
                                     val food = alimentoWrapper.convertToFood()
 
                                     lifecycleScope.launch {
-                                        mainApplication.alimentoDao.insertAlimento(food)
+                                        mainApplication.alimentoRepository.insertAlimento(food)
                                     }
-//                                    alimentList.add(
-//                                        PastoToCiboWrapper(
-//                                            idAlimento = food.id,
-//                                            nomeAlimento = food.nome,
-//                                            imageUri = food.immagine
-//                                        )
-//                                    )
+
                                     val mainApplication: MainApplication =
                                         requireActivity().application as MainApplication
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
@@ -231,6 +227,7 @@ class NewFoodFragment : Fragment() {
                                         "Nessun elemento inserito",
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    error = true
                                 }
 
                             }
@@ -266,6 +263,7 @@ class NewFoodFragment : Fragment() {
                     ) {
                         TextField(
                             enabled = alimentoWrapper.enabled,
+                            isError = error && alimentoWrapper.enabled && alimentoWrapper.id.isEmpty(),
                             value = alimentoWrapper.id,
                             onValueChange = {
                                 alimentoWrapper.id = it
@@ -283,6 +281,7 @@ class NewFoodFragment : Fragment() {
                         )
 
                         TextField(
+                            isError = error && alimentoWrapper.enabled && alimentoWrapper.nome.isEmpty(),
                             value = alimentoWrapper.nome,
                             onValueChange = {
                                 alimentoWrapper.nome = it
@@ -301,6 +300,7 @@ class NewFoodFragment : Fragment() {
                             Text("Unità valori:")
 
                             RadioButton(
+
                                 selected = alimentoWrapper.unit == "100g",
                                 onClick = {
                                     alimentoWrapper.unit = "100g"
@@ -326,6 +326,7 @@ class NewFoodFragment : Fragment() {
 
                         ) {
                             TextField(
+
                                 modifier = Modifier.weight(1.2f),
                                 value = alimentoWrapper.carboidrati.toString(),
                                 onValueChange = {
@@ -344,6 +345,7 @@ class NewFoodFragment : Fragment() {
                                 )
                             )
                             TextField(
+
                                 modifier = Modifier.weight(1f),
                                 value = alimentoWrapper.proteine.toString(),
                                 onValueChange = {
@@ -569,15 +571,6 @@ class NewFoodFragment : Fragment() {
                                 .width(56.dp),
                             contentScale = ContentScale.Fit
                         )
-                        IconButton(
-                            onClick = {
-                                lifecycleScope.launch {
-                                    mainApplication.alimentoDao.deleteAlimento(alimento)
-                                }
-                            }
-                        ) {
-                            Icon(Icons.Filled.Delete, contentDescription = null)
-                        }
                     }
                 }
 

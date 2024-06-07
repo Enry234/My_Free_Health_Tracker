@@ -807,7 +807,7 @@ class LoginPage {
         firebaseRef.child(user.id).setValue(user)
         lifecycleOwner.lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
-                mainApplication.userDao.insertUser(user)
+                mainApplication.userRepository.insertUser(user)
             }
             if (result != -1L) {
                 Log.i("loginpage", "insert success")

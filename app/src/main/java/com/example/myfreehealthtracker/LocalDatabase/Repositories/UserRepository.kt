@@ -15,7 +15,7 @@ class UserRepository(private val userDao: UserDao) {
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
     @WorkerThread
-    suspend fun insert(user: UserData) {
-        userDao.insertUser(user)
+    suspend fun insertUser(user: UserData): Long {
+        return userDao.insertUser(user)
     }
 }

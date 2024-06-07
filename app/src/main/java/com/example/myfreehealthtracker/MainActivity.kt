@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     Log.i("MAIN", "LOG file complete")
                     lifecycleScope.launch {
                         Log.i("MAIN", "Coroutine launch")
-                        mainApplication.userDao.getAllUser().collectLatest { user ->
+                        mainApplication.userRepository.allUser.collectLatest { user ->
                             user.forEach {
                                 Log.i("MAIN", "ciclo caricamento user")
 
@@ -109,9 +109,9 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-            mainApplication = application as MainApplication
-            mainApplication.userData = ViewModelProvider(this)[UserDataViewModel::class.java]
-            loadUser()
+        mainApplication = application as MainApplication
+        mainApplication.userData = ViewModelProvider(this)[UserDataViewModel::class.java]
+        loadUser()
 
     }
 
@@ -203,7 +203,9 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                         )
                                         //mainApplication.applicationScope.launch {
                                         runBlocking {
-                                            mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
+                                            mainApplication.userRepository.insertUser(
+                                                mainApplication.userData!!.userData.value!!
+                                            )//upsert mode
                                         }
                                         //}
                                         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
@@ -245,7 +247,9 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             calorie
                                         //mainApplication.applicationScope.launch {
                                         runBlocking {
-                                            mainApplication.userDao.insertUser(mainApplication.userData!!.userData.value!!)//upsert mode
+                                            mainApplication.userRepository.insertUser(
+                                                mainApplication.userData!!.userData.value!!
+                                            )//upsert mode
                                         }
                                         //}
                                         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
@@ -291,7 +295,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                                 mainApplication.userData!!.userData.value!!.carboidrati =
                                                     carboidrati
                                                 runBlocking {
-                                                    mainApplication.userDao.insertUser(
+                                                    mainApplication.userRepository.insertUser(
                                                         mainApplication.userData!!.userData.value!!
                                                     )//upsert mode
                                                 }
@@ -330,7 +334,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                                 mainApplication.userData!!.userData.value!!.proteine =
                                                     proteine
                                                 runBlocking {
-                                                    mainApplication.userDao.insertUser(
+                                                    mainApplication.userRepository.insertUser(
                                                         mainApplication.userData!!.userData.value!!
                                                     )//upsert mode
                                                 }
@@ -377,7 +381,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                                 mainApplication.userData!!.userData.value!!.fibre =
                                                     fibre
                                                 runBlocking {
-                                                    mainApplication.userDao.insertUser(
+                                                    mainApplication.userRepository.insertUser(
                                                         mainApplication.userData!!.userData.value!!
                                                     )//upsert mode
                                                 }
@@ -416,7 +420,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                                 mainApplication.userData!!.userData.value!!.grassi =
                                                     grassi
                                                 runBlocking {
-                                                    mainApplication.userDao.insertUser(
+                                                    mainApplication.userRepository.insertUser(
                                                         mainApplication.userData!!.userData.value!!
                                                     )//upsert mode
                                                 }

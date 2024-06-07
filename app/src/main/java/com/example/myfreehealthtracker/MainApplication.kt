@@ -15,13 +15,13 @@ import java.io.File
 class MainApplication : Application() {
 
 
-    val internalDatabaseRef by lazy { InternalDatabase.getDatabase(this) }
-    val userDao by lazy { internalDatabaseRef.userDao() }
-    val alimentoDao by lazy { internalDatabaseRef.alimentoDao() }
-    val pastoToCiboDao by lazy { internalDatabaseRef.pastoToCiboDao() }
-    val pastoDao by lazy { internalDatabaseRef.pastoDao() }
-    val sportDao by lazy { internalDatabaseRef.sportDao() }
-    val attivitaDao by lazy { internalDatabaseRef.attivitaDao() }
+    private val internalDatabaseRef by lazy { InternalDatabase.getDatabase(this) }
+    private val userDao by lazy { internalDatabaseRef.userDao() }
+    private val alimentoDao by lazy { internalDatabaseRef.alimentoDao() }
+    private val pastoToCiboDao by lazy { internalDatabaseRef.pastoToCiboDao() }
+    private val pastoDao by lazy { internalDatabaseRef.pastoDao() }
+    private val sportDao by lazy { internalDatabaseRef.sportDao() }
+    private val attivitaDao by lazy { internalDatabaseRef.attivitaDao() }
     val internalFileData by lazy { File(filesDir, "internalData") }
 
 
