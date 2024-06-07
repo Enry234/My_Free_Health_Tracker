@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,12 +34,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -48,8 +54,11 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
+import ir.ehsannarmani.compose_charts.models.BarProperties
+import ir.ehsannarmani.compose_charts.models.Bars
 import ir.ehsannarmani.compose_charts.models.DividerProperties
 import ir.ehsannarmani.compose_charts.models.DotProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle
@@ -101,24 +110,56 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     ) {
 
                         Surface(
-                            Modifier.fillMaxWidth(),
-                            tonalElevation = 16.dp,
-                            shadowElevation = 16.dp,
+                            Modifier
+                                .fillMaxWidth()
+                                .background(Color.White),
                             shape = RoundedCornerShape(16.dp),
                         ) {
                             Box(
-                                modifier = Modifier.padding(8.dp)
+                                modifier = Modifier
+                                    .background(Color.White)
+                                    .padding(8.dp)
                             ) {
-                                dailyReport()
+                                Row(
+
+                                ) {
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                    ) {
+                                        dailyReport()
+                                    }
+
+                                    Box(
+                                        modifier = Modifier.weight(1f).background(Color.White),
+                                    ) {
+                                        foodRanking()
+                                    }
+
+                                }
+
                             }
                         }
+
+//                        Surface(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            tonalElevation = 8.dp,
+//                            //shadowElevation = 16.dp,
+//                            shape = RoundedCornerShape(16.dp),
+//                        ) {
+//                            Box(
+//                                modifier = Modifier.height(400.dp).width(200.dp)
+//                            ){
+//
+//                            }
+//                        }
+
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            tonalElevation = 16.dp,
-                            shadowElevation = 16.dp,
+                            tonalElevation = 8.dp,
+                            //shadowElevation = 16.dp,
                             shape = RoundedCornerShape(16.dp),
                         ) {
                             Box(
@@ -133,8 +174,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            tonalElevation = 16.dp,
-                            shadowElevation = 16.dp,
+                            tonalElevation = 8.dp,
+                            //shadowElevation = 16.dp,
                             shape = RoundedCornerShape(16.dp),
                         ) {
                             Box(
@@ -147,6 +188,65 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun foodRanking() {
+
+        val allQuantities by (mainApplication).pastoToCiboRepository.getAllQuantities()
+            .observeAsState()
+
+        if (allQuantities != null) {
+
+
+            val sortedQuantities = allQuantities!!.sortedByDescending { it.quantity }
+
+            val quantityList = mutableListOf(0.0, 0.0, 0.0)
+
+            quantityList[0] = sortedQuantities.getOrNull(0)?.quantity?.toDouble() ?: 0.0
+            quantityList[1] = sortedQuantities.getOrNull(1)?.quantity?.toDouble() ?: 0.0
+            quantityList[2] = sortedQuantities.getOrNull(2)?.quantity?.toDouble() ?: 0.0
+
+            var lastHope by remember { mutableStateOf(listOf(quantityList[0], quantityList[1], quantityList[2])) }
+
+            val v1 = 10.0
+
+            Surface(
+                modifier = Modifier.height(400.dp).width(200.dp).background(Color.White),
+            ) {
+
+                ColumnChart(
+                    data = listOf(
+                        Bars(
+                            label = "", values = listOf(
+//                                Bars.Data(value = quantityList[2], color = SolidColor(Color.Blue)),
+//                                Bars.Data(value = quantityList[1], color = SolidColor(Color.Red)),
+//                                Bars.Data(value = quantityList[0], color = SolidColor(Color.Green)),
+                                Bars.Data(value = lastHope[2], color = SolidColor(Color.Blue)),
+                                Bars.Data(value = lastHope[1], color = SolidColor(Color.Red)),
+                                Bars.Data(value = lastHope[0], color = SolidColor(Color.Green)),
+                            )
+                        ),
+                    ),
+                    barProperties = BarProperties(
+                        cornerRadius = Bars.Data.Radius.Rectangle(topRight = 6.dp, topLeft = 6.dp),
+                        spacing = 8.dp,
+                        thickness = 20.dp
+                    ),
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    gridProperties = GridProperties(
+                        enabled = false
+                    )
+                )
+
+
+            }
+
+
         }
     }
 
@@ -173,7 +273,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val calendar = Calendar.getInstance()
 
         // Sottrai 5 giorni dalla data corrente
-        calendar.add(Calendar.DAY_OF_YEAR, -3)
+        calendar.add(Calendar.DAY_OF_YEAR, -4)
 
         // Imposta l'ora a mezzanotte (00:00:00)
         calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -295,18 +395,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     animationMode = AnimationMode.Together(delayBuilder = {
                         it * 500L
                     }),
-                    //minValue = 40.0,
-                    //maxValue = 100.0
-//            dotsProperties = DotProperties(
-//                enabled = true,
-//                radius = 10f,
-//                color = SolidColor(Color(0xFF04724D)),
-//                strokeWidth = 3f,
-//                //strokeColor = Color.White,
-//                strokeStyle = StrokeStyle.Normal,
-//                animationEnabled = true,
-//                animationSpec = tween(500)
-//            ),
                     dividerProperties = DividerProperties(
                         enabled = true,
                         xAxisProperties = LineProperties(
@@ -373,10 +461,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Box() {
+                    Text(
+                        text = "Riepilogo Giornaliero",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
                 Box(
                     modifier = Modifier
-                        .height(300.dp)
-                        .width(300.dp),
+                        .height(165.dp)
+                        .width(165.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     //piechart con la somma dei valori nutrizionali
@@ -400,11 +497,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
 
-                        Text(
-                            text = "Riepilogo Giornaliero",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
                         Text(
                             text = calorie.toString(),
                             fontSize = 18.sp
@@ -431,60 +523,37 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             modifier = Modifier.weight(1f)
                         ) {
                             Column(
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                verticalArrangement = Arrangement.spacedBy(24.dp)
                             ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BulletSpan1(
-                                        color = Color(0xFF59C3C3),
-                                        label = "Grassi",
-                                        value = grassi.toInt()
-                                    )
-                                }
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BulletSpan1(
-                                        color = Color(0xFF04724D),
-                                        label = "Fibre",
-                                        value = fibre.toInt()
-                                    )
-                                }
-                            }
-                        }
-                        Box(
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BulletSpan2(
-                                        color = Color(0xFFE1E289),
-                                        label = "Carboidrati",
-                                        value = carboidrati.toInt()
-                                    )
-                                }
-                                Row(
 
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BulletSpan2(
-                                        color = Color(0xFFDB504A),
-                                        label = "Proteine",
-                                        value = proteine.toInt()
-                                    )
-                                }
+                                BulletSpan1(
+                                    color = Color(0xFF59C3C3),
+                                    label = "Grassi",
+                                    value = grassi.toInt()
+                                )
+
+
+                                BulletSpan1(
+                                    color = Color(0xFF04724D),
+                                    label = "Fibre",
+                                    value = fibre.toInt()
+                                )
+
+                                BulletSpan1(
+                                    color = Color(0xFFE1E289),
+                                    label = "Carboidrati",
+                                    value = carboidrati.toInt()
+                                )
+
+                                BulletSpan1(
+                                    color = Color(0xFFDB504A),
+                                    label = "Proteine",
+                                    value = proteine.toInt()
+                                )
+
                             }
                         }
+
                     }
                 }
 
@@ -498,26 +567,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Composable
     fun BulletSpan1(color: Color, label: String, value: Int) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .width(10.dp)
-                .height(10.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
         ) {
-            //internal circle with icon
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "contentDescription",
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .width(24.dp)
-                    .background(color, CircleShape)
-                    .padding(2.dp),
-                tint = color
+                    .width(10.dp)
+                    .height(10.dp)
+            ) {
+                //internal circle with icon
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "contentDescription",
+                    modifier = Modifier
+                        .width(24.dp)
+                        .background(color, CircleShape)
+                        .padding(2.dp),
+                    tint = color
+                )
+            }
+            Text(
+                text = "$label: ${value}g"
             )
         }
-        Text(
-            text = "$label: ${value}g"
-        )
     }
 
     @Composable

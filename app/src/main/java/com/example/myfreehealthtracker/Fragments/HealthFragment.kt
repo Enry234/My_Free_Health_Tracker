@@ -177,7 +177,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         ) {
             Button(
                 onClick = { selectedData.value = date }, modifier = Modifier
-                    .padding(6.dp)
+                    .padding(10.dp)
                     .clip(shape = CircleShape)
                     .size(72.dp)
             ) {
