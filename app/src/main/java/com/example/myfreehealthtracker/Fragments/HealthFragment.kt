@@ -214,7 +214,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     }
     @Composable
     private fun ShowMeal() {
-        val allPasto2 by mainApplication.pastoRepository.allPasto()
+        val allPasto2 by mainApplication.pastoRepository.allPasto.asLiveData()
             .observeAsState(initial = emptyList())
         val allPasto = allPasto2.sortedByDescending { it.date }
         val dates = getLast30Days()

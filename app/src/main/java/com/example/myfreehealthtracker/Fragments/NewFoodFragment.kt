@@ -498,7 +498,13 @@ class NewFoodFragment : Fragment() {
                     try {
                         product = callClient(result.contents)
                     } catch (ex: Exception) {
-
+                        Toast.makeText(
+                            requireContext(),
+                            "PRODOTTO NON TROVATO INSERIRE MANUALMENTE",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.i("load error", "errore caricamento")
+                        Log.i("load error", ex.toString())
                     }
                     toast.cancel()
 

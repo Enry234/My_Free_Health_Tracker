@@ -12,16 +12,14 @@ import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoToCiboDao
 import com.example.myfreehealthtracker.LocalDatabase.Daos.SportDao
 import com.example.myfreehealthtracker.LocalDatabase.Daos.UserDao
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Assunzione
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Medicine
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
 import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 
 @Database(
-    entities = [Alimento::class, Assunzione::class, Attivita::class, Medicine::class, Pasto::class, PastoToCibo::class, Sport::class, UserData::class],
+    entities = [Alimento::class, Attivita::class, Pasto::class, PastoToCibo::class, Sport::class, UserData::class],
     version = 1,
     exportSchema = false
 )

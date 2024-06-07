@@ -69,8 +69,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     Log.i("MAIN", "LOG file complete")
                     lifecycleScope.launch {
                         Log.i("MAIN", "Coroutine launch")
-                        mainApplication.userRepository.allUser.collectLatest { user ->
-                            user.forEach {
+                        mainApplication.userRepository.allUser.collectLatest {
                                 Log.i("MAIN", "ciclo caricamento user")
 
                                 mainApplication.userData!!.setUserData(it)
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
 
                                 }
-                            }
+
                         }
 
                     }

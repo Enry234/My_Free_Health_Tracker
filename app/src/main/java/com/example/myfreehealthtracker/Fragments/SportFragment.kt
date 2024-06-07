@@ -381,8 +381,8 @@ class SportFragment : Fragment() {
         var enableConferma by rememberSaveable { mutableStateOf(false) }
         var pickedHour by rememberSaveable { mutableIntStateOf(0) }
         var pickedMinute by rememberSaveable { mutableIntStateOf(0) }
-        if (newActivityWrapper.calorie != 0 && newActivityWrapper.durata != 0 && newActivityWrapper.distanza != 0) enableConferma =
-            true
+        if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
+            enableConferma = true
         AlertDialog(onDismissRequest = {
             openAddActivityDialog = false
         }, confirmButton = {
@@ -662,8 +662,7 @@ class SportFragment : Fragment() {
                     )
                 ), animationMode = AnimationMode.Together(delayBuilder = {
                     it * 500L
-                }), minValue = 0.0,
-                //maxValue = 100.0
+                }),
                 dotsProperties = DotProperties(
                     enabled = false,
                     radius = 10f,
@@ -721,8 +720,7 @@ class SportFragment : Fragment() {
                     )
                 ), animationMode = AnimationMode.Together(delayBuilder = {
                     it * 500L
-                }), minValue = 0.0,
-                //maxValue = 100.0
+                }),
                 dotsProperties = DotProperties(
                     enabled = false,
                     radius = 10f,
@@ -779,8 +777,8 @@ class SportFragment : Fragment() {
                     )
                 ), animationMode = AnimationMode.Together(delayBuilder = {
                     it * 500L
-                }), minValue = 40.0,
-                //maxValue = 100.0
+                }),
+
                 dotsProperties = DotProperties(
                     enabled = false,
                     radius = 10f,

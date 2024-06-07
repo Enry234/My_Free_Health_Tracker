@@ -30,30 +30,44 @@ class InternalDBViewModel(
 ) : ViewModel() {
 
 
-    val allUser: LiveData<List<UserData>> =
+    //User
+    val allUser: LiveData<UserData> =
         userRepository.allUser.asLiveData(viewModelScope.coroutineContext)
 
-    val allAlimento: LiveData<List<Alimento>> =
-        alimentoRepository.allAlimento.asLiveData(viewModelScope.coroutineContext)
-
-    val allSport: LiveData<List<Sport>> =
-        sportRepository.allSports.asLiveData(viewModelScope.coroutineContext)
-
-    val allAttivita: LiveData<List<Attivita>> =
-        attivitaRepository.allAttivita.asLiveData(viewModelScope.coroutineContext)
-
-    fun insert(user: UserData) = viewModelScope.launch {
+    fun insertUser(user: UserData) = viewModelScope.launch {
         userRepository.insertUser(user)
     }
 
-    fun insert(pasto: Pasto) = viewModelScope.launch {
+
+    //Alimento
+    val allAlimento: LiveData<List<Alimento>> =
+        alimentoRepository.allAlimento.asLiveData(viewModelScope.coroutineContext)
+
+    fun insertAlimento(alimento: Alimento) = viewModelScope.launch {
+        alimentoRepository.insertAlimento(alimento)
+    }
+
+    //Pasto
+    val allPasto: LiveData<List<Pasto>> =
+        pastoRepository.allPasto.asLiveData(viewModelScope.coroutineContext)
+
+    fun insertPasto(pasto: Pasto) = viewModelScope.launch {
         pastoRepository.insertPasto(pasto)
     }
 
-    fun insert(sport: Sport) = viewModelScope.launch {
+    //sport
+    val allSport: LiveData<List<Sport>> =
+        sportRepository.allSports.asLiveData(viewModelScope.coroutineContext)
+
+    fun insertSport(sport: Sport) = viewModelScope.launch {
         sportRepository.insertSport(sport)
     }
-    fun insert(attivita: Attivita) = viewModelScope.launch {
+
+    //attivita
+    val allAttivita: LiveData<List<Attivita>> =
+        attivitaRepository.allAttivita.asLiveData(viewModelScope.coroutineContext)
+
+    fun insertAttivita(attivita: Attivita) = viewModelScope.launch {
         attivitaRepository.insertAttivita(attivita)
     }
 

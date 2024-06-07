@@ -343,7 +343,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         // Ottieni l'oggetto Date dal Calendar
         val date = calendar.time
         val pasto = Pasto(mainApplication.userData!!.userData.value!!.id, date, tipoPasto, "")
-        alimentoViewModel.insert(pasto)
+        alimentoViewModel.insertPasto(pasto)
         insertPastoToAlimento(pasto)
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
             .child(pasto.userID + pasto.date).setValue(pasto)
