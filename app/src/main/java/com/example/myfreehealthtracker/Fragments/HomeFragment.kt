@@ -143,7 +143,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                     }
 
                                     Box(
-                                        modifier = Modifier.weight(1f).background(Color.White),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .background(Color.White),
                                     ) {
                                         foodRanking()
                                     }
@@ -207,13 +209,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Composable
     private fun foodRanking() {
 
-        val allQuantities by (mainApplication).pastoToCiboRepository.getAllQuantities()
-            .observeAsState()
+        val allQuantities by dbViewModel.allQuantities.observeAsState(initial = emptyList())
 
         if (allQuantities != null) {
 
 
-            val sortedQuantities = allQuantities!!.sortedByDescending { it.quantity }
+            val sortedQuantities = allQuantities.sortedByDescending { it.quantity }
 
             val quantityList = mutableListOf(0.0, 0.0, 0.0)
 
@@ -226,7 +227,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             val v1 = 10.0
 
             Surface(
-                modifier = Modifier.height(400.dp).width(200.dp).background(Color.White),
+                modifier = Modifier
+                    .height(400.dp)
+                    .width(200.dp)
+                    .background(Color.White),
             ) {
 
                 ColumnChart(

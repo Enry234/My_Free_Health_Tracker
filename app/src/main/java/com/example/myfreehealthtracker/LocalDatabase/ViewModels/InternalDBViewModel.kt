@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoToCiboDao
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
@@ -70,6 +71,9 @@ class InternalDBViewModel(
             .asLiveData(viewModelScope.coroutineContext)
 
     }
+
+    val allQuantities: LiveData<List<PastoToCiboDao.AlimentoQuantity>> =
+        pastoToCiboRepository.getAllQuantities().asLiveData(viewModelScope.coroutineContext)
 
 
     //sport
