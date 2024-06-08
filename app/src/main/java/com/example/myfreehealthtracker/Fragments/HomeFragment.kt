@@ -7,8 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInOutCubic
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,16 +50,19 @@ import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewMo
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.github.tehras.charts.bar.BarChart
+import com.github.tehras.charts.bar.BarChartData
+import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
+import com.github.tehras.charts.bar.renderer.label.SimpleValueDrawer
+import com.github.tehras.charts.bar.renderer.xaxis.SimpleXAxisDrawer
+import com.github.tehras.charts.bar.renderer.yaxis.SimpleYAxisDrawer
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.firebase.analytics.FirebaseAnalytics
-import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
-import ir.ehsannarmani.compose_charts.models.BarProperties
-import ir.ehsannarmani.compose_charts.models.Bars
 import ir.ehsannarmani.compose_charts.models.DividerProperties
 import ir.ehsannarmani.compose_charts.models.DotProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle
@@ -72,11 +71,14 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.min
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -143,7 +145,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 Box(
                                     modifier = Modifier
                                         .background(Color.White)
-                                        .padding(8.dp)
+//                                        .padding(8.dp)
                                 ) {
                                     Row(
 
@@ -193,7 +195,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                     modifier = Modifier.padding(8.dp)
                                     //.fillMaxWidth()
                                 ) {
-                                    WeightChart()
+                                    displayMacros()
+
                                 }
                             }
 
@@ -209,7 +212,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                     modifier = Modifier.padding(8.dp)
                                     //.fillMaxWidth()
                                 ) {
-                                    displayMacros()
+                                    WeightChart()
                                 }
                             }
                         }
@@ -227,7 +230,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         if (allQuantities != null) {
 
 
+            val nameList: MutableList<String> = mutableListOf("n.d.", "n.d.", "n.d.")
+
             val sortedQuantities = allQuantities.sortedByDescending { it.quantity }
+
+            for (i in 0..min(2, sortedQuantities.size - 1))
+                runBlocking {
+                    nameList[i] =
+                        mainApplication.alimentoRepository.getAlimentoById(sortedQuantities[i].id)
+                            .firstOrNull()?.nome ?: ""
+                }
+
 
             val quantityList = mutableListOf(0.0, 0.0, 0.0)
 
@@ -235,44 +248,61 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             quantityList[1] = sortedQuantities.getOrNull(1)?.quantity?.toDouble() ?: 0.0
             quantityList[2] = sortedQuantities.getOrNull(2)?.quantity?.toDouble() ?: 0.0
 
-            var lastHope by remember { mutableStateOf(listOf(quantityList[0], quantityList[1], quantityList[2])) }
 
-            val v1 = 10.0
-
-            Surface(
-                modifier = Modifier
-                    .height(400.dp)
-                    .width(200.dp)
-                    .background(Color.White),
+            Column(
+                    modifier = Modifier.padding(start = 8.dp)
             ) {
 
-                ColumnChart(
-                    data = listOf(
-                        Bars(
-                            label = "", values = listOf(
-//                                Bars.Data(value = quantityList[2], color = SolidColor(Color.Blue)),
-//                                Bars.Data(value = quantityList[1], color = SolidColor(Color.Red)),
-//                                Bars.Data(value = quantityList[0], color = SolidColor(Color.Green)),
-                                Bars.Data(value = lastHope[2], color = SolidColor(Color.Blue)),
-                                Bars.Data(value = lastHope[1], color = SolidColor(Color.Red)),
-                                Bars.Data(value = lastHope[0], color = SolidColor(Color.Green)),
+                BulletSpanRanking(color = Color(0xFFE1E289), label = nameList[0])
+                BulletSpanRanking(color = Color(0xFF59C3C3), label = nameList[1])
+                BulletSpanRanking(color = Color(0xFFDB504A), label = nameList[2])
+
+
+                Surface(
+                    modifier = Modifier
+                        .height(325.dp)
+                        .width(200.dp)
+                        .background(Color.White)
+                       .padding(8.dp),
+                ) {
+
+                    BarChart(
+                        barChartData = BarChartData(
+                            bars = listOf(
+                                BarChartData.Bar(
+                                    label = "",
+                                    value = quantityList[2].toFloat(),
+                                    color = Color(0xFFDB504A),
+                                ),
+                                BarChartData.Bar(
+                                    label = "",
+                                    value = quantityList[1].toFloat(),
+                                    color = Color(0xFF59C3C3)
+                                ),
+                                BarChartData.Bar(
+                                    label = "",
+                                    value = quantityList[0].toFloat(),
+                                    color = Color(0xFFE1E289)
+                                )
                             )
                         ),
-                    ),
-                    barProperties = BarProperties(
-                        cornerRadius = Bars.Data.Radius.Rectangle(topRight = 6.dp, topLeft = 6.dp),
-                        spacing = 8.dp,
-                        thickness = 20.dp
-                    ),
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    ),
-                    gridProperties = GridProperties(
-                        enabled = false
+                        // Optional properties.
+                        modifier = Modifier.fillMaxSize().background(Color.White).padding(start = 30.dp,top=8.dp, bottom=8.dp),
+                        animation = TweenSpec(500),
+                        barDrawer = SimpleBarDrawer(),
+                        xAxisDrawer = SimpleXAxisDrawer(
+                            axisLineColor = Color.Transparent,
+                        ),
+                        yAxisDrawer = SimpleYAxisDrawer(
+                            axisLineColor = Color.Transparent,
+                        ),
+                        labelDrawer = SimpleValueDrawer(
+                            labelTextColor = Color.Transparent,
+                        )
                     )
-                )
 
+
+                }
 
             }
 
@@ -486,10 +516,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Box() {
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "Riepilogo Giornaliero",
                         fontSize = 20.sp,
@@ -539,6 +571,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
@@ -548,10 +582,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     ) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Box(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f).padding(2.dp),
                         ) {
                             Column(
-                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                                verticalArrangement = Arrangement.spacedBy(15.dp)
                             ) {
 
                                 BulletSpan1(
@@ -619,6 +653,36 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
             Text(
                 text = "$label: ${value}g"
+            )
+        }
+    }
+
+    @Composable
+    fun BulletSpanRanking(color: Color, label: String) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(10.dp)
+                    .height(10.dp)
+            ) {
+                //internal circle with icon
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "contentDescription",
+                    modifier = Modifier
+                        .width(24.dp)
+                        .background(color, CircleShape)
+                        .padding(2.dp),
+                    tint = color
+                )
+            }
+            Text(
+                text = "${label.substring(0,min(15,label.length))}...",
             )
         }
     }
@@ -741,7 +805,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 )
             }
         }
-
 
 
     }
