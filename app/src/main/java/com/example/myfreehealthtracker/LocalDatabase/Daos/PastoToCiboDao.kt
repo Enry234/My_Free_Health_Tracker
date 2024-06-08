@@ -1,5 +1,6 @@
 package com.example.myfreehealthtracker.LocalDatabase.Daos
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -25,6 +26,16 @@ interface PastoToCiboDao {
     @Query("SELECT quantity FROM PastoToCibo WHERE idUserID =:userId AND idDate=:date AND idAlimentoId =:idAlimento")
     fun getQuantitaByPasto(userId: String, date: Date, idAlimento: String): Flow<Float>
 
+    @Query("SELECT idAlimentoId, SUM(quantity) as Qsum FROM PastoToCibo GROUP BY idAlimentoId")
+    fun getAllQuantities(): Flow<List<AlimentoQuantity>>
+
+    class AlimentoQuantity {
+        @ColumnInfo(name = "idAlimentoId")
+        var id: String = ""
+
+        @ColumnInfo(name = "Qsum")
+        var quantity: Float = 0f
+    }
 
 
 }

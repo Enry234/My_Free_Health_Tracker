@@ -25,4 +25,8 @@ class PastoToCiboRepository(private val pastoToCiboDao: PastoToCiboDao) {
     fun getQuantitaByPasto(pasto: Pasto, alimento: Alimento) =
         pastoToCiboDao.getQuantitaByPasto(pasto.userID, pasto.date, alimento.id)
 
+    @WorkerThread
+    fun getAllQuantities() = pastoToCiboDao.getAllQuantities().asLiveData()
+
+
 }

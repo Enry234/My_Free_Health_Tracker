@@ -56,10 +56,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -75,6 +75,11 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import com.vsnappy1.datepicker.DatePicker
+import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
+import com.vsnappy1.datepicker.data.model.DatePickerDate
+import com.vsnappy1.datepicker.data.model.SelectionLimiter
+import com.vsnappy1.datepicker.ui.model.DatePickerConfiguration
 import com.vsnappy1.timepicker.TimePicker
 import com.vsnappy1.timepicker.ui.model.TimePickerConfiguration
 import ir.ehsannarmani.compose_charts.LineChart
@@ -88,6 +93,7 @@ import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -108,6 +114,10 @@ class SportFragment : Fragment() {
     private var newSportWrapper = SportWrapper()
     private var newActivityWrapper = ActivityWrapper()
 
+    private var pickedYear by mutableStateOf(0)
+    private var pickedMonth by mutableStateOf(0)
+    private var pickedDay by mutableStateOf(0)
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -124,13 +134,15 @@ class SportFragment : Fragment() {
                         verticalArrangement = Arrangement.Top
                     ) {
                         val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
-                        Hello()
+
                         if (activityList.isEmpty()) {
                             Text(text = "Nessuna attivita' presente")
                         } else {
-                            MovimentChart(activityList)
-                            BurnCaloriesChart(activityList)
-                            WorkoutTimeChart(activityList)
+
+                            BurnedCaloriesChart()
+                            //MovimentChart(activityList)
+                            //BurnCaloriesChart(activityList)
+                            //WorkoutTimeChart(activityList)
                             ShowActivityList(activityList)
                         }
                         if (openAddActivityDialog) AddActivityDialog()
@@ -140,13 +152,107 @@ class SportFragment : Fragment() {
                     IconButton(
                         onClick = { openAddActivityDialog = true },
                         modifier = Modifier
-                            .background(color = Color.Red)
-                            .clip(shape = CircleShape)
-                            .size(80.dp)
+                            .background(color = Color.Green, CircleShape)
+                            .size(60.dp)
                     ) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "")
                     }
                 })
+            }
+        }
+    }
+
+    @Composable
+    private fun BurnedCaloriesChart() {
+
+        val allAttivita by dbViewModel.allAttivita.observeAsState(initial = emptyList())
+
+
+        val calendar = Calendar.getInstance()
+
+        // Sottrai 5 giorni dalla data corrente
+        calendar.add(Calendar.DAY_OF_YEAR, -4)
+
+        // Imposta l'ora a mezzanotte (00:00:00)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        // Ottieni l'oggetto Date dal Calendar
+        val date = calendar.time
+
+
+        var filteredAttivita = allAttivita.filter {
+            it.date >= date
+        }.sortedBy { it.date }
+
+        val listCalories = LinkedHashMap<Int, Double>()
+
+
+        filteredAttivita.forEach {
+
+
+            //take the week calories
+            if (listCalories.containsKey(it.date.day)) {
+                listCalories[it.date.day] = listCalories[it.date.day]!! + it.calorie
+            } else listCalories[it.date.day] = it.calorie.toDouble()
+
+
+        }
+
+        val list = listCalories.values.toList()
+
+        if (filteredAttivita != null && listCalories.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .padding(10.dp)
+            ) {
+
+                LineChart(
+                    data = listOf(
+                        Line(
+                            label = "Calorie bruciate negli ultimi giorni",
+                            values = list,
+                            color = SolidColor(Color(0xFFDB504A)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFFDB504A).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp),
+                            curvedEdges = false
+                        ),
+                    ),
+                    animationMode = AnimationMode.Together(delayBuilder = {
+                        it * 500L
+                    }),
+            dotsProperties = DotProperties(
+                enabled = true,
+                radius = 12f,
+                color = SolidColor(Color(0xFF04724D)),
+                strokeWidth = 6f,
+                //strokeColor = Color.White,
+                strokeStyle = StrokeStyle.Normal,
+                animationEnabled = true,
+                animationSpec = tween(500)
+            ),
+                    dividerProperties = DividerProperties(
+                        enabled = false,
+                        xAxisProperties = LineProperties(
+                            enabled = false
+                        ),
+                        yAxisProperties = LineProperties(
+                            enabled = false
+                        )
+                    ),
+
+                    gridProperties = GridProperties(
+                        enabled = false,
+                    )
+                )
             }
         }
     }
@@ -384,9 +490,13 @@ class SportFragment : Fragment() {
                     it.id == selectedSportId
                 }
                 if (selectedSport != null) {
-                    newActivityWrapper.date = Date()
-                    newActivityWrapper.date.hours = pickedHour
-                    newActivityWrapper.date.minutes = pickedMinute
+
+                    val calendar = Calendar.getInstance()
+                    calendar.set(pickedYear, pickedMonth, pickedDay, pickedHour, pickedMinute)
+
+                    newActivityWrapper.date = calendar.time
+//                    newActivityWrapper.date.hours = pickedHour
+//                    newActivityWrapper.date.minutes = pickedMinute
                     newActivityWrapper.idSport = selectedSport.id
                     newActivityWrapper.userId = mainApplication.userData!!.userData.value!!.id
                     val activity = newActivityWrapper.convertToAttivita()
@@ -480,7 +590,41 @@ class SportFragment : Fragment() {
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        Text(text = "Scegli l'orario", textAlign = TextAlign.Center)
+
+
+                        val calendar = Calendar.getInstance()
+
+
+                        DatePicker(
+                            onDateSelected = { year, month, day ->
+                                pickedYear= year
+                                pickedMonth = month
+                                pickedDay = day
+
+                            },
+                            configuration = DatePickerConfiguration.Builder()
+                                .height(height = 300.dp)
+                                .dateTextStyle(
+                                    DefaultDatePickerConfig.dateTextStyle.copy(
+                                        color = Color(
+                                            0xFF333333
+                                        )
+                                    )
+                                )
+                                .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
+                                .selectedDateBackgroundColor(color = Color(0xFF64DD17))
+                                .numberOfMonthYearRowsDisplayed(5)
+                                .build(),
+                            selectionLimiter = SelectionLimiter(
+
+                                toDate = DatePickerDate(
+                                    year = calendar.get(Calendar.YEAR),
+                                    month = calendar.get(Calendar.MONTH),
+                                    day = calendar.get(Calendar.DAY_OF_MONTH)
+                                )
+                            )
+                        )
+
                         TimePicker(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -684,132 +828,129 @@ class SportFragment : Fragment() {
         }
     }
 
-    @Composable
-    private fun MovimentChart(activityList: List<Attivita>) {
-        val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
-        val km = activityList.map { it.distanza.toDouble() }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        ) {
-            LineChart(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp), data = listOf(
-                    Line(
-                        label = "Distanza percorsa",
-                        values = km,
-                        color = SolidColor(Color(0xFF04724D)),
-                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
-                        secondGradientFillColor = Color.Transparent,
-                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
-                        gradientAnimationDelay = 500,
-                        drawStyle = DrawStyle.Stroke(width = 2.dp)
-                    )
-                ), animationMode = AnimationMode.Together(delayBuilder = {
-                    it * 500L
-                }),
-                dotsProperties = DotProperties(
-                    enabled = false,
-                    radius = 10f,
-                    color = SolidColor(Color(0xFF04724D)),
-                    strokeWidth = 3f,
-                    //strokeColor = Color.White,
-                    strokeStyle = StrokeStyle.Normal,
-                    animationEnabled = true,
-                    animationSpec = tween(500)
-                ), dividerProperties = DividerProperties(
-                    enabled = true, xAxisProperties = LineProperties(
-                        enabled = false
-                    ), yAxisProperties = LineProperties(
-                        enabled = false
-                    )
-                ),
+//    @Composable
+//    private fun MovimentChart(activityList: List<Attivita>) {
+//        val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
+//        val km = activityList.map { it.distanza.toDouble() }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(150.dp)
+//        ) {
+//            LineChart(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 4.dp), data = listOf(
+//                    Line(
+//                        label = "Distanza percorsa",
+//                        values = km,
+//                        color = SolidColor(Color(0xFF04724D)),
+//                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+//                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
+//                        secondGradientFillColor = Color.Transparent,
+//                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+//                        gradientAnimationDelay = 500,
+//                        drawStyle = DrawStyle.Stroke(width = 2.dp)
+//                    )
+//                ), animationMode = AnimationMode.Together(delayBuilder = {
+//                    it * 500L
+//                }),
+//                dotsProperties = DotProperties(
+//                    enabled = false,
+//                    radius = 10f,
+//                    color = SolidColor(Color(0xFF04724D)),
+//                    strokeWidth = 3f,
+//                    //strokeColor = Color.White,
+//                    strokeStyle = StrokeStyle.Normal,
+//                    animationEnabled = true,
+//                    animationSpec = tween(500)
+//                ), dividerProperties = DividerProperties(
+//                    enabled = true, xAxisProperties = LineProperties(
+//                        enabled = false
+//                    ), yAxisProperties = LineProperties(
+//                        enabled = false
+//                    )
+//                ),
+//
+//                gridProperties = GridProperties(
+//                    enabled = false,
+//                ),
+//
+//                labelProperties = LabelProperties(
+//                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
+//                    //verticalPadding = 16.dp,
+//                    labels = dates
+//                )
+//            )
+//        }
+//    }
+//
+//    @Composable
+//    private fun BurnCaloriesChart(activityList: List<Attivita>) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(150.dp)
+//        ) {
+//            val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
+//            val burnCalories = activityList.map { it.calorie.toDouble() }
+//            LineChart(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 4.dp), data = listOf(
+//                    Line(
+//                        label = "Calorie Bruciate",
+//                        values = burnCalories,
+//                        color = SolidColor(Color(0xFF04724D)),
+//                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+//                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
+//                        secondGradientFillColor = Color.Transparent,
+//                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+//                        gradientAnimationDelay = 500,
+//                        drawStyle = DrawStyle.Stroke(width = 2.dp)
+//                    )
+//                ), animationMode = AnimationMode.Together(delayBuilder = {
+//                    it * 500L
+//                }),
+//
+//                dotsProperties = DotProperties(
+//                    enabled = false,
+//                    radius = 10f,
+//                    color = SolidColor(Color(0xFF04724D)),
+//                    strokeWidth = 3f,
+//                    //strokeColor = Color.White,
+//                    strokeStyle = StrokeStyle.Normal,
+//                    animationEnabled = true,
+//                    animationSpec = tween(500)
+//                ), dividerProperties = DividerProperties(
+//                    enabled = true, xAxisProperties = LineProperties(
+//                        enabled = false
+//                    ), yAxisProperties = LineProperties(
+//                        enabled = false
+//                    )
+//                ),
+//                gridProperties = GridProperties(
+//                    enabled = false,
+//                ),
+//                labelProperties = LabelProperties(
+//                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
+//                    //verticalPadding = 16.dp,
+//                    labels = dates
+//                )
+//            )
+//        }
+//    }
 
-                gridProperties = GridProperties(
-                    enabled = false,
-                ),
-
-                labelProperties = LabelProperties(
-                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
-                    //verticalPadding = 16.dp,
-                    labels = dates
-                )
-            )
-        }
-    }
-
-    @Composable
-    private fun BurnCaloriesChart(activityList: List<Attivita>) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        ) {
-            val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
-            val burnCalories = activityList.map { it.calorie.toDouble() }
-            LineChart(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp), data = listOf(
-                    Line(
-                        label = "Calorie Bruciate",
-                        values = burnCalories,
-                        color = SolidColor(Color(0xFF04724D)),
-                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
-                        secondGradientFillColor = Color.Transparent,
-                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
-                        gradientAnimationDelay = 500,
-                        drawStyle = DrawStyle.Stroke(width = 2.dp)
-                    )
-                ), animationMode = AnimationMode.Together(delayBuilder = {
-                    it * 500L
-                }),
-
-                dotsProperties = DotProperties(
-                    enabled = false,
-                    radius = 10f,
-                    color = SolidColor(Color(0xFF04724D)),
-                    strokeWidth = 3f,
-                    //strokeColor = Color.White,
-                    strokeStyle = StrokeStyle.Normal,
-                    animationEnabled = true,
-                    animationSpec = tween(500)
-                ), dividerProperties = DividerProperties(
-                    enabled = true, xAxisProperties = LineProperties(
-                        enabled = false
-                    ), yAxisProperties = LineProperties(
-                        enabled = false
-                    )
-                ),
-                gridProperties = GridProperties(
-                    enabled = false,
-                ),
-                labelProperties = LabelProperties(
-                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
-                    //verticalPadding = 16.dp,
-                    labels = dates
-                )
-            )
-        }
-    }
-
-    @Composable
-    private fun Hello() {
-
-
-        Box(modifier = Modifier.padding(10.dp)) {
-            Text(
-                text = "I Progressi di ${mainApplication.userData!!.userData.value!!.nome}",
-                fontSize = 50.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-
-    }
+//    @Composable
+//    private fun Hello() {
+//        Box(modifier = Modifier.padding(10.dp)) {
+//            Text(
+//                text = "I Progressi di " + mainApplication.userData!!.userData.value!!.nome,
+//                fontSize = 50.sp,
+//                textAlign = TextAlign.Center
+//            )
+//        }
+//    }
 
     @Composable
     fun BulletSpan(color: Color, label: String, value: Int, suffix: String = "") {

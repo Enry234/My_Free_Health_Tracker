@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -142,7 +143,7 @@ class NewFoodFragment : Fragment() {
 
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(bottom = 8.dp, end = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -158,7 +159,10 @@ class NewFoodFragment : Fragment() {
 
 
 
-                Button(
+                IconButton(
+                    modifier = Modifier
+                        .background(Color.Green, CircleShape)
+                        .align(Alignment.End),
                     onClick = {
                         alimentoWrapper = AlimentoWrapper()
                         showDialog = true

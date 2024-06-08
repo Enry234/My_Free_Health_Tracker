@@ -166,17 +166,16 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Nuovo Pasto",
+                    text = "Crea un nuovo pasto",
                     fontSize = 24.sp
                 )
-                Button(
+                IconButton(
                     onClick = {
                         showAddFoodDialog = true
-                    }
+                    },
+                    modifier = Modifier.background(Color.Green, CircleShape)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Alimento")
                 }
             }
             LazyColumn(
@@ -236,9 +235,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                         DatePicker(
                             onDateSelected = { year, month, day ->
-                                    pickedYear= year
-                                    pickedMonth = month
-                                    pickedDay = day
+                                pickedYear= year
+                                pickedMonth = month
+                                pickedDay = day
 
                             },
                             configuration = DatePickerConfiguration.Builder()
@@ -263,6 +262,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 )
                             )
                         )
+
 
                         TimePicker(
                             modifier = Modifier
