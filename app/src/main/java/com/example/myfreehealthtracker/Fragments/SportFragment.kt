@@ -75,6 +75,7 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
 import com.vsnappy1.datepicker.data.model.DatePickerDate
@@ -100,6 +101,7 @@ import java.util.Locale
 @Suppress("DEPRECATION")
 class SportFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
+    lateinit var firebaseAnalytics: FirebaseAnalytics
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
             mainApplication.alimentoRepository,
@@ -123,6 +125,7 @@ class SportFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         mainApplication = requireActivity().application as MainApplication
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
@@ -417,6 +420,11 @@ class SportFragment : Fragment() {
                     if (newSportWrapper.id.isNotEmpty()) {
                         val sport = newSportWrapper.convertToSport()
                         dbViewModel.insertSport(sport)
+                        val bundle = Bundle().apply {
+                            putString("id", mainApplication.userData!!.userData.value!!.id)
+                        }
+                        firebaseAnalytics.logEvent("hasInsertedSport", bundle)
+
                         //add firebase push new Sport
                         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT)
                             .child(sport.id).setValue(sport)
@@ -502,6 +510,11 @@ class SportFragment : Fragment() {
                     val activity = newActivityWrapper.convertToAttivita()
                     //room DB push
                     dbViewModel.insertAttivita(activity)
+                    val bundle = Bundle().apply {
+                        putString("id", mainApplication.userData!!.userData.value!!.id)
+                    }
+                    firebaseAnalytics.logEvent("hasInsertedActivity", bundle)
+
                     //firebase push
                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ATTIVITA)
                         .child(activity.userId + activity.idSport + activity.date)

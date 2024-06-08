@@ -97,7 +97,6 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     ): View {
 
         mainApplication = requireActivity().application as MainApplication
-
         val view = inflater.inflate(R.layout.fragment_health, container, false)
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 

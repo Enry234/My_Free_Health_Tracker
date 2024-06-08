@@ -87,6 +87,7 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.integration.android.IntentIntegrator
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
@@ -106,7 +107,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     private val currentMealFoodList = mutableStateListOf<Alimento>()
     private var alimentoWrapper = AlimentoWrapper()
     val pastoToAlimentoWrapperList = mutableStateListOf<PastoToAlimentoWrapper>()
-
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
             mainApplication.alimentoRepository,
@@ -131,6 +132,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         try {
             mainApplication = requireActivity().application as MainApplication
             alimentoWrapper.loadFromString(savedInstanceState?.getString("alimentoWrapper"))
+            firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         } catch (ex: Exception) {
             Log.i("NewFoodFragment", "MainApp error")
             Toast.makeText(
@@ -349,6 +351,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         ) //TODO TO CHECK
         dbViewModel.insertPasto(pasto)
         insertPastoToAlimento(pasto)
+        val bundle = Bundle().apply {
+            putString("id", mainApplication.userData!!.userData.value!!.id)
+        }
+        firebaseAnalytics.logEvent("hasInsertedMeal", bundle)
+
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
             .child(pasto.userID + pasto.date).setValue(pasto)
     }
@@ -833,6 +840,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 canConfirmMeal = true
 
                                 dbViewModel.insertAlimento(food)
+                                val bundle = Bundle().apply {
+                                    putString("id", mainApplication.userData!!.userData.value!!.id)
+                                }
+                                firebaseAnalytics.logEvent("hasInsertedFood", bundle)
 
                                 pastoToAlimentoWrapperList.add(
                                     PastoToAlimentoWrapper(

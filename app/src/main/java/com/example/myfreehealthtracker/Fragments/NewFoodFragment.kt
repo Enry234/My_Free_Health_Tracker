@@ -72,6 +72,7 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -93,6 +94,7 @@ class NewFoodFragment : Fragment() {
             mainApplication.attivitaRepository
         )
     }
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -104,7 +106,7 @@ class NewFoodFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
 
         val view = inflater.inflate(R.layout.fragment_new_food, container, false)
         try {
@@ -143,7 +145,9 @@ class NewFoodFragment : Fragment() {
 
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(bottom = 8.dp, end = 8.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 8.dp, end = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -217,7 +221,13 @@ class NewFoodFragment : Fragment() {
 
                                     dbViewModel.insertAlimento(food)
 
-
+                                    val bundle = Bundle().apply {
+                                        putString(
+                                            "id",
+                                            mainApplication.userData!!.userData.value!!.id
+                                        )
+                                    }
+                                    firebaseAnalytics.logEvent("hasInsertedFood", bundle)
 
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
                                         .child(food.id).setValue(food)

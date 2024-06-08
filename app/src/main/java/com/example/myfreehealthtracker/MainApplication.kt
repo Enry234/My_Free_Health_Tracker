@@ -8,6 +8,7 @@ import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepositor
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.SportRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.io.File
@@ -36,6 +37,8 @@ class MainApplication : Application() {
     val attivitaRepository by lazy { AttivitaRepository(attivitaDao) }
 
     //Firebase Setup
+
+
     private val firebaseDatabaseRef by lazy {
         FirebaseDatabase.getInstance("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference()
@@ -45,6 +48,11 @@ class MainApplication : Application() {
         return firebaseDatabaseRef.child(firebaseDBTable.toString())
     }
 
+
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseApp.initializeApp(this)
+    }
 }
 
 enum class FirebaseDBTable(val description: String) {

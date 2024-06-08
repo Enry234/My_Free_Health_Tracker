@@ -37,6 +37,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -49,7 +50,7 @@ import java.util.Date
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
     lateinit var mainApplication: MainApplication
-
+    lateinit var firebaseAnalytics: FirebaseAnalytics
     private fun loadUser() {
 
         if (mainApplication.internalFileData.exists()) {
@@ -75,6 +76,8 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 mainApplication.userData!!.setUserData(it)
                                 if (mainApplication.userData!!.userData.value!!.id != "") {
                                     Log.i("MAIN", mainApplication.userData.toString())
+                                    firebaseAnalytics =
+                                        FirebaseAnalytics.getInstance(this@MainActivity)
                                     initializeMainActivityLayout()
                                 } else {
 
@@ -195,6 +198,14 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     if (peso != 0.0) {
+
+                                        val bundle = Bundle().apply {
+                                            putString(
+                                                "id",
+                                                mainApplication.userData!!.userData.value!!.id
+                                            )
+                                        }
+                                        firebaseAnalytics.logEvent("hasUpdatePeso", bundle)
                                         mainApplication.userData!!.userData.value!!.peso!!.add(
                                             Pair(
                                                 Date(), peso
@@ -242,6 +253,13 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     if (calorie != 0) {
+                                        val bundle = Bundle().apply {
+                                            putString(
+                                                "id",
+                                                mainApplication.userData!!.userData.value!!.id
+                                            )
+                                        }
+                                        firebaseAnalytics.logEvent("hasUpdateCalorie", bundle)
                                         mainApplication.userData!!.userData.value!!.calorie =
                                             calorie
                                         //mainApplication.applicationScope.launch {
@@ -291,6 +309,16 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                         modifier = Modifier.weight(1f),
                                         onClick = {
                                             if (carboidrati != 0) {
+                                                val bundle = Bundle().apply {
+                                                    putString(
+                                                        "id",
+                                                        mainApplication.userData!!.userData.value!!.id
+                                                    )
+                                                }
+                                                firebaseAnalytics.logEvent(
+                                                    "hasUpdateCarboidrati",
+                                                    bundle
+                                                )
                                                 mainApplication.userData!!.userData.value!!.carboidrati =
                                                     carboidrati
                                                 runBlocking {
@@ -330,6 +358,16 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                         modifier = Modifier.weight(1f),
                                         onClick = {
                                             if (proteine != 0) {
+                                                val bundle = Bundle().apply {
+                                                    putString(
+                                                        "id",
+                                                        mainApplication.userData!!.userData.value!!.id
+                                                    )
+                                                }
+                                                firebaseAnalytics.logEvent(
+                                                    "hasUpdateProteine",
+                                                    bundle
+                                                )
                                                 mainApplication.userData!!.userData.value!!.proteine =
                                                     proteine
                                                 runBlocking {
@@ -376,6 +414,13 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                     Button(
                                         modifier = Modifier.weight(1f),
                                         onClick = {
+                                            val bundle = Bundle().apply {
+                                                putString(
+                                                    "id",
+                                                    mainApplication.userData!!.userData.value!!.id
+                                                )
+                                            }
+                                            firebaseAnalytics.logEvent("hasUpdateFibre", bundle)
                                             if (fibre != 0) {
                                                 mainApplication.userData!!.userData.value!!.fibre =
                                                     fibre
@@ -416,6 +461,16 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                         modifier = Modifier.weight(1f),
                                         onClick = {
                                             if (grassi != 0) {
+                                                val bundle = Bundle().apply {
+                                                    putString(
+                                                        "id",
+                                                        mainApplication.userData!!.userData.value!!.id
+                                                    )
+                                                }
+                                                firebaseAnalytics.logEvent(
+                                                    "hasUpdateGrassi",
+                                                    bundle
+                                                )
                                                 mainApplication.userData!!.userData.value!!.grassi =
                                                     grassi
                                                 runBlocking {
@@ -458,7 +513,6 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
 
         }
     }
-
 }
 
 

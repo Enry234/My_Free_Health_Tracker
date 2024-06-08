@@ -1,11 +1,11 @@
 package com.example.myfreehealthtracker
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -62,6 +62,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
@@ -528,6 +529,7 @@ class AuthPage {
         user.id = firebaseRef.push().toString()
             .removePrefix("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app/users/")
         firebaseRef.child(user.id).setValue(user)
+        val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
         lifecycleOwner.lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
                 mainApplication.userRepository.insertUser(user)
@@ -543,6 +545,14 @@ class AuthPage {
                     fileOutputStream.write("UserAccessComplete".toByteArray())
                     fileOutputStream.close()
 
+                    // Initialize Firebase Analytics
+
+
+                    // Log a custom event
+                    val bundle = Bundle().apply {
+                        putString("id", user.id)
+                    }
+                    firebaseAnalytics.logEvent("hasCompleteRegistration", bundle)
                     val intent =
                         Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
@@ -558,19 +568,7 @@ class AuthPage {
         }
     }
 
-    fun registerUser(email: String, password: String, activity: Activity) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-            activity
 
-        ) {
-            if (it.isSuccessful) {
-                user.id = firebaseAuth.currentUser?.uid.toString()
-            } else {
-                //TODO errore
-
-            }
-        }
-    }
 
     private suspend fun getLastKnownLocation(context: Context) {
         Log.i("main activity", "entro")

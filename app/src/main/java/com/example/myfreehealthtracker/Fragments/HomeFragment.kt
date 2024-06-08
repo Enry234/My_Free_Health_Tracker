@@ -57,6 +57,7 @@ import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
+import com.google.firebase.analytics.FirebaseAnalytics
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
@@ -80,7 +81,7 @@ import java.util.Locale
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     lateinit var mainApplication: MainApplication
-
+    lateinit var firebaseAnalytics: FirebaseAnalytics
     var proteine = 0f
     var carboidrati = 0f
     var grassi = 0f
@@ -105,7 +106,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        val bundle = Bundle().apply {
+            putString("id", mainApplication.userData!!.userData.value!!.id)
+        }
+        firebaseAnalytics.logEvent("login", bundle)
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             // Update the UI, in this case, a TextView.
             composeView.setContent {
