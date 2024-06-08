@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
@@ -107,58 +108,64 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-        val bundle = Bundle().apply {
-            putString("id", mainApplication.userData!!.userData.value!!.id)
-        }
-        firebaseAnalytics.logEvent("login", bundle)
+
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             // Update the UI, in this case, a TextView.
+            val bundle = Bundle().apply {
+                putString("id", mainApplication.userData!!.userData.value!!.id)
+            }
+            firebaseAnalytics.logEvent("login", bundle)
             composeView.setContent {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp)
-                ) {
-                    Column(
+
+                ApplicationTheme {
+
+
+                    Surface(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
+                            .padding(8.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
 //                    horizontalAlignment = Alignment.CenterHorizontally,
 //                    verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Surface(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(Color.White),
-                            shape = RoundedCornerShape(16.dp),
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(Color.White)
-                                    .padding(8.dp)
+
+                            Surface(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White),
+                                shape = RoundedCornerShape(16.dp),
                             ) {
-                                Row(
-
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color.White)
+                                        .padding(8.dp)
                                 ) {
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                    ) {
-                                        dailyReport()
-                                    }
+                                    Row(
 
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .background(Color.White),
                                     ) {
-                                        foodRanking()
+                                        Column(
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+                                            dailyReport()
+                                        }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .background(Color.White),
+                                        ) {
+                                            foodRanking()
+                                        }
+
                                     }
 
                                 }
-
                             }
-                        }
 
 //                        Surface(
 //                            modifier = Modifier.fillMaxWidth(),
@@ -174,35 +181,36 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 //                        }
 
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            tonalElevation = 8.dp,
-                            //shadowElevation = 16.dp,
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Box(
-                                modifier = Modifier.padding(8.dp)
-                                //.fillMaxWidth()
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                tonalElevation = 8.dp,
+                                //shadowElevation = 16.dp,
+                                shape = RoundedCornerShape(16.dp),
                             ) {
-                                WeightChart()
+                                Box(
+                                    modifier = Modifier.padding(8.dp)
+                                    //.fillMaxWidth()
+                                ) {
+                                    WeightChart()
+                                }
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            tonalElevation = 8.dp,
-                            //shadowElevation = 16.dp,
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Box(
-                                modifier = Modifier.padding(8.dp)
-                                //.fillMaxWidth()
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                tonalElevation = 8.dp,
+                                //shadowElevation = 16.dp,
+                                shape = RoundedCornerShape(16.dp),
                             ) {
-                                displayMacros()
+                                Box(
+                                    modifier = Modifier.padding(8.dp)
+                                    //.fillMaxWidth()
+                                ) {
+                                    displayMacros()
+                                }
                             }
                         }
                     }
