@@ -107,9 +107,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     private var alimentoWrapper = AlimentoWrapper()
     val pastoToAlimentoWrapperList = mutableStateListOf<PastoToAlimentoWrapper>()
 
-    private val alimentoViewModel: InternalDBViewModel by viewModels {
+    private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepository,
             mainApplication.alimentoRepository,
             mainApplication.pastoRepository,
             mainApplication.pastoToCiboRepository,
@@ -342,8 +341,13 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
         // Ottieni l'oggetto Date dal Calendar
         val date = calendar.time
-        val pasto = Pasto(mainApplication.userData!!.userData.value!!.id, date, tipoPasto, "")
-        alimentoViewModel.insertPasto(pasto)
+        val pasto = Pasto(
+            mainApplication.userData!!.userData.value!!.id,
+            date,
+            tipoPasto,
+            ""
+        ) //TODO TO CHECK
+        dbViewModel.insertPasto(pasto)
         insertPastoToAlimento(pasto)
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
             .child(pasto.userID + pasto.date).setValue(pasto)
@@ -363,7 +367,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 val pastoToCibo =
                     PastoToCibo(it.idUser, it.idDate, it.idAlimento, it.quantita.value.toFloat())
                 //push internal db
-                mainApplication.pastoToCiboRepository.insertPastoToCibo(pastoToCibo)
+                dbViewModel.insertPastoToCibo(pastoToCibo)
                 //push firebase db
                 mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
                     .child(pastoToCibo.userID + pastoToCibo.date).child(pastoToCibo.idAlimento)
@@ -663,7 +667,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     @Composable
     private fun AddFoodDialog() {
-        val existingAllAlimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
+        val existingAllAlimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
         var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
         var selectedFoodItemLabel by rememberSaveable { mutableStateOf("Seleziona Esistente") }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -689,7 +693,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             currentMealFoodList.add(selectedFood)
                             pastoToAlimentoWrapperList.add(
                                 PastoToAlimentoWrapper(
-                                    idUser = mainApplication.userData!!.userData.value!!.id,
+                                    idUser = mainApplication.userData!!.userData.value!!.id, //TODO
                                     idAlimento = selectedFood.id,
                                     nomeAlimento = selectedFood.nome,
                                     imageUri = selectedFood.immagine,
@@ -828,13 +832,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 currentMealFoodList.add(food)
                                 canConfirmMeal = true
 
-                                lifecycleScope.launch {
-                                    mainApplication.alimentoRepository.insertAlimento(food)
-                                }
+                                dbViewModel.insertAlimento(food)
 
                                 pastoToAlimentoWrapperList.add(
                                     PastoToAlimentoWrapper(
-                                        idUser = mainApplication.userData!!.userData.value!!.id,
+                                        idUser = mainApplication.userData!!.userData.value!!.id, //TODO
                                         idAlimento = food.id,
                                         nomeAlimento = food.nome,
                                         imageUri = food.immagine,

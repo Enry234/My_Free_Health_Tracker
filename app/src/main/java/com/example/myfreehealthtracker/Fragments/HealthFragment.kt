@@ -57,12 +57,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.asLiveData
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.github.tehras.charts.piechart.PieChart
@@ -70,7 +72,6 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -79,7 +80,15 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     private lateinit var expandableFloatingActionButton: ExpandableFloatingActionButton
     private lateinit var mainApplication: MainApplication
-
+    private val dbViewModel: InternalDBViewModel by viewModels {
+        InternalViewModelFactory(
+            mainApplication.alimentoRepository,
+            mainApplication.pastoRepository,
+            mainApplication.pastoToCiboRepository,
+            mainApplication.sportRepository,
+            mainApplication.attivitaRepository
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -214,8 +223,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     }
     @Composable
     private fun ShowMeal() {
-        val allPasto2 by mainApplication.pastoRepository.allPasto.asLiveData()
-            .observeAsState(initial = emptyList())
+        val allPasto2 by dbViewModel.allPasto.observeAsState(initial = emptyList())
         val allPasto = allPasto2.sortedByDescending { it.date }
         val dates = getLast30Days()
 
@@ -265,10 +273,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
     @Composable
     private fun PastoItem(pasto: Pasto) {
 
-        val alimentiPasto: List<Alimento>? by mainApplication.pastoToCiboRepository.getAlimentiByPasto(
-            pasto
-        ).asLiveData().observeAsState()
-
+        val alimentiPasto: List<Alimento>? by dbViewModel.loadAlimentiByPasto(pasto)
+            .observeAsState(initial = null)
         var calorie: Int = 0
         var carboidrati: Int = 0
         var proteine: Int = 0
@@ -281,12 +287,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         alimentiPasto?.forEach {
 
 
-            var qta = 1f
-
-            runBlocking {
-                qta = mainApplication.pastoToCiboRepository.getQuantitaByPasto(pasto, it)
-            }
-
+            val qta by dbViewModel.loadQuantitaByPasto(pasto, it).observeAsState(initial = 0f)
 
             calorie += ((it.calorie!!) * qta).toInt()
             carboidrati += ((it.carboidrati!!) * qta).toInt()
@@ -478,14 +479,15 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                 alimentiPasto?.forEach {
 
 
-                    var qta = 1f
+                    val qta by dbViewModel.loadQuantitaByPasto(pasto, it)
+                        .observeAsState(initial = null)
 
-                    runBlocking {
-                        qta = mainApplication.pastoToCiboRepository.getQuantitaByPasto(pasto, it)
+
+
+                    if (qta != (null)) {
+                        DisplayAlimento(it, qta!!)
                     }
 
-
-                    DisplayAlimento(it, qta)
                 }
             }
         }

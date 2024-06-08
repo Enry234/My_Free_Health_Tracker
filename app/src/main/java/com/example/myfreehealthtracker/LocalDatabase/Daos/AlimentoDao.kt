@@ -20,7 +20,7 @@ interface AlimentoDao {
 
 
     @Query("SELECT * FROM Alimento WHERE id = :barcode")
-    suspend fun getAlimentoById(barcode: String): Alimento
+    fun getAlimentoById(barcode: String): Flow<Alimento>
 
     @Query("DELETE FROM Alimento")
     suspend fun deleteAll()

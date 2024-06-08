@@ -64,8 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
@@ -89,7 +87,6 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -99,7 +96,6 @@ class SportFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepository,
             mainApplication.alimentoRepository,
             mainApplication.pastoRepository,
             mainApplication.pastoToCiboRepository,
@@ -169,8 +165,8 @@ class SportFragment : Fragment() {
         var durata: Int = activity.durata
         var lunghezza: Int = activity.distanza
         var calorie: Int = activity.calorie
-        val sport by mainApplication.sportRepository.getSportById(activity.idSport).asLiveData()
-            .observeAsState()
+        val sport by dbViewModel.loadSportById(activity.idSport).observeAsState(initial = null)
+
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -314,10 +310,7 @@ class SportFragment : Fragment() {
                             .removePrefix("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app/sport/")
                     if (newSportWrapper.id.isNotEmpty()) {
                         val sport = newSportWrapper.convertToSport()
-                        lifecycleScope.launch {
-                            //insert Room, DB
-                            mainApplication.sportRepository.insertSport(sport)
-                        }
+                        dbViewModel.insertSport(sport)
                         //add firebase push new Sport
                         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT)
                             .child(sport.id).setValue(sport)
@@ -396,12 +389,9 @@ class SportFragment : Fragment() {
                     newActivityWrapper.date.minutes = pickedMinute
                     newActivityWrapper.idSport = selectedSport.id
                     newActivityWrapper.userId = mainApplication.userData!!.userData.value!!.id
-
                     val activity = newActivityWrapper.convertToAttivita()
                     //room DB push
-                    lifecycleScope.launch {
-                        mainApplication.attivitaRepository.insertAttivita(activity)
-                    }
+                    dbViewModel.insertAttivita(activity)
                     //firebase push
                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ATTIVITA)
                         .child(activity.userId + activity.idSport + activity.date)
@@ -809,13 +799,16 @@ class SportFragment : Fragment() {
 
     @Composable
     private fun Hello() {
+
+
         Box(modifier = Modifier.padding(10.dp)) {
             Text(
-                text = "I Progressi di " + mainApplication.userData!!.userData.value!!.nome,
+                text = "I Progressi di ${mainApplication.userData!!.userData.value!!.nome}",
                 fontSize = 50.sp,
                 textAlign = TextAlign.Center
             )
         }
+
     }
 
     @Composable

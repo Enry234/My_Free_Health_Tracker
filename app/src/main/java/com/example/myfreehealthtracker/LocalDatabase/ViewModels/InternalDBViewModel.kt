@@ -8,18 +8,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
-import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AttivitaRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.SportRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class InternalDBViewModel(
-    private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
     private val pastoRepository: PastoRepository,
     private val pastoToCiboRepository: PastoToCiboRepository,
@@ -30,13 +28,6 @@ class InternalDBViewModel(
 ) : ViewModel() {
 
 
-    //User
-    val allUser: LiveData<UserData> =
-        userRepository.allUser.asLiveData(viewModelScope.coroutineContext)
-
-    fun insertUser(user: UserData) = viewModelScope.launch {
-        userRepository.insertUser(user)
-    }
 
 
     //Alimento
@@ -47,6 +38,10 @@ class InternalDBViewModel(
         alimentoRepository.insertAlimento(alimento)
     }
 
+    fun loadAlimentoById(id: String): LiveData<Alimento> {
+        return alimentoRepository.getAlimentoById(id).asLiveData(viewModelScope.coroutineContext)
+    }
+
     //Pasto
     val allPasto: LiveData<List<Pasto>> =
         pastoRepository.allPasto.asLiveData(viewModelScope.coroutineContext)
@@ -55,6 +50,28 @@ class InternalDBViewModel(
         pastoRepository.insertPasto(pasto)
     }
 
+    fun loadAlimentiByPasto(pasto: Pasto): LiveData<List<Alimento>> {
+        return pastoToCiboRepository.getAlimentiByPasto(pasto)
+            .asLiveData(viewModelScope.coroutineContext)
+
+    }
+
+
+    //PastoToCibo
+    fun insertPastoToCibo(pastoToCibo: PastoToCibo) = viewModelScope.launch {
+        pastoToCiboRepository.insertPastoToCibo(pastoToCibo)
+    }
+
+    val allPastoToCibo: LiveData<List<PastoToCibo>> =
+        pastoToCiboRepository.allPastoToCibo.asLiveData(viewModelScope.coroutineContext)
+
+    fun loadQuantitaByPasto(pasto: Pasto, alimento: Alimento): LiveData<Float> {
+        return pastoToCiboRepository.getQuantitaByPasto(pasto, alimento)
+            .asLiveData(viewModelScope.coroutineContext)
+
+    }
+
+
     //sport
     val allSport: LiveData<List<Sport>> =
         sportRepository.allSports.asLiveData(viewModelScope.coroutineContext)
@@ -62,6 +79,11 @@ class InternalDBViewModel(
     fun insertSport(sport: Sport) = viewModelScope.launch {
         sportRepository.insertSport(sport)
     }
+
+    fun loadSportById(id: String): LiveData<Sport> {
+        return sportRepository.getSportById(id).asLiveData(viewModelScope.coroutineContext)
+    }
+
 
     //attivita
     val allAttivita: LiveData<List<Attivita>> =
@@ -74,7 +96,6 @@ class InternalDBViewModel(
 }
 
 class InternalViewModelFactory(
-    private val userRepository: UserRepository,
     private val alimentoRepository: AlimentoRepository,
     private val pastoRepository: PastoRepository,
     private val pastoToCiboRepository: PastoToCiboRepository,
@@ -85,7 +106,6 @@ class InternalViewModelFactory(
         if (modelClass.isAssignableFrom(InternalDBViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return InternalDBViewModel(
-                userRepository,
                 alimentoRepository,
                 pastoRepository,
                 pastoToCiboRepository,

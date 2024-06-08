@@ -41,7 +41,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.github.tehras.charts.piechart.PieChart
@@ -58,7 +61,6 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -76,6 +78,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     var fibre = 0f
     var calorie = 0f
 
+    private val dbViewModel: InternalDBViewModel by viewModels {
+        InternalViewModelFactory(
+            mainApplication.alimentoRepository,
+            mainApplication.pastoRepository,
+            mainApplication.pastoToCiboRepository,
+            mainApplication.sportRepository,
+            mainApplication.attivitaRepository
+        )
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,6 +95,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         mainApplication = requireActivity().application as MainApplication
 
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
+
 
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             // Update the UI, in this case, a TextView.
@@ -167,8 +180,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Composable
     private fun displayMacros() {
 
-        val allPastoToCibo by (mainApplication).pastoToCiboRepository.getAllPastoToCibo()
-            .observeAsState()
+        val allPastoToCibo by dbViewModel.allPastoToCibo.observeAsState(initial = emptyList())
 
         val calendar = Calendar.getInstance()
 
@@ -193,11 +205,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val listMacro = LinkedHashMap<Int, Macros>()
 
         filteredPastoToCibo?.forEach {
-            val alimento: Alimento
+            val alimento by dbViewModel.loadAlimentoById(it.idAlimento)
+                .observeAsState(initial = null)
 
-            runBlocking {
-                alimento = mainApplication.alimentoRepository.getAlimentoById(it.idAlimento)
-            }
+
             //alimento can be null ide error
             if (alimento != null) {
 
@@ -205,17 +216,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (listMacro.containsKey(it.date.day)) {
                     listMacro[it.date.day]?.add(
                         Macros(
-                            it.quantity * alimento.proteine!!,
-                            it.quantity * alimento.carboidrati!!,
-                            it.quantity * alimento.grassi!!,
-                            it.quantity * alimento.fibre!!
+                            it.quantity * alimento!!.proteine!!,
+                            it.quantity * alimento!!.carboidrati!!,
+                            it.quantity * alimento!!.grassi!!,
+                            it.quantity * alimento!!.fibre!!
                         )
                     )
                 } else listMacro[it.date.day] = Macros(
-                    it.quantity * alimento.proteine!!,
-                    it.quantity * alimento.carboidrati!!,
-                    it.quantity * alimento.grassi!!,
-                    it.quantity * alimento.fibre!!
+                    it.quantity * alimento!!.proteine!!,
+                    it.quantity * alimento!!.carboidrati!!,
+                    it.quantity * alimento!!.grassi!!,
+                    it.quantity * alimento!!.fibre!!
                 )
             }
         }
@@ -330,8 +341,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Composable
     private fun dailyReport() {
-        val allPastoToCibo by (mainApplication).pastoToCiboRepository.getAllPastoToCibo()
-            .observeAsState()
+        val allPastoToCibo by dbViewModel.allPastoToCibo.observeAsState(initial = emptyList())
 
         // Ottenere la data e l'ora corrente
         val today = Date()
@@ -349,13 +359,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         if (filterededPastoToCibo != null) {
             filterededPastoToCibo.forEach {
-                var alimento: Alimento
-                runBlocking {
-                    alimento = mainApplication.alimentoRepository.getAlimentoById(it.idAlimento)
+                val alimento by dbViewModel.loadAlimentoById(it.idAlimento)
+                    .observeAsState(initial = null)
+
+                if (alimento != null) {
+                    dailyFoods.add(Pair(alimento!!, it.quantity))
+                    Log.i("FILTERED", "LOOP")
                 }
 
-                dailyFoods.add(Pair(alimento, it.quantity))
-                Log.i("FILTERED", "LOOP")
 
             }
 
@@ -557,82 +568,88 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun WeightChart() {
 
 
-        val pairList = mainApplication.userData!!.userData.value!!.peso
-        val weights = List<Double>(minOf(pairList!!.size, 7)) { 0.0 }.toMutableList()
-        val currentDate = Date()
-        val dates =
-            List<String>(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
+        val user by mainApplication.userData!!.userData.observeAsState(initial = null)
 
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("d/MM")
-        val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
+        if (user != null) {
+            val pairList = user!!.peso
 
-        pairList!!.subList(maxOf(0, pairList.size - 7), pairList.size)
-            .forEachIndexed { index, pair ->
-                weights[index] = pair.second
-                dates[index] = formatter.format(pair.first)
-            }
+            val weights = List<Double>(minOf(pairList!!.size, 7)) { 0.0 }.toMutableList()
+            val currentDate = Date()
+            val dates =
+                List<String>(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
+
+            val dateTimeFormatter = DateTimeFormatter.ofPattern("d/MM")
+            val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
+
+            pairList.subList(maxOf(0, pairList.size - 7), pairList.size)
+                .forEachIndexed { index, pair ->
+                    weights[index] = pair.second
+                    dates[index] = formatter.format(pair.first)
+                }
 
 
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        ) {
-            LineChart(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                data = listOf(
-                    Line(
-                        label = "Il tuo peso",
-                        values = weights,
-                        color = SolidColor(Color(0xFF04724D)),
-                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
-                        secondGradientFillColor = Color.Transparent,
-                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
-                        gradientAnimationDelay = 500,
-                        drawStyle = DrawStyle.Stroke(width = 2.dp)
-                    )
-                ),
-                animationMode = AnimationMode.Together(delayBuilder = {
-                    it * 500L
-                }),
-                //minValue = 40.0,
-                //maxValue = 100.0
-                dotsProperties = DotProperties(
-                    enabled = false,
-                    radius = 10f,
-                    color = SolidColor(Color(0xFF04724D)),
-                    strokeWidth = 3f,
-                    //strokeColor = Color.White,
-                    strokeStyle = StrokeStyle.Normal,
-                    animationEnabled = true,
-                    animationSpec = tween(500)
-                ),
-                dividerProperties = DividerProperties(
-                    enabled = true,
-                    xAxisProperties = LineProperties(
-                        enabled = false
+                    .height(300.dp)
+            ) {
+                LineChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
+                    data = listOf(
+                        Line(
+                            label = "Il tuo peso",
+                            values = weights,
+                            color = SolidColor(Color(0xFF04724D)),
+                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
+                            firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
+                            secondGradientFillColor = Color.Transparent,
+                            strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
+                            gradientAnimationDelay = 500,
+                            drawStyle = DrawStyle.Stroke(width = 2.dp)
+                        )
                     ),
-                    yAxisProperties = LineProperties(
-                        enabled = false
+                    animationMode = AnimationMode.Together(delayBuilder = {
+                        it * 500L
+                    }),
+                    //minValue = 40.0,
+                    //maxValue = 100.0
+                    dotsProperties = DotProperties(
+                        enabled = false,
+                        radius = 10f,
+                        color = SolidColor(Color(0xFF04724D)),
+                        strokeWidth = 3f,
+                        //strokeColor = Color.White,
+                        strokeStyle = StrokeStyle.Normal,
+                        animationEnabled = true,
+                        animationSpec = tween(500)
+                    ),
+                    dividerProperties = DividerProperties(
+                        enabled = true,
+                        xAxisProperties = LineProperties(
+                            enabled = false
+                        ),
+                        yAxisProperties = LineProperties(
+                            enabled = false
+                        )
+                    ),
+
+                    gridProperties = GridProperties(
+                        enabled = false,
+                    ),
+
+                    labelProperties = LabelProperties(
+                        enabled = true,
+                        textStyle = MaterialTheme.typography.labelSmall,
+                        //verticalPadding = 16.dp,
+                        labels = dates
                     )
-                ),
-
-                gridProperties = GridProperties(
-                    enabled = false,
-                ),
-
-                labelProperties = LabelProperties(
-                    enabled = true,
-                    textStyle = MaterialTheme.typography.labelSmall,
-                    //verticalPadding = 16.dp,
-                    labels = dates
                 )
-            )
+            }
         }
+
 
 
     }

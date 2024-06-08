@@ -1,5 +1,6 @@
 package com.example.myfreehealthtracker.foodOpenFacts.model
 
+import androidx.annotation.Nullable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -370,6 +371,7 @@ data class Product(
     val nutritionScoreWarningNoFruitsVegetablesNuts: Int? = 0,
 
     @SerialName("no_nutrition_data")
+    @Nullable
     val noNutritionData: String? = null,
 
     @SerialName("nova_group")

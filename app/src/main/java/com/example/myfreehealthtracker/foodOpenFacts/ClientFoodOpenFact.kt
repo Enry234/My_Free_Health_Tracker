@@ -26,6 +26,7 @@ class ClientFoodOpenFact() {
                     prettyPrint = false
                     useArrayPolymorphism = false
                     ignoreUnknownKeys = true
+
                 }
             )
         }

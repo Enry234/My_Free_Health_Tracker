@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
@@ -84,9 +83,8 @@ class NewFoodFragment : Fragment() {
     private var alimentoWrapper = AlimentoWrapper()
     private lateinit var mainApplication: MainApplication
 
-    private val alimentoViewModel: InternalDBViewModel by viewModels {
+    private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
-            mainApplication.userRepository,
             mainApplication.alimentoRepository,
             mainApplication.pastoRepository,
             mainApplication.pastoToCiboRepository,
@@ -137,7 +135,7 @@ class NewFoodFragment : Fragment() {
         var showDialog by rememberSaveable {
             mutableStateOf(false)
         }
-        val alimentList by alimentoViewModel.allAlimento.observeAsState(initial = emptyList())
+        val alimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -212,12 +210,11 @@ class NewFoodFragment : Fragment() {
                                     showDialog = false
                                     val food = alimentoWrapper.convertToFood()
 
-                                    lifecycleScope.launch {
-                                        mainApplication.alimentoRepository.insertAlimento(food)
-                                    }
 
-                                    val mainApplication: MainApplication =
-                                        requireActivity().application as MainApplication
+                                    dbViewModel.insertAlimento(food)
+
+
+
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
                                         .child(food.id).setValue(food)
                                     //add element to list
