@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
+    id("com.google.firebase.firebase-perf")
+
     kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
 
@@ -124,8 +126,9 @@ dependencies {
 
     implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
 
-//    implementation ("com.patrykandpatrick.vico:core:1.11.1")
-//    implementation ("com.patrykandpatrick.vico:compose-m3:1.11.1")
+
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-perf")
 
 
 }
