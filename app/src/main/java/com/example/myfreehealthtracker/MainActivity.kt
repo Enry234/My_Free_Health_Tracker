@@ -1,7 +1,12 @@
 package com.example.myfreehealthtracker
 
+import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -30,15 +35,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -52,11 +60,13 @@ import java.util.Date
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
     private lateinit var mainApplication: MainApplication
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var fileInputStream: FileInputStream
+    private lateinit var locationManager: LocationManager
     private fun loadUser() {
 
         if (mainApplication.internalFileData.exists()) {
             try {
-                val fileInputStream: FileInputStream =
+                fileInputStream =
                     applicationContext.openFileInput("internalData")
                 val inputStreamReader = InputStreamReader(fileInputStream)
                 val bufferedReader = BufferedReader(inputStreamReader)
@@ -116,6 +126,22 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         loadUser()
 
     }
+    override fun onDestroy() {
+        super.onDestroy()
+
+
+        Log.i("MainActivity", "onDestroy called")
+
+        // Cancel any  coroutines
+        lifecycleScope.coroutineContext.cancel()
+
+        // Close file streams if any are open
+        try {
+            fileInputStream.close()
+        } catch (e: IOException) {
+        }
+
+    }
 
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun initializeMainActivityLayout() {
@@ -154,6 +180,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
 
+        //bottomNavBar
         bottomNavBar.setOnItemSelectedListener {
             val navController = fragmentContainer.findNavController()
             when (it.itemId) {
@@ -180,6 +207,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             }
         }
 
+        //Drawer
         composeViewDrawerHeader.setContent {
             Box(
                 modifier = Modifier
@@ -218,7 +246,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                     //}
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
                                         .child(mainApplication.userData!!.userData.value!!.id)
-                                        .setValue(mainApplication.userData!!)
+                                        .setValue(mainApplication.userData!!.userData.value)
                                 } else {
                                     Toast.makeText(
                                         this@MainActivity,
@@ -265,7 +293,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                     //}
                                     mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
                                         .child(mainApplication.userData!!.userData.value!!.id)
-                                        .setValue(mainApplication.userData!!)
+                                        .setValue(mainApplication.userData!!.userData.value)
                                 } else {
                                     Toast.makeText(
                                         this@MainActivity,
@@ -320,7 +348,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             mainApplication.getFirebaseDatabaseRef(
                                                 FirebaseDBTable.USERS
                                             ).child(mainApplication.userData!!.userData.value!!.id)
-                                                .setValue(mainApplication.userData!!)
+                                                .setValue(mainApplication.userData!!.userData.value)
                                         } else {
                                             Toast.makeText(
                                                 this@MainActivity,
@@ -365,7 +393,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             mainApplication.getFirebaseDatabaseRef(
                                                 FirebaseDBTable.USERS
                                             ).child(mainApplication.userData!!.userData.value!!.id)
-                                                .setValue(mainApplication.userData!!)
+                                                .setValue(mainApplication.userData!!.userData.value)
                                         } else {
                                             Toast.makeText(
                                                 this@MainActivity,
@@ -416,7 +444,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             mainApplication.getFirebaseDatabaseRef(
                                                 FirebaseDBTable.USERS
                                             ).child(mainApplication.userData!!.userData.value!!.id)
-                                                .setValue(mainApplication.userData!!)
+                                                .setValue(mainApplication.userData!!.userData.value)
                                         } else {
                                             Toast.makeText(
                                                 this@MainActivity,
@@ -461,7 +489,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                             mainApplication.getFirebaseDatabaseRef(
                                                 FirebaseDBTable.USERS
                                             ).child(mainApplication.userData!!.userData.value!!.id)
-                                                .setValue(mainApplication.userData!!)
+                                                .setValue(mainApplication.userData!!.userData.value)
                                         } else {
                                             Toast.makeText(
                                                 this@MainActivity,
@@ -491,6 +519,62 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             }
 
         }
+        location()
+
+    }
+
+    private fun location() {
+        try {
+            locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    2
+                )
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    2
+                )
+            } else {
+
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        if (location != null) {
+                            val strLocation =
+                                location.latitude.toString() + "|" + location.longitude.toString()
+                            mainApplication.userData!!.userData.value!!.posizione = strLocation
+
+                            mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                .child(mainApplication.userData!!.userData.value!!.id)
+                                .setValue(mainApplication.userData!!.userData.value!!)
+                            val bundle = Bundle().apply {
+                                putString(
+                                    "position",
+                                    mainApplication.userData!!.userData.value!!.posizione
+                                )
+                            }
+                            firebaseAnalytics.logEvent("hasUpdatePosition", bundle)
+                        }
+                    }
+
+            }
+        } catch (ex: Exception) {
+            Log.i("location", "ErrorLoadingPosition")
+        }
+
+
     }
 }
 

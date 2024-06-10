@@ -53,6 +53,10 @@ class MainApplication : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
     }
+    override fun onTerminate() {
+        super.onTerminate()
+        internalDatabaseRef.close()
+    }
 }
 
 enum class FirebaseDBTable(val description: String) {

@@ -12,7 +12,7 @@
     <string name="homeText">Updates</string>
     <string name="sportText">Your Activities</string>
     <string name="healthText">Your Meals</string>
-    <string name="welcomeDrawerPicProfile">Welcome Back</string>
+    <string name="welcomeDrawerPicProfile">Welcome Back </string>
     <string name="openDrawer">Open</string>
     <string name="closeDrawer">Close</string>
     <string name="back">Back</string>

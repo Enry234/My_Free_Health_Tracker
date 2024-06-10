@@ -1,9 +1,7 @@
 package com.example.myfreehealthtracker
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -58,12 +56,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
@@ -580,35 +576,5 @@ class AuthPage {
         }
     }
 
-
-    private fun getLastKnownLocation(context: Context) {
-        Log.i("main activity", "entro")
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
-        //permission check
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.i("main activity", "permessi validi")
-            //permission success
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location ->
-                    if (location != null) {
-                        user.posizione = location.toString()
-                        Log.i("main activity", "location settata")
-                    } else {
-                        Log.i("main activity", "location non settata")
-                    }
-
-                }
-        } else {
-            Log.i("main activity", "permessi non settati")
-        }
-    }
 
 }
