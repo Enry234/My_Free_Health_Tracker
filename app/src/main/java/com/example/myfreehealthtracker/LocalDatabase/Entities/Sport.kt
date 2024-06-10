@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class Sport(
     @PrimaryKey //generate by Firebase
-    var id: String,
+    var id: String = "",
     @ColumnInfo("NomeSport")
-    var nomeSport: String,
+    var nomeSport: String = "",
     @ColumnInfo("Descrizione")
-    var desc: String,
+    var desc: String = "",
     @ColumnInfo("Immagine")
-    var image: String
+    var image: String = ""
 )

@@ -137,6 +137,7 @@ class NewFoodFragment : Fragment() {
         return view
     }
 
+
     @Preview(showBackground = true)
     @Composable
     fun NewFoodScreen() {
@@ -223,6 +224,9 @@ class NewFoodFragment : Fragment() {
 
                                     dbViewModel.insertAlimento(food)
 
+
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+                                        .child(food.id).setValue(food)
                                     val bundle = Bundle().apply {
                                         putString(
                                             "id",
@@ -231,8 +235,6 @@ class NewFoodFragment : Fragment() {
                                     }
                                     firebaseAnalytics.logEvent("hasInsertedFood", bundle)
 
-                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
-                                        .child(food.id).setValue(food)
                                     //add element to list
                                 } else {
                                     Toast.makeText(

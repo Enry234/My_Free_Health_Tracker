@@ -95,6 +95,9 @@
     <string name="ourPeso">Il Tuo Peso</string>
     <string name="dailyRemember">Il Tuo Progresso Giornaliero</string>
     <string name="inserisciPeso">Nuovo peso</string>
+    <string name="openAddActivity">Oppure Inserisci Manualmente</string>
+    <string name="startActivity">Avvia Attivita\'</string>
+    <string name="selectExistedFirebase">Seleziona Esistenti da altri Utenti</string>
 
 
 </resources>

@@ -8,37 +8,37 @@ import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
 @Entity
 data class Alimento(
     @PrimaryKey
-    var id: String,
+    var id: String = "",
 
     @ColumnInfo(name = "nome")
-    var nome: String?,
+    var nome: String? = "",
 
     @ColumnInfo(name = "immagine")
-    var immagine: String?,
+    var immagine: String? = "",
 
     @ColumnInfo(name = "unit")
-    var unit: String?,
+    var unit: String? = "",
 
     @ColumnInfo(name = "carboidrati")
-    var carboidrati: Float?,
+    var carboidrati: Float? = 0f,
 
     @ColumnInfo(name = "proteine")
-    var proteine: Float?,
+    var proteine: Float? = 0f,
 
     @ColumnInfo(name = "fibre")
     var fibre: Float? = null,
 
     @ColumnInfo(name = "grassi")
-    var grassi: Float?,
+    var grassi: Float? = 0f,
 
     @ColumnInfo(name = "sale")
-    var sale: Float?,
+    var sale: Float? = 0f,
 
     @ColumnInfo(name = "calorie")
-    var calorie: Int?,
+    var calorie: Int? = 0,
 
     @ColumnInfo(name = "descrizione")
-    var descrizione: String?
+    var descrizione: String? = ""
 
 
     ) {

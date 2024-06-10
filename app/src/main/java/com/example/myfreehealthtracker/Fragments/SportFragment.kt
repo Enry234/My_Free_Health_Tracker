@@ -1,11 +1,19 @@
 package com.example.myfreehealthtracker.Fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -64,9 +72,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.Actions
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
@@ -75,11 +87,15 @@ import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewMo
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.SportActivityService
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
 import com.vsnappy1.datepicker.data.model.DatePickerDate
@@ -97,6 +113,7 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -119,22 +136,28 @@ class SportFragment : Fragment() {
     private var openNewSportDialog by mutableStateOf(false)
     private var newSportWrapper = SportWrapper()
     private var newActivityWrapper = ActivityWrapper()
-
+    private var fireBaseSport by mutableStateOf(mutableListOf<Sport>())
     private var pickedYear by mutableIntStateOf(0)
     private var pickedMonth by mutableIntStateOf(0)
     private var pickedDay by mutableIntStateOf(0)
+    private var serviceRunning by mutableStateOf(false)
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         mainApplication = requireActivity().application as MainApplication
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        lifecycleScope.launch {
+            retriveSportFromFirebase()
+        }
+        serviceRunning = isServiceRunning(requireContext(), SportActivityService::class.java)
+
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
                 ApplicationTheme {
-
                     Scaffold(content = {
                         Column(
                             modifier = Modifier
@@ -147,7 +170,9 @@ class SportFragment : Fragment() {
                             if (activityList.isEmpty()) {
                                 Text(text = stringResource(id = R.string.noActivityPresent))
                             } else {
+                                if (serviceRunning) {
 
+                                }
                                 BurnedCaloriesChart()
                                 //MovimentChart(activityList)
                                 //BurnCaloriesChart(activityList)
@@ -286,7 +311,6 @@ class SportFragment : Fragment() {
         val lunghezza: Int = activity.distanza
         val calorie: Int = activity.calorie
         val sport by dbViewModel.loadSportById(activity.idSport).observeAsState(initial = null)
-
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -431,14 +455,15 @@ class SportFragment : Fragment() {
                     if (newSportWrapper.id.isNotEmpty()) {
                         val sport = newSportWrapper.convertToSport()
                         dbViewModel.insertSport(sport)
+                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT)
+                            .child(sport.id).setValue(sport)
                         val bundle = Bundle().apply {
                             putString("id", mainApplication.userData!!.userData.value!!.id)
                         }
                         firebaseAnalytics.logEvent("hasInsertedSport", bundle)
 
                         //add firebase push new Sport
-                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT)
-                            .child(sport.id).setValue(sport)
+
                     } else {
                         Toast.makeText(
                             requireContext(),
@@ -493,17 +518,32 @@ class SportFragment : Fragment() {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     @Composable
     fun AddActivityDialog() {
         val existingSportList by dbViewModel.allSport.observeAsState(initial = emptyList())
+
         var selectedSportId by rememberSaveable { mutableStateOf("") }
-        var selectedSportName by rememberSaveable { mutableStateOf("Seleziona Esistente") }
+        var selectedSportName by rememberSaveable { mutableStateOf(requireContext().getString(R.string.selectExisted)) }
+        var selectedSportNameFirebase by rememberSaveable {
+            mutableStateOf(
+                requireContext().getString(
+                    R.string.selectExistedFirebase
+                )
+            )
+        }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
+        var isDropDownMenuFirebaseExpanded by rememberSaveable { mutableStateOf(false) }
+        var showFirebaseSport by rememberSaveable { mutableStateOf(true) }
+        var showInternalSport by rememberSaveable { mutableStateOf(true) }
         var showNewSportButton by rememberSaveable { mutableStateOf(true) }
         var openDetails by rememberSaveable { mutableStateOf(false) }
         var enableConferma by rememberSaveable { mutableStateOf(false) }
         var pickedHour by rememberSaveable { mutableIntStateOf(0) }
         var pickedMinute by rememberSaveable { mutableIntStateOf(0) }
+        var showAddActivity by rememberSaveable {
+            mutableStateOf(false)
+        }
         if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
             enableConferma = true
         AlertDialog(onDismissRequest = {
@@ -519,22 +559,21 @@ class SportFragment : Fragment() {
                     calendar.set(pickedYear, pickedMonth, pickedDay, pickedHour, pickedMinute)
 
                     newActivityWrapper.date = calendar.time
-//                    newActivityWrapper.date.hours = pickedHour
-//                    newActivityWrapper.date.minutes = pickedMinute
                     newActivityWrapper.idSport = selectedSport.id
                     newActivityWrapper.userId = mainApplication.userData!!.userData.value!!.id
                     val activity = newActivityWrapper.convertToAttivita()
                     //room DB push
                     dbViewModel.insertAttivita(activity)
+                    //firebase push
+                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ATTIVITA)
+                        .child(activity.userId + activity.idSport + activity.date)
+                        .setValue(activity)
                     val bundle = Bundle().apply {
                         putString("id", mainApplication.userData!!.userData.value!!.id)
                     }
                     firebaseAnalytics.logEvent("hasInsertedActivity", bundle)
 
-                    //firebase push
-                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ATTIVITA)
-                        .child(activity.userId + activity.idSport + activity.date)
-                        .setValue(activity)
+
 
                 } else {
                     Toast.makeText(
@@ -567,6 +606,7 @@ class SportFragment : Fragment() {
                 // SPINNER CON SPORT
                 Box {
                     Button(
+                        enabled = showInternalSport,
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             isDropDownMenuExpanded = !isDropDownMenuExpanded
@@ -590,7 +630,6 @@ class SportFragment : Fragment() {
                     ) {
                         existingSportList.forEach {
                             DropdownMenuItem(modifier = Modifier.fillMaxWidth(), text = {
-                                //Text(text = it.nome ?: "ciao", modifier = Modifier.fillMaxWidth())
                                 ItemSportSpinnerMenu(it)
                             }, onClick = {
                                 selectedSportName = it.nomeSport
@@ -599,6 +638,7 @@ class SportFragment : Fragment() {
                                 if (selectedSportName != "") {
                                     openDetails = true
                                     showNewSportButton = false
+                                    showFirebaseSport = false
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
@@ -610,6 +650,56 @@ class SportFragment : Fragment() {
                         }
                     }
                 }
+                Box {
+                    Button(
+                        enabled = showFirebaseSport,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            isDropDownMenuFirebaseExpanded = !isDropDownMenuFirebaseExpanded
+                        },
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = selectedSportNameFirebase)
+                            Icon(
+                                Icons.Default.ArrowDropDown, contentDescription = ""
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = isDropDownMenuFirebaseExpanded, onDismissRequest = {
+                            isDropDownMenuFirebaseExpanded = false
+                        }, modifier = Modifier.fillMaxHeight(0.5f)
+                    ) {
+                        fireBaseSport.forEach {
+                            DropdownMenuItem(modifier = Modifier.fillMaxWidth(), text = {
+                                ItemSportSpinnerMenu(it)
+                            }, onClick = {
+                                selectedSportNameFirebase = it.nomeSport
+                                selectedSportId = it.id
+                                isDropDownMenuFirebaseExpanded = false
+                                if (selectedSportNameFirebase != "") {
+                                    openDetails = true
+                                    showNewSportButton = false
+                                    showInternalSport = false
+
+                                    //if not present try to push in internal db
+                                    dbViewModel.insertSport(it)
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        requireContext().getString(R.string.noSportSelected),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            })
+                        }
+                    }
+                }
+
                 Button(
                     onClick = {
                         openAddActivityDialog = false
@@ -619,147 +709,203 @@ class SportFragment : Fragment() {
                 ) {
                     Text(text = stringResource(id = R.string.newSport))
                 }
-                Box {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.verticalScroll(rememberScrollState())
-                    ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    enabled = openDetails,
+                    onClick = {
+                        //   loadService()
+                    }, modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.startActivity))
+                }
+                Button(
+                    enabled = openDetails,
+                    onClick = {
+                        showAddActivity = true
+                    }, modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.openAddActivity))
+                }
+                if (showAddActivity) {
+                    Box() {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
 
 
-                        val calendar = Calendar.getInstance()
+                            val calendar = Calendar.getInstance()
 
 
-                        DatePicker(
-                            onDateSelected = { year, month, day ->
-                                pickedYear = year
-                                pickedMonth = month
-                                pickedDay = day
+                            DatePicker(
+                                onDateSelected = { year, month, day ->
+                                    pickedYear = year
+                                    pickedMonth = month
+                                    pickedDay = day
 
-                            },
-                            configuration = DatePickerConfiguration.Builder()
-                                .height(height = 300.dp)
-                                .dateTextStyle(
-                                    DefaultDatePickerConfig.dateTextStyle.copy(
-                                        color = Color(
-                                            0xFF333333
+                                },
+                                configuration = DatePickerConfiguration.Builder()
+                                    .height(height = 300.dp)
+                                    .dateTextStyle(
+                                        DefaultDatePickerConfig.dateTextStyle.copy(
+                                            color = Color(
+                                                0xFF333333
+                                            )
                                         )
                                     )
-                                )
-                                .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
-                                .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
-                                .numberOfMonthYearRowsDisplayed(5)
-                                .build(),
-                            selectionLimiter = SelectionLimiter(
+                                    .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
+                                    .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
+                                    .numberOfMonthYearRowsDisplayed(5)
+                                    .build(),
+                                selectionLimiter = SelectionLimiter(
 
-                                toDate = DatePickerDate(
-                                    year = calendar.get(Calendar.YEAR),
-                                    month = calendar.get(Calendar.MONTH),
-                                    day = calendar.get(Calendar.DAY_OF_MONTH)
+                                    toDate = DatePickerDate(
+                                        year = calendar.get(Calendar.YEAR),
+                                        month = calendar.get(Calendar.MONTH),
+                                        day = calendar.get(Calendar.DAY_OF_MONTH)
+                                    )
                                 )
                             )
-                        )
 
-                        TimePicker(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .background(Color.Transparent, RoundedCornerShape(8.dp))
-                                .height(100.dp),
+                            TimePicker(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .background(Color.Transparent, RoundedCornerShape(8.dp))
+                                    .height(100.dp),
 
-                            onTimeSelected = { hour, minute ->
-                                pickedMinute = minute
-                                pickedHour = hour
-                            },
-                            configuration = TimePickerConfiguration.Builder()
-                                .numberOfTimeRowsDisplayed(count = 3)
-                                .selectedTimeScaleFactor(scaleFactor = 1.5f).build(),
-                            is24Hour = true
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            TextField(
-                                modifier = Modifier.weight(1f),
-                                enabled = openDetails,
-                                value = newActivityWrapper.calorie.toString(),
-                                onValueChange = {
-                                    try {
-                                        newActivityWrapper.calorie = it.toInt()
-                                    } catch (ex: Exception) {
+                                onTimeSelected = { hour, minute ->
+                                    pickedMinute = minute
+                                    pickedHour = hour
+                                },
+                                configuration = TimePickerConfiguration.Builder()
+                                    .numberOfTimeRowsDisplayed(count = 3)
+                                    .selectedTimeScaleFactor(scaleFactor = 1.5f).build(),
+                                is24Hour = true
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TextField(
+                                    modifier = Modifier.weight(1f),
+                                    enabled = openDetails,
+                                    value = newActivityWrapper.calorie.toString(),
+                                    onValueChange = {
+                                        try {
+                                            newActivityWrapper.calorie = it.toInt()
+                                        } catch (ex: Exception) {
+                                        }
+
+                                    },
+                                    label = {
+                                        Text(text = stringResource(id = R.string.caloriesBurn))
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number,
+                                        imeAction = ImeAction.Done
+                                    )
+                                )
+                                TextField(
+                                    modifier = Modifier.weight(1f),
+                                    enabled = openDetails,
+                                    value = newActivityWrapper.durata.toString(),
+                                    onValueChange = {
+                                        try {
+                                            newActivityWrapper.durata = it.toInt()
+                                        } catch (ex: Exception) {
+                                        }
+
+                                    },
+                                    label = {
+                                        Text(text = stringResource(id = R.string.timeTotal))
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number,
+                                        imeAction = ImeAction.Done
+                                    )
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TextField(
+                                    modifier = Modifier.weight(1f),
+                                    enabled = openDetails,
+                                    value = newActivityWrapper.distanza.toString(),
+                                    onValueChange = {
+                                        try {
+                                            newActivityWrapper.distanza = it.toInt()
+                                        } catch (ex: Exception) {
+                                        }
+
+                                    },
+                                    label = {
+                                        Text(text = stringResource(id = R.string.totalLenght))
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number,
+                                        imeAction = ImeAction.Done
+                                    )
+                                )
+                                TextField(modifier = Modifier.weight(1f),
+                                    enabled = openDetails,
+                                    value = newActivityWrapper.note,
+                                    onValueChange = {
+                                        try {
+                                            newActivityWrapper.note = it
+                                        } catch (ex: Exception) {
+                                        }
+
+                                    },
+                                    label = {
+                                        Text(text = stringResource(id = R.string.note))
                                     }
 
-                                },
-                                label = {
-                                    Text(text = stringResource(id = R.string.caloriesBurn))
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
                                 )
-                            )
-                            TextField(
-                                modifier = Modifier.weight(1f),
-                                enabled = openDetails,
-                                value = newActivityWrapper.durata.toString(),
-                                onValueChange = {
-                                    try {
-                                        newActivityWrapper.durata = it.toInt()
-                                    } catch (ex: Exception) {
-                                    }
-
-                                },
-                                label = {
-                                    Text(text = stringResource(id = R.string.timeTotal))
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
-                                )
-                            )
+                            }
                         }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            TextField(
-                                modifier = Modifier.weight(1f),
-                                enabled = openDetails,
-                                value = newActivityWrapper.distanza.toString(),
-                                onValueChange = {
-                                    try {
-                                        newActivityWrapper.distanza = it.toInt()
-                                    } catch (ex: Exception) {
-                                    }
 
-                                },
-                                label = {
-                                    Text(text = stringResource(id = R.string.totalLenght))
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
-                                )
-                            )
-                            TextField(modifier = Modifier.weight(1f),
-                                enabled = openDetails,
-                                value = newActivityWrapper.note,
-                                onValueChange = {
-                                    try {
-                                        newActivityWrapper.note = it
-                                    } catch (ex: Exception) {
-                                    }
-
-                                },
-                                label = {
-                                    Text(text = stringResource(id = R.string.note))
-                                }
-
-                            )
-                        }
                     }
-
                 }
             }
         })
+    }
+
+    private fun loadService() {
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACTIVITY_RECOGNITION
+            )
+            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.FOREGROUND_SERVICE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.FOREGROUND_SERVICE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(
+                            Manifest.permission.ACTIVITY_RECOGNITION,
+                            Manifest.permission.FOREGROUND_SERVICE_LOCATION,
+                            Manifest.permission.FOREGROUND_SERVICE,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ),
+
+                        100
+                    )
+                }
+            }
+        } else {
+            startStepCounterService()
+        }
     }
 
     @Composable
@@ -886,6 +1032,28 @@ class SportFragment : Fragment() {
         )
     }
 
+    private fun retriveSportFromFirebase() {
+        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                for (sportSnapshot in dataSnapshot.children) {
+                    val sport = sportSnapshot.getValue(Sport::class.java)
+                    sport?.let {
+                        fireBaseSport.add(it)
+                    }
+                }
+
+                // Now you have a list of User objects
+                Log.i("SportFragment", "load sport from firebase")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
     private class SportWrapper {
 
         var id: String by mutableStateOf("")
@@ -929,6 +1097,23 @@ class SportFragment : Fragment() {
         var calorie: Int by mutableIntStateOf(0)
         var durata: Int by mutableIntStateOf(0)
         var distanza: Int by mutableIntStateOf(0)
+    }
+
+    private fun startStepCounterService() {
+        Intent(requireContext(), SportActivityService::class.java).also {
+            it.action = Actions.START.toString()
+            requireContext().startService(it)
+        }
+    }
+
+    fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 }
 

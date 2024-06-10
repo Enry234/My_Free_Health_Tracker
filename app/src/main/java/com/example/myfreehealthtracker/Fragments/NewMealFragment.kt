@@ -91,6 +91,9 @@ import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.zxing.integration.android.IntentIntegrator
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
@@ -123,7 +126,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
 
     private lateinit var mainApplication: MainApplication
-
+    private var firebaseAlimenti by mutableStateOf(mutableListOf<Alimento>())
     private var canConfirmMeal by mutableStateOf(false)
     private var showAddFoodDialog by mutableStateOf(false)
     private var showNewFoodDialog by mutableStateOf(false)
@@ -136,6 +139,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             mainApplication = requireActivity().application as MainApplication
             alimentoWrapper.loadFromString(savedInstanceState?.getString("alimentoWrapper"))
             firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+            lifecycleScope.launch {
+                retriveAlimentoFromFirebase()
+            }
         } catch (ex: Exception) {
             Log.i("NewFoodFragment", "MainApp error")
             Toast.makeText(
@@ -228,13 +234,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-
-
-
-
                         DatePicker(
                             onDateSelected = { year, month, day ->
-                                pickedYear= year
+                                pickedYear = year
                                 pickedMonth = month
                                 pickedDay = day
 
@@ -316,7 +318,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 openInsertDialog = false
-                                insertPasto(pickedMinute, pickedHour, pickedDay, pickedMonth, pickedYear, tipoPasto)
+                                insertPasto(
+                                    pickedMinute,
+                                    pickedHour,
+                                    pickedDay,
+                                    pickedMonth,
+                                    pickedYear,
+                                    tipoPasto
+                                )
 
                             }) {
                             Text(text = stringResource(id = R.string.confirmInsert))
@@ -334,7 +343,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
-    private fun insertPasto(pickedMinute: Int, pickedHour: Int,pickedDay: Int, pickedMonth: Int, pickedYear: Int, tipoPasto: TipoPasto) {
+    private fun insertPasto(
+        pickedMinute: Int,
+        pickedHour: Int,
+        pickedDay: Int,
+        pickedMonth: Int,
+        pickedYear: Int,
+        tipoPasto: TipoPasto
+    ) {
         val calendar = Calendar.getInstance()
         calendar.set(pickedYear, pickedMonth, pickedDay, pickedHour, pickedMinute)
 
@@ -345,16 +361,17 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             date,
             tipoPasto,
             ""
-        ) //TODO TO CHECK
+        )
         dbViewModel.insertPasto(pasto)
         insertPastoToAlimento(pasto)
+
+        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
+            .child(pasto.userID + pasto.date).setValue(pasto)
         val bundle = Bundle().apply {
             putString("id", mainApplication.userData!!.userData.value!!.id)
         }
         firebaseAnalytics.logEvent("hasInsertedMeal", bundle)
 
-        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.PASTO)
-            .child(pasto.userID + pasto.date).setValue(pasto)
     }
 
     private fun insertPastoToAlimento(pasto: Pasto) {
@@ -592,7 +609,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     //NOME E BARCODE
                     modifier = Modifier.weight(1f),
 
-                ) {
+                    ) {
                     alimento.nome?.let {
                         Text(
                             text = it,
@@ -659,7 +676,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         val existingAllAlimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
         var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
         var selectedFoodItemLabel by rememberSaveable { mutableStateOf(requireContext().getString(R.string.selectExisted)) }
+        var selectedFoodItemLabelFirebase by rememberSaveable {
+            mutableStateOf(
+                requireContext().getString(
+                    R.string.selectExistedFirebase
+                )
+            )
+        }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
+        var isDropDownMenuFirebaseExpanded by rememberSaveable { mutableStateOf(false) }
         var enableNewFood by rememberSaveable {
             mutableStateOf(true)
         }
@@ -760,6 +785,51 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         }
                     }
+                    Box {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                isDropDownMenuFirebaseExpanded = !isDropDownMenuFirebaseExpanded
+                            },
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = selectedFoodItemLabelFirebase)
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            }
+                        }
+                        DropdownMenu(
+                            expanded = isDropDownMenuFirebaseExpanded,
+                            onDismissRequest = {
+                                isDropDownMenuFirebaseExpanded = false
+                            },
+                            modifier = Modifier.fillMaxHeight(0.5f)
+                        ) {
+                            firebaseAlimenti.forEach {
+                                DropdownMenuItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = {
+                                        //Text(text = it.nome ?: "ciao", modifier = Modifier.fillMaxWidth())
+                                        ItemFoodSpinnerMenu(it)
+                                    },
+                                    onClick = {
+                                        selectedFoodItemLabel = it.nome ?: ""
+                                        selectedFoodItemBarcode = it.id
+                                        isDropDownMenuFirebaseExpanded = false
+                                        enableNewFood = false
+                                        enableConferma = true
+
+
+                                        //try push if not present in the internal db
+                                        dbViewModel.insertAlimento(it)
+                                    }
+                                )
+                            }
+                        }
+                    }
                     Button(
                         enabled = enableNewFood,
                         onClick = {
@@ -821,6 +891,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 canConfirmMeal = true
 
                                 dbViewModel.insertAlimento(food)
+
+                                //push firebase db
+                                mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+                                    .child(food.id).setValue(food)
                                 val bundle = Bundle().apply {
                                     putString("id", mainApplication.userData!!.userData.value!!.id)
                                 }
@@ -1146,6 +1220,29 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         var imageUri: String? = "",
         var quantita: MutableState<String> = mutableStateOf("")
     )
+
+    private suspend fun retriveAlimentoFromFirebase() {
+        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
+            .addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                    for (alimentiSnapshot in dataSnapshot.children) {
+                        val alimenti = alimentiSnapshot.getValue(Alimento::class.java)
+                        alimenti?.let {
+                            firebaseAlimenti.add(it)
+                        }
+                    }
+
+                    // Now you have a list of User objects
+                    Log.i("SportFragment", "load sport from firebase")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+    }
 
     private class AlimentoWrapper {
 

@@ -51,6 +51,12 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//        {
+//            val channel = NotificationChannel("running_channel","Running Notification", NotificationManager.IMPORTANCE_HIGH)
+//            val notificationManager= getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            notificationManager.createNotificationChannel(channel)
+//        }
     }
     override fun onTerminate() {
         super.onTerminate()
