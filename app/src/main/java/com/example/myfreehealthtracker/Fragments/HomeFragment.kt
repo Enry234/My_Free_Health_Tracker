@@ -111,6 +111,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
 
+        if(mainApplication.userData!!.userData.value != null){
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             // Update the UI, in this case, a TextView.
             val bundle = Bundle().apply {
@@ -220,6 +221,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         }
+            }
     }
 
     @Composable

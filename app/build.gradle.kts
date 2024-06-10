@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
     id("com.google.firebase.firebase-perf")
+    id("com.google.firebase.crashlytics")
 
     kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -118,11 +119,9 @@ dependencies {
     implementation("com.github.vsnappy1:ComposeDatePicker:2.2.0")
 
 
-//    implementation(libs.vico.compose)
-//    implementation(libs.vico.compose.m2)
-//    implementation(libs.vico.compose.m3)
-//    implementation(libs.vico.core)
-//    implementation(libs.vico.views)
+
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
 
