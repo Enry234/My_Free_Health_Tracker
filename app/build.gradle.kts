@@ -94,6 +94,9 @@ dependencies {
     implementation(libs.androidx.junit)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.android)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.storage)
     //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.6.1")
     androidTestImplementation(libs.androidx.espresso.core)

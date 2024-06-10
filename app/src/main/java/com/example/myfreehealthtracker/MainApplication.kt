@@ -38,7 +38,6 @@ class MainApplication : Application() {
 
     //Firebase Setup
 
-
     private val firebaseDatabaseRef by lazy {
         FirebaseDatabase.getInstance("https://my-free-health-tracker-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference()

@@ -60,12 +60,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.auth
+import com.google.firebase.storage.FirebaseStorage
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 import java.io.IOException
@@ -75,11 +80,7 @@ import java.util.Date
 class AuthPage {
 
     enum class LoginScreen {
-        FIRST_LAST_NAME,
-        BIRTHDATE_GENDER,
-        HEIGHT_WEIGHT,
-        IMAGE,
-        DONE
+        FIRST_LAST_NAME, BIRTHDATE_GENDER, HEIGHT_WEIGHT, IMAGE, DONE
     }
 
     class UserState {
@@ -137,6 +138,7 @@ class AuthPage {
     private val userState = UserState()
 
     private var currentScreen: LoginScreen by mutableStateOf(LoginScreen.FIRST_LAST_NAME)
+    private var internalStorageImageUri by mutableStateOf("")
 
     @Composable
     fun LoginForm() {
@@ -255,8 +257,7 @@ class AuthPage {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            if (back != null)
-                BackButton(back)
+            if (back != null) BackButton(back)
             if (next != null) {
                 Spacer(Modifier.width(0.dp))
                 NextButton(current, next)
@@ -272,8 +273,7 @@ class AuthPage {
         Button(
             onClick = {
                 isDatePickerOpened = !isDatePickerOpened
-            },
-            modifier = Modifier.height(50.dp)
+            }, modifier = Modifier.height(50.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -292,36 +292,28 @@ class AuthPage {
 
             val calendar = Calendar.getInstance()
 
-            AlertDialog(
-                onDismissRequest = { isDatePickerOpened = false },
-                confirmButton = {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            isDatePickerOpened = false
-                        }
-                    ) {
-                        Text(text = stringResource(id = R.string.confirm))
-                    }
-                },
-                text = {
-                    DatePicker(
-                        onDateSelected = { y, m, d ->
-                            year = y
-                            month = m
-                            day = d
-                            userState.birthdate = "$day/${month + 1}/$year"
-                        },
-                        selectionLimiter = SelectionLimiter(
-                            toDate = DatePickerDate(
-                                year = calendar.get(Calendar.YEAR),
-                                month = calendar.get(Calendar.MONTH),
-                                day = calendar.get(Calendar.DAY_OF_MONTH)
-                            )
+            AlertDialog(onDismissRequest = { isDatePickerOpened = false }, confirmButton = {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    isDatePickerOpened = false
+                }) {
+                    Text(text = stringResource(id = R.string.confirm))
+                }
+            }, text = {
+                DatePicker(
+                    onDateSelected = { y, m, d ->
+                        year = y
+                        month = m
+                        day = d
+                        userState.birthdate = "$day/${month + 1}/$year"
+                    }, selectionLimiter = SelectionLimiter(
+                        toDate = DatePickerDate(
+                            year = calendar.get(Calendar.YEAR),
+                            month = calendar.get(Calendar.MONTH),
+                            day = calendar.get(Calendar.DAY_OF_MONTH)
                         )
                     )
-                }
-            )
+                )
+            })
 
         }
         // GENDER
@@ -334,30 +326,22 @@ class AuthPage {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(
-                    selected = userState.gender == "M",
-                    onClick = {
-                        userState.gender = "M"
-                    }
-                )
+                RadioButton(selected = userState.gender == "M", onClick = {
+                    userState.gender = "M"
+                })
                 Text(text = "Maschio")
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Femmina")
-                RadioButton(
-                    selected = userState.gender == "F",
-                    onClick = {
-                        userState.gender = "F"
-                    }
-                )
+                RadioButton(selected = userState.gender == "F", onClick = {
+                    userState.gender = "F"
+                })
             }
         }
         ActionBar(
-            LoginScreen.BIRTHDATE_GENDER,
-            LoginScreen.FIRST_LAST_NAME,
-            LoginScreen.HEIGHT_WEIGHT
+            LoginScreen.BIRTHDATE_GENDER, LoginScreen.FIRST_LAST_NAME, LoginScreen.HEIGHT_WEIGHT
         )
     }
 
@@ -388,9 +372,7 @@ class AuthPage {
             )
         }
         ActionBar(
-            LoginScreen.HEIGHT_WEIGHT,
-            LoginScreen.BIRTHDATE_GENDER,
-            LoginScreen.IMAGE
+            LoginScreen.HEIGHT_WEIGHT, LoginScreen.BIRTHDATE_GENDER, LoginScreen.IMAGE
         )
     }
 
@@ -399,38 +381,35 @@ class AuthPage {
         val context = LocalContext.current
         LoginHeader()
         Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
         ) {
 
             Text(
-                text = stringResource(id = R.string.selectPhotoOr),
-                textAlign = TextAlign.Center
+                text = stringResource(id = R.string.selectPhotoOr), textAlign = TextAlign.Center
             )
         }
         var isPhotoInserted by remember { mutableStateOf(false) }
         var isPhotoSelectorOpened by remember { mutableStateOf(false) }
 
-        val photoSelectorLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                userState.imageUri = uri
-                userState.imageUri?.let {
-                    Log.i("login", "uri success")
-                    val imageController = ImageController()
-                    if (imageController.saveImageToInternalStorage(
-                            context,
-                            it,
-                            "pictureProfile.png"
-                        )
-                    )
-                        Log.i("login", "image success")
-                    else
-                        Log.i("login", "image error")
-                }
-                isPhotoInserted = true
-            }
-        )
+        val photoSelectorLauncher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+                onResult = { uri ->
+                    userState.imageUri = uri
+                    userState.imageUri?.let {
+                        Log.i("login", "uri success")
+                        val imageController = ImageController()
+                        if (imageController.saveImageToInternalStorage(
+                                context, it, "pictureProfile.png"
+                            )
+                        ) Log.i("login", "image success")
+                        else Log.i("login", "image error")
+                        if (uri != null) {
+
+
+                        }
+                    }
+                    isPhotoInserted = true
+                })
 
         Column(
             modifier = Modifier
@@ -453,10 +432,7 @@ class AuthPage {
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                modifier = Modifier.width(200.dp),
-                onClick = { isPhotoSelectorOpened = true }
-            ) {
+            Button(modifier = Modifier.width(200.dp), onClick = { isPhotoSelectorOpened = true }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -479,34 +455,26 @@ class AuthPage {
             isPhotoSelectorOpened = false
         }
         Text(
-            text = stringResource(id = R.string.allertInsertImage),
-            textAlign = TextAlign.Center
+            text = stringResource(id = R.string.allertInsertImage), textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         ActionBar(
-            LoginScreen.IMAGE,
-            LoginScreen.HEIGHT_WEIGHT,
-            LoginScreen.DONE
+            LoginScreen.IMAGE, LoginScreen.HEIGHT_WEIGHT, LoginScreen.DONE
         )
     }
 
     @Composable
     private fun NextButton(current: LoginScreen, next: LoginScreen) {
         val context = LocalContext.current
-        Button(
-            modifier = Modifier,
-            onClick = {
-                if (userState.isValidInput(current)) {
-                    currentScreen = next
-                } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.errorInsertData),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+        Button(modifier = Modifier, onClick = {
+            if (userState.isValidInput(current)) {
+                currentScreen = next
+            } else {
+                Toast.makeText(
+                    context, context.getString(R.string.errorInsertData), Toast.LENGTH_SHORT
+                ).show()
             }
-        ) {
+        }) {
             Text(stringResource(id = R.string.foward))
             Icon(
                 Icons.AutoMirrored.Filled.ArrowForward,
@@ -517,10 +485,7 @@ class AuthPage {
 
     @Composable
     private fun BackButton(back: LoginScreen) {
-        Button(
-            modifier = Modifier,
-            onClick = { currentScreen = back }
-        ) {
+        Button(modifier = Modifier, onClick = { currentScreen = back }) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.back)
@@ -530,8 +495,7 @@ class AuthPage {
     }
 
     private fun onLoginSuccess(context: Context, lifecycleOwner: LifecycleOwner) {
-        val mainApplication =
-            context.applicationContext as MainApplication
+        val mainApplication = context.applicationContext as MainApplication
         mainApplication.userData!!.setUserData(user)
         val firebaseRef = mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
         user.id = firebaseRef.push().toString()
@@ -545,15 +509,11 @@ class AuthPage {
             if (result != -1L) {
                 Log.i("loginpage", "insert success")
                 try {
-                    val fileOutputStream: FileOutputStream =
-                        context.openFileOutput(
-                            "internalData",
-                            Context.MODE_PRIVATE
-                        )
+                    val fileOutputStream: FileOutputStream = context.openFileOutput(
+                        "internalData", Context.MODE_PRIVATE
+                    )
                     fileOutputStream.write("UserAccessComplete".toByteArray())
                     fileOutputStream.close()
-
-                    // Initialize Firebase Analytics
 
 
                     // Log a custom event
@@ -561,8 +521,15 @@ class AuthPage {
                         putString("id", user.id)
                     }
                     firebaseAnalytics.logEvent("hasCompleteRegistration", bundle)
-                    val intent =
-                        Intent(context, MainActivity::class.java)
+                    GlobalScope.launch {
+                        val imageController = ImageController()
+                        uploadImage(
+                            imageController.getImageFromInternalStorage(
+                                context, "pictureProfile.png"
+                            )!!, user.id
+                        )
+                    }
+                    val intent = Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
                     (context as? ComponentActivity)?.finish()
                 } catch (e: IOException) {
@@ -576,5 +543,22 @@ class AuthPage {
         }
     }
 
+    private suspend fun uploadImage(uri: Uri, id: String) {
 
+        val auth = Firebase.auth
+        try {
+            val userCredential = auth.signInAnonymously().await()
+            val user = userCredential.user //dummy
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference
+            val imageRef = storageRef.child("images/$id/${uri.lastPathSegment}")
+            imageRef.putFile(uri).addOnSuccessListener { _ ->
+                Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
+            }.addOnFailureListener { _ ->
+                Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
+            }
+        } catch (e: Exception) {
+        }
+
+    }
 }
