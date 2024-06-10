@@ -59,6 +59,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.ExpandableFloatingActionButton
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
@@ -131,7 +132,10 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                ShowMeal()
+                ApplicationTheme {
+                    ShowMeal()
+                }
+
             }
         }
         return view

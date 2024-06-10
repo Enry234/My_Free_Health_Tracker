@@ -6,26 +6,31 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.example.myfreehealthtracker.ColorPalette.Blue800
+import com.example.myfreehealthtracker.ColorPalette.HonoluluBlue
+import com.example.myfreehealthtracker.ColorPalette.Orange800
 
 
-val Orange800 = Color(0xFFEF6C00)
-val Blue800 = Color(0xFF0277BD)
-val Teal800 = Color(0xFF00838F)
-val Orange100 = Color(0xFFFFE0B2)
-
+object ColorPalette {
+    val Orange800 = Color(0xFFEF6C00)
+    val Blue800 = Color(0xFF0277BD)
+    val Teal800 = Color(0xFF00838F)
+    val Orange100 = Color(0xFFFFE0B2)
+    val HonoluluBlue = Color(0xFF0496FF)
+}
 
 private val DarkColorPalette = darkColorScheme(
     primary = Blue800,
-    onPrimary = Teal800,
+    onPrimary = Color.White,
     secondary = Orange800,
     background = Color.Black
 )
 
 private val LightColorPalette = lightColorScheme(
-    primary = Orange800,
-    onPrimary = Teal800,
-    secondary = Blue800,
-    background = Orange100,
+    primary = HonoluluBlue,
+    onPrimary = Color.White,
+    secondary = Color.White,
+    background = Color.Transparent,
 
     )
 private val AppTypography = androidx.compose.material3.Typography(

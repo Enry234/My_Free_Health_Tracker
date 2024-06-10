@@ -38,6 +38,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
@@ -131,38 +133,45 @@ class SportFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
-                Scaffold(content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
+                ApplicationTheme {
 
-                        if (activityList.isEmpty()) {
-                            Text(text = stringResource(id = R.string.noActivityPresent))
-                        } else {
+                    Scaffold(content = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
 
-                            BurnedCaloriesChart()
-                            //MovimentChart(activityList)
-                            //BurnCaloriesChart(activityList)
-                            //WorkoutTimeChart(activityList)
-                            ShowActivityList(activityList)
+                            if (activityList.isEmpty()) {
+                                Text(text = stringResource(id = R.string.noActivityPresent))
+                            } else {
+
+                                BurnedCaloriesChart()
+                                //MovimentChart(activityList)
+                                //BurnCaloriesChart(activityList)
+                                //WorkoutTimeChart(activityList)
+                                ShowActivityList(activityList)
+                            }
+                            if (openAddActivityDialog) AddActivityDialog()
+                            if (openNewSportDialog) NewSportDialog()
                         }
-                        if (openAddActivityDialog) AddActivityDialog()
-                        if (openNewSportDialog) NewSportDialog()
-                    }
-                }, floatingActionButton = {
-                    IconButton(
-                        onClick = { openAddActivityDialog = true },
-                        modifier = Modifier
-                            .background(color = Color.Green, CircleShape)
-                            .size(60.dp)
-                    ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "")
-                    }
-                })
+                    }, floatingActionButton = {
+                        IconButton(
+                            onClick = { openAddActivityDialog = true },
+                            modifier = Modifier
+                                .size(60.dp),
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.secondary
+                            )
+
+                        ) {
+                            Icon(imageVector = Icons.Default.Add, contentDescription = "")
+                        }
+                    })
+                }
             }
         }
     }
@@ -234,16 +243,16 @@ class SportFragment : Fragment() {
                     animationMode = AnimationMode.Together(delayBuilder = {
                         it * 500L
                     }),
-            dotsProperties = DotProperties(
-                enabled = true,
-                radius = 12f,
-                color = SolidColor(Color(0xFF04724D)),
-                strokeWidth = 6f,
-                //strokeColor = Color.White,
-                strokeStyle = StrokeStyle.Normal,
-                animationEnabled = true,
-                animationSpec = tween(500)
-            ),
+                    dotsProperties = DotProperties(
+                        enabled = true,
+                        radius = 12f,
+                        color = SolidColor(Color(0xFF04724D)),
+                        strokeWidth = 6f,
+                        //strokeColor = Color.White,
+                        strokeStyle = StrokeStyle.Normal,
+                        animationEnabled = true,
+                        animationSpec = tween(500)
+                    ),
                     dividerProperties = DividerProperties(
                         enabled = false,
                         xAxisProperties = LineProperties(
@@ -622,7 +631,7 @@ class SportFragment : Fragment() {
 
                         DatePicker(
                             onDateSelected = { year, month, day ->
-                                pickedYear= year
+                                pickedYear = year
                                 pickedMonth = month
                                 pickedDay = day
 
@@ -637,7 +646,7 @@ class SportFragment : Fragment() {
                                     )
                                 )
                                 .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
-                                .selectedDateBackgroundColor(color = Color(0xFF64DD17))
+                                .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
                                 .numberOfMonthYearRowsDisplayed(5)
                                 .build(),
                             selectionLimiter = SelectionLimiter(
