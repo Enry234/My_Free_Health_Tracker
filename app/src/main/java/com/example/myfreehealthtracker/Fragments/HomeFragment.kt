@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -132,8 +133,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState()),
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.Center
                         ) {
 
                             Surface(
@@ -143,9 +142,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 shape = RoundedCornerShape(16.dp),
                             ) {
                                 Box(
-                                    modifier = Modifier
-                                        .background(Color.White)
-//                                        .padding(8.dp)
+                                    modifier = Modifier.background(Color.White)
                                 ) {
                                     Row(
 
@@ -169,31 +166,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 }
                             }
 
-//                        Surface(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            tonalElevation = 8.dp,
-//                            //shadowElevation = 16.dp,
-//                            shape = RoundedCornerShape(16.dp),
-//                        ) {
-//                            Box(
-//                                modifier = Modifier.height(400.dp).width(200.dp)
-//                            ){
-//
-//                            }
-//                        }
-
-
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 tonalElevation = 8.dp,
-                                //shadowElevation = 16.dp,
                                 shape = RoundedCornerShape(16.dp),
                             ) {
                                 Box(
                                     modifier = Modifier.padding(8.dp)
-                                    //.fillMaxWidth()
                                 ) {
                                     displayMacros()
 
@@ -234,12 +215,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             val sortedQuantities = allQuantities.sortedByDescending { it.quantity }
 
-            for (i in 0..min(2, sortedQuantities.size - 1))
-                runBlocking {
-                    nameList[i] =
-                        mainApplication.alimentoRepository.getAlimentoById(sortedQuantities[i].id)
-                            .firstOrNull()?.nome ?: ""
-                }
+            for (i in 0..min(2, sortedQuantities.size - 1)) runBlocking {
+                nameList[i] =
+                    mainApplication.alimentoRepository.getAlimentoById(sortedQuantities[i].id)
+                        .firstOrNull()?.nome ?: ""
+            }
 
 
             val quantityList = mutableListOf(0.0, 0.0, 0.0)
@@ -250,7 +230,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
             Column(
-                    modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp)
             ) {
 
                 BulletSpanRanking(color = Color(0xFFE1E289), label = nameList[0])
@@ -263,7 +243,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         .height(325.dp)
                         .width(200.dp)
                         .background(Color.White)
-                       .padding(8.dp),
+                        .padding(8.dp),
                 ) {
 
                     BarChart(
@@ -273,13 +253,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                     label = "",
                                     value = quantityList[2].toFloat(),
                                     color = Color(0xFFDB504A),
-                                ),
-                                BarChartData.Bar(
+                                ), BarChartData.Bar(
                                     label = "",
                                     value = quantityList[1].toFloat(),
                                     color = Color(0xFF59C3C3)
-                                ),
-                                BarChartData.Bar(
+                                ), BarChartData.Bar(
                                     label = "",
                                     value = quantityList[0].toFloat(),
                                     color = Color(0xFFE1E289)
@@ -287,7 +265,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             )
                         ),
                         // Optional properties.
-                        modifier = Modifier.fillMaxSize().background(Color.White).padding(start = 30.dp,top=8.dp, bottom=8.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(start = 30.dp, top = 8.dp, bottom = 8.dp),
                         animation = TweenSpec(500),
                         barDrawer = SimpleBarDrawer(),
                         xAxisDrawer = SimpleXAxisDrawer(
@@ -403,10 +384,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                    data = listOf(
+                        .padding(horizontal = 4.dp), data = listOf(
                         Line(
-                            label = "Proteine",
+                            label = stringResource(id = R.string.protein),
                             values = proteins,
                             color = SolidColor(Color(0xFFDB504A)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -415,9 +395,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
-                        ),
-                        Line(
-                            label = "Carboidrati",
+                        ), Line(
+                            label = stringResource(id = R.string.carboidrati),
                             values = carbohydrates,
                             color = SolidColor(Color(0xFFE1E289)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -426,9 +405,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
-                        ),
-                        Line(
-                            label = "Grassi",
+                        ), Line(
+                            label = stringResource(id = R.string.grassi),
                             values = fats,
                             color = SolidColor(Color(0xFF59C3C3)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -437,9 +415,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
-                        ),
-                        Line(
-                            label = "Fibre",
+                        ), Line(
+                            label = stringResource(id = R.string.fibre),
                             values = fibers,
                             color = SolidColor(Color(0xFF04724D)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -449,16 +426,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             gradientAnimationDelay = 500,
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
                         )
-                    ),
-                    animationMode = AnimationMode.Together(delayBuilder = {
+                    ), animationMode = AnimationMode.Together(delayBuilder = {
                         it * 500L
-                    }),
-                    dividerProperties = DividerProperties(
-                        enabled = true,
-                        xAxisProperties = LineProperties(
+                    }), dividerProperties = DividerProperties(
+                        enabled = true, xAxisProperties = LineProperties(
                             enabled = false
-                        ),
-                        yAxisProperties = LineProperties(
+                        ), yAxisProperties = LineProperties(
                             enabled = false
                         )
                     ),
@@ -523,7 +496,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Riepilogo Giornaliero",
+                        text = stringResource(id = R.string.dailyRemember),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -541,8 +514,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         pieChartData = PieChartData(
                             listOf(
                                 PieChartData.Slice(
-                                    carboidrati,
-                                    Color(0xFFE1E289)
+                                    carboidrati, Color(0xFFE1E289)
                                 ),
                                 PieChartData.Slice(proteine, Color(0xFFDB504A)),
                                 PieChartData.Slice(grassi, Color(0xFF59C3C3)),
@@ -558,13 +530,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     ) {
 
                         Text(
-                            text = calorie.toString(),
-                            fontSize = 18.sp
+                            text = calorie.toString(), fontSize = 18.sp
                         )
 
                         Text(
-                            text = "kcal",
-                            fontSize = 18.sp
+                            text = stringResource(id = R.string.kcal), fontSize = 18.sp
                         )
 
                     }
@@ -574,15 +544,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Box(
-                            modifier = Modifier.weight(1f).padding(2.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(2.dp),
                         ) {
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -590,26 +561,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                                 BulletSpan1(
                                     color = Color(0xFF59C3C3),
-                                    label = "Grassi",
+                                    label = stringResource(id = R.string.grassi),
                                     value = grassi.toInt()
                                 )
 
 
                                 BulletSpan1(
                                     color = Color(0xFF04724D),
-                                    label = "Fibre",
+                                    label = stringResource(id = R.string.fibre),
                                     value = fibre.toInt()
                                 )
 
                                 BulletSpan1(
                                     color = Color(0xFFE1E289),
-                                    label = "Carboidrati",
+                                    label = stringResource(id = R.string.carboidrati),
                                     value = carboidrati.toInt()
                                 )
 
                                 BulletSpan1(
                                     color = Color(0xFFDB504A),
-                                    label = "Proteine",
+                                    label = stringResource(id = R.string.protein),
                                     value = proteine.toInt()
                                 )
 
@@ -635,15 +606,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         ) {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .width(10.dp)
                     .height(10.dp)
             ) {
                 //internal circle with icon
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "contentDescription",
+                    contentDescription = "Add",
                     modifier = Modifier
                         .width(24.dp)
                         .background(color, CircleShape)
@@ -665,15 +635,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         ) {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .width(10.dp)
                     .height(10.dp)
             ) {
                 //internal circle with icon
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "contentDescription",
+                    contentDescription = "Add",
                     modifier = Modifier
                         .width(24.dp)
                         .background(color, CircleShape)
@@ -682,7 +651,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 )
             }
             Text(
-                text = "${label.substring(0,min(15,label.length))}...",
+                text = "${label.substring(0, min(15, label.length))}...",
             )
         }
     }
@@ -690,23 +659,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Composable
     fun BulletSpan2(color: Color, label: String, value: Int) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "$label: ${value}g"
             )
 
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .width(10.dp)
                     .height(10.dp)
             ) {
                 //internal circle with icon
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "contentDescription",
+                    contentDescription = "Add",
                     modifier = Modifier
                         .width(24.dp)
                         .background(color, CircleShape)
@@ -753,41 +720,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                    data = listOf(
+                        .padding(horizontal = 4.dp), data = listOf(
                         Line(
-                            label = "Il tuo peso",
+                            label = stringResource(id = R.string.ourPeso),
                             values = weights,
                             color = SolidColor(Color(0xFF04724D)),
-                            //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
                             firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
                             secondGradientFillColor = Color.Transparent,
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
                             drawStyle = DrawStyle.Stroke(width = 2.dp)
                         )
-                    ),
-                    animationMode = AnimationMode.Together(delayBuilder = {
+                    ), animationMode = AnimationMode.Together(delayBuilder = {
                         it * 500L
-                    }),
-                    //minValue = 40.0,
-                    //maxValue = 100.0
-                    dotsProperties = DotProperties(
+                    }), dotsProperties = DotProperties(
                         enabled = false,
                         radius = 10f,
                         color = SolidColor(Color(0xFF04724D)),
                         strokeWidth = 3f,
-                        //strokeColor = Color.White,
                         strokeStyle = StrokeStyle.Normal,
                         animationEnabled = true,
                         animationSpec = tween(500)
-                    ),
-                    dividerProperties = DividerProperties(
-                        enabled = true,
-                        xAxisProperties = LineProperties(
+                    ), dividerProperties = DividerProperties(
+                        enabled = true, xAxisProperties = LineProperties(
                             enabled = false
-                        ),
-                        yAxisProperties = LineProperties(
+                        ), yAxisProperties = LineProperties(
                             enabled = false
                         )
                     ),
@@ -799,7 +756,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     labelProperties = LabelProperties(
                         enabled = true,
                         textStyle = MaterialTheme.typography.labelSmall,
-                        //verticalPadding = 16.dp,
                         labels = dates
                     )
                 )

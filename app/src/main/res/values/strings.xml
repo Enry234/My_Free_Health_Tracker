@@ -1,50 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Free Health Tracker</string>
-    <string name="Home">Home</string>
-    <string name="Sport">Sport</string>
-    <string name="Health">Health</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="open_drawer">Apri drawer</string>
+    <string name="updateObjectGrassi">Update Fat Goal</string>
+    <string name="updateObjectFibre">Update Fiber Goal</string>
+    <string name="updateObjectCarboidrati">Update Carbohydrate Goal</string>
+    <string name="updateObjectProteine">Update Protein Goal</string>
+    <string name="errorUpdateObject">Invalid Value</string>
+    <string name="updateObjective">Update Goals</string>
+    <string name="updateObjectCalorie">Update Calorie Goal</string>
+    <string name="updatePeso">Update Weight</string>
+    <string name="errorPeso">Cannot enter 0 as Weight</string>
+    <string name="homeText">Updates</string>
+    <string name="sportText">Your Activities</string>
+    <string name="healthText">Your Meals</string>
+    <string name="welcomeDrawerPicProfile">Welcome Back</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
+    <string name="back">Back</string>
+    <string name="foward">Forward</string>
+    <string name="errorInsertData">The data entered is not valid</string>
+    <string name="allertInsertImage">Warning: the selected image will be uploaded to the cloud (Firebase Storage)</string>
+    <string name="selectPhoto">Select a Photo</string>
+    <string name="selectPhotoOr">Select a Profile Photo or proceed to complete the Access</string>
+    <string name="confirm">Confirm</string>
+    <string name="weight">Weight</string>
+    <string name="kg">Kg</string>
+    <string name="km">Km</string>
+    <string name="kcal">Kcal</string>
+    <string name="calories">Calories</string>
+    <string name="min">Min</string>
+    <string name="time">Duration</string>
+    <string name="height">Height</string>
+    <string name="insertName">Enter your First Name</string>
+    <string name="insertCognome">Enter your Last Name</string>
+    <string name="insertDataCompleteAccess">Enter your data to complete the Access</string>
+    <string name="welcome">Welcome</string>
+    <string name="registrationComplete">Registration Completed</string>
+    <string name="selectDateBird">Select Birth Date</string>
+    <string name="timeActivity">Workout Duration</string>
+    <string name="totalLenght">Total Distance</string>
+    <string name="timeTotal">Total Duration</string>
+    <string name="caloriesBurn">Calories Burned</string>
+    <string name="newSport">New Sport</string>
+    <string name="noSportSelected">No Sport Selected</string>
+    <string name="addActivity">Add Activity</string>
+    <string name="description">Description</string>
+    <string name="name">Name</string>
+    <string name="addSport">Add Sport</string>
+    <string name="lenght">Length</string>
+    <string name="noElementInserted">No Element Inserted</string>
+    <string name="andamento">Progress</string>
+    <string name="burnCaloriesLastDay">Calories Burned in the Last Days</string>
+    <string name="noActivityPresent">No Activity Present</string>
+    <string name="note">Notes</string>
+    <string name="productNotFound">Product not found</string>
+    <string name="app_name">My Free Health Care</string>
+    <string name="title_activity_login">Login</string>
+    <string name="dummy_content">dummy content</string>
+    <string name="quantit">quantità</string>
+    <string name="cm">Cm</string>
+    <string name="_100g">100g</string>
+    <string name="fragment_new_meal_add_existing_food_dialog_cancel">Close</string>
+    <string name="fragment_new_meal_add_existing_food_dialog_confirm">Confirm</string>
+    <string name="fragment_new_meal_insert_new_btn">Insert new Meal</string>
+    <string name="fragment_new_meal_add_food_existing">Present</string>
+    <string name="fragment_new_meal_add_food_new">New</string>
+    <string name="fragment_new_meal_add_food_cancel">Close</string>
+    <string name="profile_name">Your Name</string>
+    <string name="activity_main_toolbar_initial_title">Menu</string>
+    <string name="activity_main_toolbar_profile_picture_content_desc">imagePic</string>
+    <string name="loadBarcode">Loading Data in Progress</string>
+    <string name="salt">Salt</string>
+    <string name="grassi">Fat</string>
+    <string name="protein">Protein</string>
+    <string name="carboidrati">Carbohydrates</string>
+    <string name="unit">Unit</string>
+    <string name="unitValue">Unit Values: </string>
+    <string name="fibre">Fiber</string>
 
-    <string name="activity_main_drawer_first_item_title">
-        First Item
-    </string>
-    <string name="activity_main_drawer_second_item_title">
-        Second Item
-    </string>
-    <string name="activity_main_drawer_third_item_title">
-        Third Item
-    </string>
-    <string name="activity_main_toolbar_initial_title">
-        Initial Title
-    </string>
-    <string name="activity_main_toolbar_profile_picture_content_desc">
-        Profile Picture
-    </string>
+    <string name="insertBarcode">Enter the Barcode</string>
+    <string name="barcode">Barcode</string>
+    <string name="insertAlimento">Enter a Food Item</string>
+    <string name="scanner">Scan</string>
 
-    <string name="profile_name">User Name</string>
+    <string name="scanABarcode">Scan a Barcode</string>
+    <string name="_new">New</string>
+    <string name="addAlimento">Add Food Item</string>
+    <string name="selectExisted">Select Existing</string>
+    <string name="confirmInsert">Confirm Entry</string>
+    <string name="selectTypePasto">Select Meal Type</string>
 
-    <!-- HEALTH STRINGS -->
-    <string name="fragment_new_meal_title">Inserisci un nuovo pasto</string>
-    <string name="fragment_new_meal_confirm_btn">CONFERMA INSERIMENTO</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="fragment_new_meal_insert_new_btn">AGGIUNGI ALIMENTO</string>
-    <string name="fragment_new_meal_add_food_existing">Aggiungi Esistente</string>
-    <string name="fragment_new_meal_add_food_new">Aggiungi Nuovo</string>
-    <string name="fragment_new_meal_add_food_cancel">Annulla Inserimento</string>
-    <string name="fragment_new_meal_add_existing_food_dialog_cancel">Annulla</string>
-    <string name="fragment_new_meal_add_existing_food_dialog_confirm">Conferma</string>
-    <string name="open_nav">ciao A\n\n</string>
-    <string name="close">Ciao B</string>
+    <string name="insertDataPasto">Enter Meal Data</string>
+    <string name="createNewPasto">Create a New Meal</string>
+    <string name="dbConnectionError">DB Connection Error, try restarting the Application</string>
+    <string name="ourPeso">Your Weight</string>
+    <string name="dailyRemember">Your Daily Progress</string>
+
 </resources>

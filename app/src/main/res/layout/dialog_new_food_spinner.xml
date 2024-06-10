@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
@@ -29,7 +28,7 @@
             android:id="@+id/dialog_existing_quantity"
             android:layout_width="0dp"
             android:layout_weight="3"
-            android:hint="quantità"
+            android:hint="@string/quantit"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:minHeight="50dp" />
@@ -38,7 +37,7 @@
             android:layout_weight="1"
             android:textAlignment="center"
             android:layout_height="wrap_content"
-            android:text="100g"
+            android:text="@string/_100g"
             android:minHeight="50dp"/>
 
     </LinearLayout>

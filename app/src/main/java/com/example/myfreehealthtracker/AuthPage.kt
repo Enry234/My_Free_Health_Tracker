@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -63,7 +64,6 @@ import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.FirebaseAuth
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
@@ -138,7 +138,6 @@ class AuthPage {
 
     private lateinit var user: UserData
     private val userState = UserState()
-    private val firebaseAuth = FirebaseAuth.getInstance()
 
     private var currentScreen: LoginScreen by mutableStateOf(LoginScreen.FIRST_LAST_NAME)
 
@@ -191,7 +190,7 @@ class AuthPage {
     @Composable
     private fun RegistrationComplete() {
         Text(
-            text = "Registrazione Completata",
+            text = stringResource(id = R.string.registrationComplete),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
         )
@@ -210,10 +209,10 @@ class AuthPage {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Benvenuto",
+                    text = stringResource(id = R.string.welcome),
                     fontSize = 40.sp,
                 )
-                Text(text = "Inserisci i tuoi dati per completare l'accesso")
+                Text(text = stringResource(id = R.string.insertDataCompleteAccess))
             }
         }
     }
@@ -224,20 +223,26 @@ class AuthPage {
         OutlinedTextField(
             value = userState.firstName,
             onValueChange = { userState.firstName = it },
-            label = { Text("Inserisci il tuo nome") },
+            label = { Text(stringResource(id = R.string.insertName)) },
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = {
-                Icon(Icons.Filled.AccountCircle, contentDescription = "Nome")
+                Icon(
+                    Icons.Filled.AccountCircle,
+                    contentDescription = stringResource(id = R.string.insertName)
+                )
             },
             singleLine = true
         )
         OutlinedTextField(
             value = userState.lastName,
             onValueChange = { userState.lastName = it },
-            label = { Text("Inserisci il tuo cognome") },
+            label = { Text(stringResource(id = R.string.insertCognome)) },
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = {
-                Icon(Icons.Filled.AccountCircle, contentDescription = "Nome")
+                Icon(
+                    Icons.Filled.AccountCircle,
+                    contentDescription = stringResource(id = R.string.insertCognome)
+                )
             },
             singleLine = true
         )
@@ -299,7 +304,7 @@ class AuthPage {
                             isDatePickerOpened = false
                         }
                     ) {
-                        Text(text = "Conferma")
+                        Text(text = stringResource(id = R.string.confirm))
                     }
                 },
                 text = {
@@ -369,8 +374,8 @@ class AuthPage {
                 modifier = Modifier.weight(1f),
                 value = userState.height,
                 onValueChange = { userState.height = it },
-                label = { Text("Altezza") },
-                suffix = { Text("cm") },
+                label = { Text(stringResource(id = R.string.height)) },
+                suffix = { Text(stringResource(id = R.string.cm)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -379,8 +384,8 @@ class AuthPage {
                 modifier = Modifier.weight(1f),
                 value = userState.weight,
                 onValueChange = { userState.weight = it },
-                label = { Text("Peso") },
-                suffix = { Text(text = "kg") },
+                label = { Text(stringResource(id = R.string.weight)) },
+                suffix = { Text(text = stringResource(id = R.string.kg)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -402,7 +407,7 @@ class AuthPage {
         ) {
 
             Text(
-                text = "Seleziona una foto profilo oppure prosegui per completare l'acesso",
+                text = stringResource(id = R.string.selectPhotoOr),
                 textAlign = TextAlign.Center
             )
         }
@@ -441,7 +446,7 @@ class AuthPage {
             ) {
                 AsyncImage(
                     model = userState.imageUri,
-                    contentDescription = "Immagine profilo",
+                    contentDescription = stringResource(id = R.string.selectPhoto),
                     modifier = Modifier
                         .width(200.dp)
                         .height(200.dp)
@@ -459,10 +464,10 @@ class AuthPage {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(text = "Seleziona una foto")
+                    Text(text = stringResource(id = R.string.selectPhoto))
                     Icon(
                         imageVector = Icons.Outlined.AccountBox,
-                        contentDescription = "Immagine profilo"
+                        contentDescription = stringResource(id = R.string.selectPhoto)
                     )
                 }
             }
@@ -477,7 +482,7 @@ class AuthPage {
             isPhotoSelectorOpened = false
         }
         Text(
-            text = "Attenzione: l'immagine selezionata verrà caricata in cloud (Firebase Storage)",
+            text = stringResource(id = R.string.allertInsertImage),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -499,14 +504,17 @@ class AuthPage {
                 } else {
                     Toast.makeText(
                         context,
-                        "I dati inseriti non sono validi",
+                        context.getString(R.string.errorInsertData),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         ) {
-            Text("Avanti")
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Avanti")
+            Text(stringResource(id = R.string.foward))
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = stringResource(id = R.string.foward)
+            )
         }
     }
 
@@ -516,8 +524,11 @@ class AuthPage {
             modifier = Modifier,
             onClick = { currentScreen = back }
         ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Indietro")
-            Text("Indietro")
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(id = R.string.back)
+            )
+            Text(stringResource(id = R.string.back))
         }
     }
 

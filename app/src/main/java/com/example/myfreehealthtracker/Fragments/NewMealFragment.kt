@@ -58,8 +58,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -137,7 +137,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             Log.i("NewFoodFragment", "MainApp error")
             Toast.makeText(
                 requireContext(),
-                "Errore connessione DB prova a riavviare l'applicazione",
+                requireContext().getString(R.string.dbConnectionError),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -168,7 +168,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Crea un nuovo pasto",
+                    text = stringResource(id = R.string.createNewPasto),
                     fontSize = 24.sp
                 )
                 IconButton(
@@ -194,16 +194,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Conferma Inserimento")
+                Text(text = stringResource(id = R.string.confirmInsert))
             }
         }
 
         if (openInsertDialog) {
-            val context = LocalContext.current
-
             var pickedHour by remember { mutableIntStateOf(0) }
             var pickedMinute by remember { mutableIntStateOf(0) }
-            var selectMealType by remember { mutableStateOf("Seleziona tipo pasto") }
+            var selectMealType by remember { mutableStateOf(requireContext().getString(R.string.selectTypePasto)) }
             var pickedYear by remember { mutableIntStateOf(0) }
             var pickedMonth by remember { mutableIntStateOf(0) }
             var pickedDay by remember { mutableIntStateOf(0) }
@@ -217,21 +215,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             AlertDialog(onDismissRequest = { openInsertDialog = false }, confirmButton = {
 
             }, title = {
-                Text(text = "Inserisci dati del pasto")
+                Text(text = stringResource(id = R.string.insertDataPasto))
             },
                 text = {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        //.fillMaxHeight(0.4f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        //Text(text = String.format("%02d:%02d", pickedHour, pickedMinute))
-//                        Row() {
-//                            Button(onClick = { isTimePickerDialogOpen = true }) {
-//                            Text("Ins")
-//                         }
-//                        }
+
 
                         val calendar = Calendar.getInstance()
 
@@ -315,14 +307,14 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         }
                         Button(
-                            enabled = canConfirmMeal && selectMealType != "Seleziona tipo pasto",
+                            enabled = canConfirmMeal && selectMealType != stringResource(id = R.string.selectTypePasto),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 openInsertDialog = false
                                 insertPasto(pickedMinute, pickedHour, pickedDay, pickedMonth, pickedYear, tipoPasto)
 
                             }) {
-                            Text(text = "Conferma Inserimento")
+                            Text(text = stringResource(id = R.string.confirmInsert))
 
                         }
                     }
@@ -393,11 +385,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-//                .border(
-//                    width = 2.dp,
-//                    color = Color.Black,
-//                    shape= RoundedCornerShape(8.dp)
-//                )
         ) {
             Column(
                 modifier = Modifier
@@ -468,7 +455,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             )
 
                             Text(
-                                text = "kcal",
+                                text = stringResource(id = R.string.kcal),
                             )
 
                         }
@@ -495,7 +482,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF59C3C3),
-                                            label = "Grassi",
+                                            label = stringResource(id = R.string.grassi),
                                             value = alimento.grassi?.toInt() ?: 0
                                         )
                                     }
@@ -505,7 +492,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF04724D),
-                                            label = "Fibre",
+                                            label = stringResource(id = R.string.fibre),
                                             value = alimento.fibre?.toInt() ?: 0
                                         )
                                     }
@@ -523,7 +510,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFE1E289),
-                                            label = "Carboidrati",
+                                            label = stringResource(id = R.string.carboidrati),
                                             value = alimento.carboidrati?.toInt() ?: 0
                                         )
                                     }
@@ -533,7 +520,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFDB504A),
-                                            label = "Proteine",
+                                            label = stringResource(id = R.string.protein),
                                             value = alimento.proteine?.toInt() ?: 0
                                         )
                                     }
@@ -558,7 +545,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         },
                         label = {
-                            Text(text = "Quantità (${alimento.unit})")
+                            Text(text = stringResource(R.string.quantit) + { alimento.unit })
                         },
                         keyboardOptions =
                         KeyboardOptions(
@@ -592,23 +579,15 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-//                .border(
-//                    width = 2.dp,
-//                    color = Color.Black,
-//                    shape= RoundedCornerShape(8.dp)
-//                )
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
-                //verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Column(
                     //NOME E BARCODE
                     modifier = Modifier.weight(1f),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.SpaceBetween
 
                 ) {
                     alimento.nome?.let {
@@ -659,7 +638,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             //internal circle with icon
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "contentDescription",
+                contentDescription = "Add",
                 modifier = Modifier
                     .width(24.dp)
                     .background(color, CircleShape)
@@ -676,7 +655,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     private fun AddFoodDialog() {
         val existingAllAlimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
         var selectedFoodItemBarcode by rememberSaveable { mutableStateOf("") }
-        var selectedFoodItemLabel by rememberSaveable { mutableStateOf("Seleziona Esistente") }
+        var selectedFoodItemLabel by rememberSaveable { mutableStateOf(requireContext().getString(R.string.selectExisted)) }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
         var enableNewFood by rememberSaveable {
             mutableStateOf(true)
@@ -711,7 +690,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         } else {
                             Toast.makeText(
                                 requireContext(),
-                                "Nessun elemento selezionato",
+                                requireContext().getString(R.string.noElementInserted),
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -727,7 +706,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Aggiungi Alimento")
+                    Text(text = stringResource(id = R.string.addAlimento))
                     IconButton(onClick = { showAddFoodDialog = false }) {
                         Icon(Icons.Default.Close, contentDescription = null)
                     }
@@ -788,7 +767,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Nuovo")
+                        Text(text = stringResource(id = R.string._new))
                     }
                 }
 
@@ -811,7 +790,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     Button(onClick = {
                         val integrator =
                             IntentIntegrator.forSupportFragment(this@NewMealFragment)
-                        integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
+                        integrator.setPrompt(requireContext().getString(R.string.scanABarcode)) // Testo mostrato sopra l'area di scansione
                         integrator.setCameraId(0) // Usa la fotocamera posteriore
                         integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
                         integrator.setBeepEnabled(true) // Disabilita il segnale acustico alla scansione
@@ -827,7 +806,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         integrator.initiateScan()
 
                     }) {
-                        Text(text = "Scannerizza")
+                        Text(text = stringResource(id = R.string.scanner))
                     }
                     Button(
                         onClick = {
@@ -847,36 +826,24 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                                 pastoToAlimentoWrapperList.add(
                                     PastoToAlimentoWrapper(
-                                        idUser = mainApplication.userData!!.userData.value!!.id, //TODO
+                                        idUser = mainApplication.userData!!.userData.value!!.id,
                                         idAlimento = food.id,
                                         nomeAlimento = food.nome,
                                         imageUri = food.immagine,
                                         quantita = mutableStateOf("1")
                                     )
                                 )
-//                                    alimentList.add(
-//                                        PastoToCiboWrapper(
-//                                            idAlimento = food.id,
-//                                            nomeAlimento = food.nome,
-//                                            imageUri = food.immagine
-//                                        )
-//                                    )
-//                                    val mainApplication: MainApplication =
-//                                        requireActivity().application as MainApplication
-//                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.ALIMENTI)
-//                                        .child(food.id).setValue(food)
-                                //add element to list
                             } else {
                                 Toast.makeText(
                                     requireContext(),
-                                    "Nessun elemento inserito",
+                                    requireContext().getString(R.string.noElementInserted),
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
 
                         }
                     ) {
-                        Text(text = "Conferma")
+                        Text(text = stringResource(id = R.string.confirm))
                     }
                 }
             },
@@ -886,7 +853,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Inserisci alimento")
+                    Text(text = stringResource(id = R.string.insertAlimento))
 
                     Spacer(modifier = Modifier.width(20.dp))
 
@@ -912,10 +879,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             alimentoWrapper.id = it
                         },
                         label = {
-                            Text(text = "Barcode")
+                            Text(text = stringResource(id = R.string.barcode))
                         },
                         placeholder = {
-                            Text(text = "Inserisci il Barcode")
+                            Text(text = stringResource(id = R.string.insertBarcode))
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -929,7 +896,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             alimentoWrapper.nome = it
                         },
                         label = {
-                            Text(text = "Nome")
+                            Text(text = stringResource(id = R.string.name))
                         }
                     )
 
@@ -939,7 +906,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Text("Unità valori:")
+                        Text(stringResource(id = R.string.unitValue))
 
                         RadioButton(
                             selected = alimentoWrapper.unit == "100g",
@@ -948,7 +915,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         )
 
-                        Text("100g")
+                        Text(stringResource(id = R.string._100g))
 
                         RadioButton(
                             selected = alimentoWrapper.unit == "unit",
@@ -956,7 +923,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 alimentoWrapper.unit = "unit"
                             }
                         )
-                        Text("unit")
+                        Text(stringResource(id = R.string.unit))
 
                     }
 
@@ -977,7 +944,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Carboidrati")
+                                Text(text = stringResource(id = R.string.carboidrati))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -995,7 +962,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Proteine")
+                                Text(text = stringResource(id = R.string.protein))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -1014,7 +981,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Fibre")
+                                Text(text = stringResource(id = R.string.fibre))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -1040,7 +1007,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Calorie")
+                                Text(text = stringResource(id = R.string.calories))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -1058,7 +1025,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Grassi")
+                                Text(text = stringResource(id = R.string.grassi))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -1076,7 +1043,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
                             },
                             label = {
-                                Text(text = "Sale")
+                                Text(text = stringResource(id = R.string.salt))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -1097,7 +1064,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 alimentoWrapper.descrizione = it
                             },
                             label = {
-                                Text(text = "Descrizione")
+                                Text(text = stringResource(id = R.string.description))
                             }
                         )
                     }
@@ -1123,7 +1090,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 // Il codice a barre è stato trovato
                 val toast = Toast.makeText(
                     requireContext(),
-                    "Codice a barre: $barcode, Caricamento dati in corso",
+                    barcode + requireContext().getString(R.string.loadBarcode),
                     Toast.LENGTH_LONG
                 )
                 toast.show()
@@ -1142,7 +1109,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     if (product == null || product.status == 0) {
                         Toast.makeText(
                             requireContext(),
-                            "Prodotto non trovato",
+                            requireContext().getString(R.string.productNotFound),
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
@@ -1155,7 +1122,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             Log.i("Test", food.toString())
                             Toast.makeText(
                                 requireContext(),
-                                "Prodotto non trovato",
+                                requireContext().getString(R.string.productNotFound),
                                 Toast.LENGTH_LONG
                             ).show()
                         }

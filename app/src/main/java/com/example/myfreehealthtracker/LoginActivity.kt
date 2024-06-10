@@ -12,10 +12,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val a = AuthPage()
-        val b = LoginPage()
         setContent {
             a.LoginForm()
-            //b.Login()
         }
     }
 }

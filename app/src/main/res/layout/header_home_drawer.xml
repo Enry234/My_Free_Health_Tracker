@@ -49,8 +49,7 @@
                     android:layout_height="100dp"
                     android:contentDescription="Profile Pic"
                     android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:src="@drawable/img" />
+                    android:focusableInTouchMode="true" />
 
             </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

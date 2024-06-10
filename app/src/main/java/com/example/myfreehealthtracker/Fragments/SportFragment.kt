@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -71,6 +72,7 @@ import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -139,7 +141,7 @@ class SportFragment : Fragment() {
                         val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
 
                         if (activityList.isEmpty()) {
-                            Text(text = "Nessuna attivita' presente")
+                            Text(text = stringResource(id = R.string.noActivityPresent))
                         } else {
 
                             BurnedCaloriesChart()
@@ -217,7 +219,7 @@ class SportFragment : Fragment() {
                 LineChart(
                     data = listOf(
                         Line(
-                            label = "Calorie bruciate negli ultimi giorni",
+                            label = stringResource(id = R.string.burnCaloriesLastDay),
                             values = list,
                             color = SolidColor(Color(0xFFDB504A)),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -335,7 +337,7 @@ class SportFragment : Fragment() {
                         Column()
                         {
                             Text(
-                                text = "Andamento",
+                                text = stringResource(id = R.string.andamento),
                             )
                         }
                     }
@@ -358,9 +360,9 @@ class SportFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF59C3C3),
-                                            label = "Calorie",
+                                            label = stringResource(id = R.string.calories),
                                             value = calorie,
-                                            suffix = "Kcal"
+                                            suffix = stringResource(id = R.string.kcal)
                                         )
                                     }
                                 }
@@ -377,9 +379,9 @@ class SportFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFE1E289),
-                                            label = "Durata",
+                                            label = stringResource(id = R.string.time),
                                             value = durata,
-                                            suffix = "min"
+                                            suffix = stringResource(id = R.string.min)
                                         )
                                     }
                                     Row(
@@ -388,9 +390,9 @@ class SportFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFDB504A),
-                                            label = "Lunghezza",
+                                            label = stringResource(id = R.string.lenght),
                                             value = lunghezza,
-                                            suffix = "Km"
+                                            suffix = stringResource(id = R.string.km)
                                         )
                                     }
                                 }
@@ -430,12 +432,14 @@ class SportFragment : Fragment() {
                             .child(sport.id).setValue(sport)
                     } else {
                         Toast.makeText(
-                            requireContext(), "Nessun elemento inserito", Toast.LENGTH_LONG
+                            requireContext(),
+                            requireContext().getString(R.string.noElementInserted),
+                            Toast.LENGTH_LONG
                         ).show()
                     }
 
                 }) {
-                    Text(text = "Conferma")
+                    Text(text = stringResource(id = R.string.confirm))
                 }
             }
         }, title = {
@@ -444,9 +448,12 @@ class SportFragment : Fragment() {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Inserisci Sport")
+                Text(text = stringResource(id = R.string.addSport))
                 IconButton(onClick = { openNewSportDialog = false }) {
-                    Icon(Icons.Default.Close, contentDescription = "Close Dialog")
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.closeDrawer)
+                    )
                 }
             }
         }, text = {
@@ -457,7 +464,7 @@ class SportFragment : Fragment() {
                 TextField(value = newSportWrapper.nomeSport, onValueChange = {
                     newSportWrapper.nomeSport = it
                 }, label = {
-                    Text(text = "Nome")
+                    Text(text = stringResource(id = R.string.name))
                 })
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -470,7 +477,7 @@ class SportFragment : Fragment() {
                             newSportWrapper.descrizione = it
                         },
                         label = {
-                            Text(text = "Descrizione")
+                            Text(text = stringResource(id = R.string.description))
                         })
                 }
             }
@@ -522,12 +529,14 @@ class SportFragment : Fragment() {
 
                 } else {
                     Toast.makeText(
-                        requireContext(), "Nessuno sport selezionato", Toast.LENGTH_LONG
+                        requireContext(),
+                        requireContext().getString(R.string.noSportSelected),
+                        Toast.LENGTH_LONG
                     ).show()
                 }
                 openAddActivityDialog = false
             }) {
-                Text(text = "Conferma")
+                Text(text = stringResource(id = R.string.confirm))
             }
         }, title = {
             Row(
@@ -535,9 +544,12 @@ class SportFragment : Fragment() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Aggiungi Attività")
+                Text(text = stringResource(id = R.string.addActivity))
                 IconButton(onClick = { openAddActivityDialog = false }) {
-                    Icon(Icons.Default.Close, contentDescription = "Close Dialog")
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.closeDrawer)
+                    )
                 }
             }
         }, text = {
@@ -581,7 +593,7 @@ class SportFragment : Fragment() {
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Nessun Sport selezionato",
+                                        requireContext().getString(R.string.noSportSelected),
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -596,7 +608,7 @@ class SportFragment : Fragment() {
                         openNewSportDialog = true
                     }, enabled = showNewSportButton, modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Nuovo Sport")
+                    Text(text = stringResource(id = R.string.newSport))
                 }
                 Box() {
                     Column(
@@ -670,7 +682,7 @@ class SportFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Calorie Bruciate")
+                                    Text(text = stringResource(id = R.string.caloriesBurn))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
@@ -688,7 +700,7 @@ class SportFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Durata Totale")
+                                    Text(text = stringResource(id = R.string.timeTotal))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
@@ -712,7 +724,7 @@ class SportFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Distanza Totale")
+                                    Text(text = stringResource(id = R.string.totalLenght))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
@@ -729,7 +741,7 @@ class SportFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Note")
+                                    Text(text = stringResource(id = R.string.note))
                                 }
 
                             )
@@ -797,7 +809,7 @@ class SportFragment : Fragment() {
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp), data = listOf(
                     Line(
-                        label = "Durata Allenamento",
+                        label = stringResource(id = R.string.timeActivity),
                         values = workoutTime,
                         color = SolidColor(Color(0xFF04724D)),
                         //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
@@ -841,129 +853,6 @@ class SportFragment : Fragment() {
         }
     }
 
-//    @Composable
-//    private fun MovimentChart(activityList: List<Attivita>) {
-//        val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
-//        val km = activityList.map { it.distanza.toDouble() }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(150.dp)
-//        ) {
-//            LineChart(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 4.dp), data = listOf(
-//                    Line(
-//                        label = "Distanza percorsa",
-//                        values = km,
-//                        color = SolidColor(Color(0xFF04724D)),
-//                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-//                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
-//                        secondGradientFillColor = Color.Transparent,
-//                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
-//                        gradientAnimationDelay = 500,
-//                        drawStyle = DrawStyle.Stroke(width = 2.dp)
-//                    )
-//                ), animationMode = AnimationMode.Together(delayBuilder = {
-//                    it * 500L
-//                }),
-//                dotsProperties = DotProperties(
-//                    enabled = false,
-//                    radius = 10f,
-//                    color = SolidColor(Color(0xFF04724D)),
-//                    strokeWidth = 3f,
-//                    //strokeColor = Color.White,
-//                    strokeStyle = StrokeStyle.Normal,
-//                    animationEnabled = true,
-//                    animationSpec = tween(500)
-//                ), dividerProperties = DividerProperties(
-//                    enabled = true, xAxisProperties = LineProperties(
-//                        enabled = false
-//                    ), yAxisProperties = LineProperties(
-//                        enabled = false
-//                    )
-//                ),
-//
-//                gridProperties = GridProperties(
-//                    enabled = false,
-//                ),
-//
-//                labelProperties = LabelProperties(
-//                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
-//                    //verticalPadding = 16.dp,
-//                    labels = dates
-//                )
-//            )
-//        }
-//    }
-//
-//    @Composable
-//    private fun BurnCaloriesChart(activityList: List<Attivita>) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(150.dp)
-//        ) {
-//            val dates = activityList.map { it.date.toString().format("dd/MM/yyyy") }
-//            val burnCalories = activityList.map { it.calorie.toDouble() }
-//            LineChart(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 4.dp), data = listOf(
-//                    Line(
-//                        label = "Calorie Bruciate",
-//                        values = burnCalories,
-//                        color = SolidColor(Color(0xFF04724D)),
-//                        //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-//                        firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
-//                        secondGradientFillColor = Color.Transparent,
-//                        strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
-//                        gradientAnimationDelay = 500,
-//                        drawStyle = DrawStyle.Stroke(width = 2.dp)
-//                    )
-//                ), animationMode = AnimationMode.Together(delayBuilder = {
-//                    it * 500L
-//                }),
-//
-//                dotsProperties = DotProperties(
-//                    enabled = false,
-//                    radius = 10f,
-//                    color = SolidColor(Color(0xFF04724D)),
-//                    strokeWidth = 3f,
-//                    //strokeColor = Color.White,
-//                    strokeStyle = StrokeStyle.Normal,
-//                    animationEnabled = true,
-//                    animationSpec = tween(500)
-//                ), dividerProperties = DividerProperties(
-//                    enabled = true, xAxisProperties = LineProperties(
-//                        enabled = false
-//                    ), yAxisProperties = LineProperties(
-//                        enabled = false
-//                    )
-//                ),
-//                gridProperties = GridProperties(
-//                    enabled = false,
-//                ),
-//                labelProperties = LabelProperties(
-//                    enabled = true, textStyle = MaterialTheme.typography.labelSmall,
-//                    //verticalPadding = 16.dp,
-//                    labels = dates
-//                )
-//            )
-//        }
-//    }
-
-//    @Composable
-//    private fun Hello() {
-//        Box(modifier = Modifier.padding(10.dp)) {
-//            Text(
-//                text = "I Progressi di " + mainApplication.userData!!.userData.value!!.nome,
-//                fontSize = 50.sp,
-//                textAlign = TextAlign.Center
-//            )
-//        }
-//    }
 
     @Composable
     fun BulletSpan(color: Color, label: String, value: Int, suffix: String = "") {
@@ -975,7 +864,7 @@ class SportFragment : Fragment() {
             //internal circle with icon
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "contentDescription",
+                contentDescription = "Add",
                 modifier = Modifier
                     .width(24.dp)
                     .background(color, CircleShape)

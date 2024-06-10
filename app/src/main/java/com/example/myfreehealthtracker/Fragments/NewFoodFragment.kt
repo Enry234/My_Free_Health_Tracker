@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -116,7 +117,7 @@ class NewFoodFragment : Fragment() {
             Log.i("NewFoodFragment", "MainApp error")
             Toast.makeText(
                 requireContext(),
-                "Errore connessione DB prova a riavviare l'applicazione",
+                requireContext().getString(R.string.dbConnectionError),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -161,8 +162,6 @@ class NewFoodFragment : Fragment() {
                     }
                 }
 
-
-
                 IconButton(
                     modifier = Modifier
                         .background(Color.Green, CircleShape)
@@ -191,7 +190,7 @@ class NewFoodFragment : Fragment() {
                         Button(onClick = {
                             val integrator =
                                 IntentIntegrator.forSupportFragment(this@NewFoodFragment)
-                            integrator.setPrompt("Scansiona un barcode") // Testo mostrato sopra l'area di scansione
+                            integrator.setPrompt(requireContext().getString(R.string.scanABarcode)) // Testo mostrato sopra l'area di scansione
                             integrator.setCameraId(0) // Usa la fotocamera posteriore
                             integrator.setOrientationLocked(true) // Imposta il blocco dell'orientamento
                             integrator.setBeepEnabled(true) // Disabilita il segnale acustico alla scansione
@@ -200,14 +199,12 @@ class NewFoodFragment : Fragment() {
                                 "EAN_8"
                             ) // Mostra l'immagine del codice a barre
                             integrator.setBarcodeImageEnabled(true) // Mostra l'immagine del codice a barre
-
-                            integrator.setPrompt("Ciao prompt")
                             integrator.setOrientationLocked(false)  // Lock the orientation
                             integrator.captureActivity = PortraitCaptureActivity::class.java
                             integrator.initiateScan()
 
                         }) {
-                            Text(text = "Scannerizza")
+                            Text(text = stringResource(id = R.string.scanner))
                         }
                         Button(
 
@@ -235,7 +232,7 @@ class NewFoodFragment : Fragment() {
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Nessun elemento inserito",
+                                        requireContext().getString(R.string.noElementInserted),
                                         Toast.LENGTH_LONG
                                     ).show()
                                     error = true
@@ -243,7 +240,7 @@ class NewFoodFragment : Fragment() {
 
                             }
                         ) {
-                            Text(text = "Conferma")
+                            Text(text = stringResource(id = R.string.confirm))
                         }
                     }
                 },
@@ -253,7 +250,7 @@ class NewFoodFragment : Fragment() {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Inserisci alimento")
+                        Text(text = stringResource(id = R.string.insertAlimento))
 
                         Spacer(modifier = Modifier.width(20.dp))
 
@@ -280,10 +277,10 @@ class NewFoodFragment : Fragment() {
                                 alimentoWrapper.id = it
                             },
                             label = {
-                                Text(text = "Barcode")
+                                Text(text = stringResource(id = R.string.barcode))
                             },
                             placeholder = {
-                                Text(text = "Inserisci il Barcode")
+                                Text(text = stringResource(id = R.string.insertBarcode))
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -298,7 +295,7 @@ class NewFoodFragment : Fragment() {
                                 alimentoWrapper.nome = it
                             },
                             label = {
-                                Text(text = "Nome")
+                                Text(text = stringResource(id = R.string.name))
                             }
                         )
 
@@ -308,7 +305,7 @@ class NewFoodFragment : Fragment() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
 
-                            Text("Unità valori:")
+                            Text(stringResource(id = R.string.unitValue))
 
                             RadioButton(
 
@@ -318,7 +315,7 @@ class NewFoodFragment : Fragment() {
                                 }
                             )
 
-                            Text("100g")
+                            Text(stringResource(id = R.string._100g))
 
                             RadioButton(
                                 selected = alimentoWrapper.unit == "unit",
@@ -326,7 +323,7 @@ class NewFoodFragment : Fragment() {
                                     alimentoWrapper.unit = "unit"
                                 }
                             )
-                            Text("unit")
+                            Text(stringResource(id = R.string.unit))
 
                         }
 
@@ -348,7 +345,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Carboidrati")
+                                    Text(text = stringResource(id = R.string.carboidrati))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -367,7 +364,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Proteine")
+                                    Text(text = stringResource(id = R.string.protein))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -386,7 +383,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Fibre")
+                                    Text(text = stringResource(id = R.string.fibre))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -412,7 +409,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Calorie")
+                                    Text(text = stringResource(id = R.string.calories))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -430,7 +427,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Grassi")
+                                    Text(text = stringResource(id = R.string.grassi))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -448,7 +445,7 @@ class NewFoodFragment : Fragment() {
 
                                 },
                                 label = {
-                                    Text(text = "Sale")
+                                    Text(text = stringResource(id = R.string.salt))
                                 },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number,
@@ -469,7 +466,7 @@ class NewFoodFragment : Fragment() {
                                     alimentoWrapper.descrizione = it
                                 },
                                 label = {
-                                    Text(text = "Descrizione")
+                                    Text(text = stringResource(id = R.string.description))
                                 }
                             )
                         }
@@ -497,7 +494,7 @@ class NewFoodFragment : Fragment() {
                 // Il codice a barre è stato trovato
                 val toast = Toast.makeText(
                     requireContext(),
-                    "Codice a barre: $barcode, Caricamento dati in corso",
+                    barcode + requireContext().getString(R.string.loadBarcode),
                     Toast.LENGTH_LONG
                 )
                 toast.show()
@@ -511,7 +508,7 @@ class NewFoodFragment : Fragment() {
                     } catch (ex: Exception) {
                         Toast.makeText(
                             requireContext(),
-                            "PRODOTTO NON TROVATO INSERIRE MANUALMENTE",
+                            requireContext().getString(R.string.productNotFound),
                             Toast.LENGTH_LONG
                         ).show()
                         Log.i("load error", "errore caricamento")
@@ -522,7 +519,7 @@ class NewFoodFragment : Fragment() {
                     if (product == null || product.status == 0) {
                         Toast.makeText(
                             requireContext(),
-                            "Prodotto non trovato",
+                            requireContext().getString(R.string.productNotFound),
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
@@ -535,7 +532,7 @@ class NewFoodFragment : Fragment() {
                             Log.i("Test", food.toString())
                             Toast.makeText(
                                 requireContext(),
-                                "Prodotto non trovato",
+                                requireContext().getString(R.string.productNotFound),
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -551,11 +548,7 @@ class NewFoodFragment : Fragment() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-//                .border(
-//                    width = 2.dp,
-//                    color = Color.Black,
-//                    shape= RoundedCornerShape(8.dp)
-//                )
+
         ) {
             Column(
                 modifier = Modifier
@@ -628,7 +621,7 @@ class NewFoodFragment : Fragment() {
                             )
 
                             Text(
-                                text = "kcal",
+                                text = stringResource(id = R.string.kcal),
                             )
 
                         }
@@ -655,7 +648,7 @@ class NewFoodFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF59C3C3),
-                                            label = "Grassi",
+                                            label = stringResource(id = R.string.grassi),
                                             value = alimento.grassi?.toInt() ?: 0
                                         )
                                     }
@@ -665,7 +658,7 @@ class NewFoodFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF04724D),
-                                            label = "Fibre",
+                                            label = stringResource(id = R.string.fibre),
                                             value = alimento.fibre?.toInt() ?: 0
                                         )
                                     }
@@ -683,7 +676,7 @@ class NewFoodFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFE1E289),
-                                            label = "Carboidrati",
+                                            label = stringResource(id = R.string.carboidrati),
                                             value = alimento.carboidrati?.toInt() ?: 0
                                         )
                                     }
@@ -693,7 +686,7 @@ class NewFoodFragment : Fragment() {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFDB504A),
-                                            label = "Proteine",
+                                            label = stringResource(id = R.string.protein),
                                             value = alimento.proteine?.toInt() ?: 0
                                         )
                                     }
@@ -719,7 +712,7 @@ class NewFoodFragment : Fragment() {
             //internal circle with icon
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "contentDescription",
+                contentDescription = "Add",
                 modifier = Modifier
                     .width(24.dp)
                     .background(color, CircleShape)

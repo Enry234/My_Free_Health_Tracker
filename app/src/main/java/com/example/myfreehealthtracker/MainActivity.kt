@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -71,20 +72,19 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     lifecycleScope.launch {
                         Log.i("MAIN", "Coroutine launch")
                         mainApplication.userRepository.allUser.collectLatest {
-                                Log.i("MAIN", "ciclo caricamento user")
+                            Log.i("MAIN", "ciclo caricamento user")
 
-                                mainApplication.userData!!.setUserData(it)
-                                if (mainApplication.userData!!.userData.value!!.id != "") {
-                                    Log.i("MAIN", mainApplication.userData.toString())
-                                    firebaseAnalytics =
-                                        FirebaseAnalytics.getInstance(this@MainActivity)
-                                    initializeMainActivityLayout()
-                                } else {
+                            mainApplication.userData!!.setUserData(it)
+                            if (mainApplication.userData!!.userData.value!!.id != "") {
+                                Log.i("MAIN", mainApplication.userData.toString())
+                                firebaseAnalytics = FirebaseAnalytics.getInstance(this@MainActivity)
+                                initializeMainActivityLayout()
+                            } else {
 
-                                    Log.i("MAIN_ERROR", "Internal user db not found")
+                                Log.i("MAIN_ERROR", "Internal user db not found")
 
 
-                                }
+                            }
 
                         }
 
@@ -133,13 +133,15 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         val composeViewDrawerHeader = findViewById<ComposeView>(R.id.drawer_header_compose_view)
         drawerImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
         toolbarImage.setImageURI(a.getImageFromInternalStorage(this, "pictureProfile.png"))
-        drawerProfileName.text = "Hello " + mainApplication.userData!!.userData.value!!.nome
+        drawerProfileName.text =
+            getString(R.string.welcomeDrawerPicProfile) + mainApplication.userData!!.userData.value!!.nome
 
 
         setSupportActionBar(toolbar)
         navigationView.bringToFront()
-        val toogle =
-            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.close, R.string.open_drawer)
+        val toogle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar, R.string.closeDrawer, R.string.openDrawer
+        )
         drawerLayout.addDrawerListener(toogle)
         toogle.syncState()
 
@@ -148,8 +150,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             R.id.activity_main_fragment_container
         )
 
-        findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture)
-            .setOnClickListener {
+        findViewById<ImageView>(R.id.activity_main_toolbar_profile_picture).setOnClickListener {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
 
@@ -157,20 +158,20 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
             val navController = fragmentContainer.findNavController()
             when (it.itemId) {
                 R.id.Home -> {
-                    toolbarTitle.text = getString(R.string.Home)
+                    toolbarTitle.text = getString(R.string.homeText)
                     navController.navigate(R.id.homeFragment)
                     true
                 }
 
                 R.id.Sport -> {
-                    toolbarTitle.text = getString(R.string.Sport)
+                    toolbarTitle.text = getString(R.string.sportText)
                     navController.navigate(R.id.sportFragment)
                     true
                 }
 
 
                 R.id.Health -> {
-                    toolbarTitle.text = getString(R.string.Health)
+                    toolbarTitle.text = getString(R.string.healthText)
                     navController.navigate(R.id.healthFragment)
                     true
                 }
@@ -194,47 +195,44 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 .padding(10.dp)
                         ) {
                             var peso by remember { mutableStateOf(0.0) }
-                            Button(
-                                modifier = Modifier.weight(1f),
-                                onClick = {
-                                    if (peso != 0.0) {
+                            Button(modifier = Modifier.weight(1f), onClick = {
+                                if (peso != 0.0) {
 
-                                        val bundle = Bundle().apply {
-                                            putString(
-                                                "id",
-                                                mainApplication.userData!!.userData.value!!.id
-                                            )
-                                        }
-                                        firebaseAnalytics.logEvent("hasUpdatePeso", bundle)
-                                        mainApplication.userData!!.userData.value!!.peso!!.add(
-                                            Pair(
-                                                Date(), peso
-                                            )
+                                    val bundle = Bundle().apply {
+                                        putString(
+                                            "id", mainApplication.userData!!.userData.value!!.id
                                         )
-                                        //mainApplication.applicationScope.launch {
-                                        runBlocking {
-                                            mainApplication.userRepository.insertUser(
-                                                mainApplication.userData!!.userData.value!!
-                                            )//upsert mode
-                                        }
-                                        //}
-                                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
-                                            .child(mainApplication.userData!!.userData.value!!.id)
-                                            .setValue(mainApplication.userData!!)
-                                    } else {
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            "Impossibile inserire 0 come peso",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
+                                    firebaseAnalytics.logEvent("hasUpdatePeso", bundle)
+                                    mainApplication.userData!!.userData.value!!.peso!!.add(
+                                        Pair(
+                                            Date(), peso
+                                        )
+                                    )
+                                    //mainApplication.applicationScope.launch {
+                                    runBlocking {
+                                        mainApplication.userRepository.insertUser(
+                                            mainApplication.userData!!.userData.value!!
+                                        )//upsert mode
+                                    }
+                                    //}
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                        .child(mainApplication.userData!!.userData.value!!.id)
+                                        .setValue(mainApplication.userData!!)
+                                } else {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        this@MainActivity.getString(R.string.errorPeso),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            ) {
-                                Text(text = "Aggiorna peso")
+                            }) {
+                                Text(text = stringResource(id = R.string.updatePeso))
                             }
                             TextField(
                                 modifier = Modifier.weight(1f),
-                                value = peso.toString(), onValueChange = {
+                                value = peso.toString(),
+                                onValueChange = {
                                     try {
                                         peso = it.toDouble()
                                     } catch (ex: Exception) {
@@ -249,43 +247,39 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 .padding(10.dp)
                         ) {
                             var calorie by remember { mutableStateOf(0) }
-                            Button(
-                                modifier = Modifier.weight(1f),
-                                onClick = {
-                                    if (calorie != 0) {
-                                        val bundle = Bundle().apply {
-                                            putString(
-                                                "id",
-                                                mainApplication.userData!!.userData.value!!.id
-                                            )
-                                        }
-                                        firebaseAnalytics.logEvent("hasUpdateCalorie", bundle)
-                                        mainApplication.userData!!.userData.value!!.calorie =
-                                            calorie
-                                        //mainApplication.applicationScope.launch {
-                                        runBlocking {
-                                            mainApplication.userRepository.insertUser(
-                                                mainApplication.userData!!.userData.value!!
-                                            )//upsert mode
-                                        }
-                                        //}
-                                        mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
-                                            .child(mainApplication.userData!!.userData.value!!.id)
-                                            .setValue(mainApplication.userData!!)
-                                    } else {
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            "Impossibile inserire 0",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                            Button(modifier = Modifier.weight(1f), onClick = {
+                                if (calorie != 0) {
+                                    val bundle = Bundle().apply {
+                                        putString(
+                                            "id", mainApplication.userData!!.userData.value!!.id
+                                        )
                                     }
+                                    firebaseAnalytics.logEvent("hasUpdateCalorie", bundle)
+                                    mainApplication.userData!!.userData.value!!.calorie = calorie
+                                    //mainApplication.applicationScope.launch {
+                                    runBlocking {
+                                        mainApplication.userRepository.insertUser(
+                                            mainApplication.userData!!.userData.value!!
+                                        )//upsert mode
+                                    }
+                                    //}
+                                    mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                        .child(mainApplication.userData!!.userData.value!!.id)
+                                        .setValue(mainApplication.userData!!)
+                                } else {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        this@MainActivity.getString(R.string.errorUpdateObject),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            ) {
-                                Text(text = "Aggiorna Obiettio Calorie")
+                            }) {
+                                Text(text = stringResource(id = R.string.updateObjectCalorie))
                             }
                             TextField(
                                 modifier = Modifier.weight(1f),
-                                value = calorie.toString(), onValueChange = {
+                                value = calorie.toString(),
+                                onValueChange = {
                                     try {
                                         calorie = it.toInt()
                                     } catch (ex: Exception) {
@@ -295,7 +289,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     }
                     Box() {
                         Column {
-                            Text(text = "Aggiorna obiettivi")
+                            Text(text = stringResource(id = R.string.updateObjective))
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -305,46 +299,42 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 //Carbo
                                 Column(modifier = Modifier.weight(1f)) {
                                     var carboidrati by remember { mutableIntStateOf(0) }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            if (carboidrati != 0) {
-                                                val bundle = Bundle().apply {
-                                                    putString(
-                                                        "id",
-                                                        mainApplication.userData!!.userData.value!!.id
-                                                    )
-                                                }
-                                                firebaseAnalytics.logEvent(
-                                                    "hasUpdateCarboidrati",
-                                                    bundle
+                                    Button(modifier = Modifier.weight(1f), onClick = {
+                                        if (carboidrati != 0) {
+                                            val bundle = Bundle().apply {
+                                                putString(
+                                                    "id",
+                                                    mainApplication.userData!!.userData.value!!.id
                                                 )
-                                                mainApplication.userData!!.userData.value!!.carboidrati =
-                                                    carboidrati
-                                                runBlocking {
-                                                    mainApplication.userRepository.insertUser(
-                                                        mainApplication.userData!!.userData.value!!
-                                                    )//upsert mode
-                                                }
-                                                mainApplication.getFirebaseDatabaseRef(
-                                                    FirebaseDBTable.USERS
-                                                )
-                                                    .child(mainApplication.userData!!.userData.value!!.id)
-                                                    .setValue(mainApplication.userData!!)
-                                            } else {
-                                                Toast.makeText(
-                                                    this@MainActivity,
-                                                    "Impossibile inserire 0",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
+                                            firebaseAnalytics.logEvent(
+                                                "hasUpdateCarboidrati", bundle
+                                            )
+                                            mainApplication.userData!!.userData.value!!.carboidrati =
+                                                carboidrati
+                                            runBlocking {
+                                                mainApplication.userRepository.insertUser(
+                                                    mainApplication.userData!!.userData.value!!
+                                                )//upsert mode
+                                            }
+                                            mainApplication.getFirebaseDatabaseRef(
+                                                FirebaseDBTable.USERS
+                                            ).child(mainApplication.userData!!.userData.value!!.id)
+                                                .setValue(mainApplication.userData!!)
+                                        } else {
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                this@MainActivity.getString(R.string.errorUpdateObject),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    ) {
-                                        Text(text = "Aggiorna Obiettivo Carboidrati")
+                                    }) {
+                                        Text(text = stringResource(id = R.string.updateObjectCarboidrati))
                                     }
                                     TextField(
                                         modifier = Modifier.weight(1f),
-                                        value = carboidrati.toString(), onValueChange = {
+                                        value = carboidrati.toString(),
+                                        onValueChange = {
                                             try {
                                                 carboidrati = it.toInt()
                                             } catch (ex: Exception) {
@@ -354,46 +344,42 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 //proteine
                                 Column(modifier = Modifier.weight(1f)) {
                                     var proteine by remember { mutableIntStateOf(0) }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            if (proteine != 0) {
-                                                val bundle = Bundle().apply {
-                                                    putString(
-                                                        "id",
-                                                        mainApplication.userData!!.userData.value!!.id
-                                                    )
-                                                }
-                                                firebaseAnalytics.logEvent(
-                                                    "hasUpdateProteine",
-                                                    bundle
+                                    Button(modifier = Modifier.weight(1f), onClick = {
+                                        if (proteine != 0) {
+                                            val bundle = Bundle().apply {
+                                                putString(
+                                                    "id",
+                                                    mainApplication.userData!!.userData.value!!.id
                                                 )
-                                                mainApplication.userData!!.userData.value!!.proteine =
-                                                    proteine
-                                                runBlocking {
-                                                    mainApplication.userRepository.insertUser(
-                                                        mainApplication.userData!!.userData.value!!
-                                                    )//upsert mode
-                                                }
-                                                mainApplication.getFirebaseDatabaseRef(
-                                                    FirebaseDBTable.USERS
-                                                )
-                                                    .child(mainApplication.userData!!.userData.value!!.id)
-                                                    .setValue(mainApplication.userData!!)
-                                            } else {
-                                                Toast.makeText(
-                                                    this@MainActivity,
-                                                    "Impossibile inserire 0",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
+                                            firebaseAnalytics.logEvent(
+                                                "hasUpdateProteine", bundle
+                                            )
+                                            mainApplication.userData!!.userData.value!!.proteine =
+                                                proteine
+                                            runBlocking {
+                                                mainApplication.userRepository.insertUser(
+                                                    mainApplication.userData!!.userData.value!!
+                                                )//upsert mode
+                                            }
+                                            mainApplication.getFirebaseDatabaseRef(
+                                                FirebaseDBTable.USERS
+                                            ).child(mainApplication.userData!!.userData.value!!.id)
+                                                .setValue(mainApplication.userData!!)
+                                        } else {
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                this@MainActivity.getString(R.string.errorUpdateObject),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    ) {
-                                        Text(text = "Aggiorna Obiettivo Proteine")
+                                    }) {
+                                        Text(text = stringResource(id = R.string.updateObjectProteine))
                                     }
                                     TextField(
                                         modifier = Modifier.weight(1f),
-                                        value = proteine.toString(), onValueChange = {
+                                        value = proteine.toString(),
+                                        onValueChange = {
                                             try {
                                                 proteine = it.toInt()
                                             } catch (ex: Exception) {
@@ -411,43 +397,40 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 //Fibre
                                 Column(modifier = Modifier.weight(1f)) {
                                     var fibre by remember { mutableIntStateOf(0) }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            val bundle = Bundle().apply {
-                                                putString(
-                                                    "id",
-                                                    mainApplication.userData!!.userData.value!!.id
-                                                )
-                                            }
-                                            firebaseAnalytics.logEvent("hasUpdateFibre", bundle)
-                                            if (fibre != 0) {
-                                                mainApplication.userData!!.userData.value!!.fibre =
-                                                    fibre
-                                                runBlocking {
-                                                    mainApplication.userRepository.insertUser(
-                                                        mainApplication.userData!!.userData.value!!
-                                                    )//upsert mode
-                                                }
-                                                mainApplication.getFirebaseDatabaseRef(
-                                                    FirebaseDBTable.USERS
-                                                )
-                                                    .child(mainApplication.userData!!.userData.value!!.id)
-                                                    .setValue(mainApplication.userData!!)
-                                            } else {
-                                                Toast.makeText(
-                                                    this@MainActivity,
-                                                    "Impossibile inserire 0",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
+                                    Button(modifier = Modifier.weight(1f), onClick = {
+                                        val bundle = Bundle().apply {
+                                            putString(
+                                                "id",
+                                                mainApplication.userData!!.userData.value!!.id
+                                            )
                                         }
-                                    ) {
-                                        Text(text = "Aggiorna Obiettivo Fibre")
+                                        firebaseAnalytics.logEvent("hasUpdateFibre", bundle)
+                                        if (fibre != 0) {
+                                            mainApplication.userData!!.userData.value!!.fibre =
+                                                fibre
+                                            runBlocking {
+                                                mainApplication.userRepository.insertUser(
+                                                    mainApplication.userData!!.userData.value!!
+                                                )//upsert mode
+                                            }
+                                            mainApplication.getFirebaseDatabaseRef(
+                                                FirebaseDBTable.USERS
+                                            ).child(mainApplication.userData!!.userData.value!!.id)
+                                                .setValue(mainApplication.userData!!)
+                                        } else {
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                this@MainActivity.getString(R.string.errorUpdateObject),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }) {
+                                        Text(text = stringResource(id = R.string.updateObjectFibre))
                                     }
                                     TextField(
                                         modifier = Modifier.weight(1f),
-                                        value = fibre.toString(), onValueChange = {
+                                        value = fibre.toString(),
+                                        onValueChange = {
                                             try {
                                                 fibre = it.toInt()
                                             } catch (ex: Exception) {
@@ -457,46 +440,42 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 //grassi
                                 Column(modifier = Modifier.weight(1f)) {
                                     var grassi by remember { mutableIntStateOf(0) }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            if (grassi != 0) {
-                                                val bundle = Bundle().apply {
-                                                    putString(
-                                                        "id",
-                                                        mainApplication.userData!!.userData.value!!.id
-                                                    )
-                                                }
-                                                firebaseAnalytics.logEvent(
-                                                    "hasUpdateGrassi",
-                                                    bundle
+                                    Button(modifier = Modifier.weight(1f), onClick = {
+                                        if (grassi != 0) {
+                                            val bundle = Bundle().apply {
+                                                putString(
+                                                    "id",
+                                                    mainApplication.userData!!.userData.value!!.id
                                                 )
-                                                mainApplication.userData!!.userData.value!!.grassi =
-                                                    grassi
-                                                runBlocking {
-                                                    mainApplication.userRepository.insertUser(
-                                                        mainApplication.userData!!.userData.value!!
-                                                    )//upsert mode
-                                                }
-                                                mainApplication.getFirebaseDatabaseRef(
-                                                    FirebaseDBTable.USERS
-                                                )
-                                                    .child(mainApplication.userData!!.userData.value!!.id)
-                                                    .setValue(mainApplication.userData!!)
-                                            } else {
-                                                Toast.makeText(
-                                                    this@MainActivity,
-                                                    "Impossibile inserire 0",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
+                                            firebaseAnalytics.logEvent(
+                                                "hasUpdateGrassi", bundle
+                                            )
+                                            mainApplication.userData!!.userData.value!!.grassi =
+                                                grassi
+                                            runBlocking {
+                                                mainApplication.userRepository.insertUser(
+                                                    mainApplication.userData!!.userData.value!!
+                                                )//upsert mode
+                                            }
+                                            mainApplication.getFirebaseDatabaseRef(
+                                                FirebaseDBTable.USERS
+                                            ).child(mainApplication.userData!!.userData.value!!.id)
+                                                .setValue(mainApplication.userData!!)
+                                        } else {
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                this@MainActivity.getString(R.string.errorUpdateObject),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    ) {
-                                        Text(text = "Aggiorna Obiettivo Grassi")
+                                    }) {
+                                        Text(text = stringResource(id = R.string.updateObjectGrassi))
                                     }
                                     TextField(
                                         modifier = Modifier.weight(1f),
-                                        value = grassi.toString(), onValueChange = {
+                                        value = grassi.toString(),
+                                        onValueChange = {
                                             try {
                                                 grassi = it.toInt()
                                             } catch (ex: Exception) {

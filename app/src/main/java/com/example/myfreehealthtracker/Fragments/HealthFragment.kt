@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -120,23 +121,9 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         expandableFloatingActionButton.setChildActionListener(firstChild) {
             // NEW MEAL
             view.findNavController().navigate(R.id.addMealFragment)
-            //Toast.makeText(view.context, "ACTION1", Toast.LENGTH_SHORT).show()
         }
         expandableFloatingActionButton.setChildActionListener(secondChild) {
-
             view.findNavController().navigate(R.id.action_healthFragment_to_newFoodFragment)
-
-//            val dialogAddFood = Dialog(view.context)
-//            dialogAddFood.setContentView(R.layout.dialog_new_food)
-//            dialogAddFood.show()
-//
-//            val composeViewContainer = dialogAddFood.findViewById<ComposeView>(R.id.compose_view)
-//            composeViewContainer.apply {
-//                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-//            }
-
-
-//            Toast.makeText(view.context, "ACTION2", Toast.LENGTH_SHORT).show()
         }
         val content = arguments?.getString("content")
         view.findViewById<TextView>(R.id.fragment_health_tv).apply {
@@ -340,7 +327,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                         } else {
                             Icons.Default.KeyboardArrowDown
                         }
-                        Icon(imageVector, contentDescription = "ToggleExpand")
+                        Icon(imageVector, contentDescription = "CloseExpand")
                     }
 
                 }
@@ -383,7 +370,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                             )
 
                             Text(
-                                text = "kcal",
+                                text = stringResource(id = R.string.kcal),
                             )
 
                         }
@@ -410,7 +397,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF59C3C3),
-                                            label = "Grassi",
+                                            label = stringResource(id = R.string.grassi),
                                             value = grassi
                                         )
                                     }
@@ -420,7 +407,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFF04724D),
-                                            label = "Fibre",
+                                            label = stringResource(id = R.string.fibre),
                                             value = fibre
                                         )
                                     }
@@ -438,7 +425,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFE1E289),
-                                            label = "Carboidrati",
+                                            label = stringResource(id = R.string.carboidrati),
                                             value = carboidrati
                                         )
                                     }
@@ -448,7 +435,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                                     ) {
                                         BulletSpan(
                                             color = Color(0xFFDB504A),
-                                            label = "Proteine",
+                                            label = stringResource(id = R.string.protein),
                                             value = proteine
                                         )
                                     }
@@ -511,17 +498,25 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(text = alimento.nome!!, fontWeight = FontWeight.Bold)
-                    Text(text = "Calorie: ${alimento.calorie?.times(qta)?.toInt()} kcal")
+                    Text(
+                        text = stringResource(id = R.string.calories) + {
+                            alimento.calorie?.times(
+                                qta
+                            )?.toInt()
+                        } + stringResource(
+                            id = R.string.kcal
+                        )
+                    )
 
                     val amount: String
 
                     if (alimento.unit.equals("100g")) {
                         amount = "${(qta * 100).toInt()}g"
                     } else {
-                        amount = "${qta} unità"
+                        amount = "$qta" + stringResource(id = R.string.unit)
                     }
 
-                    Text(text = "Quantità: $amount")
+                    Text(text = stringResource(id = R.string.quantit) + amount)
                 }
             }
 
@@ -554,7 +549,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             //internal circle with icon
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "contentDescription",
+                contentDescription = "Add",
                 modifier = Modifier
                     .width(24.dp)
                     .background(color, CircleShape)
