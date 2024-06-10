@@ -146,7 +146,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(8.dp),
-                            color = MaterialTheme.colorScheme.primary
                         ) {
 
                             if (showUpdateWeightDialog) updateWeightDialog()
@@ -827,8 +826,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(8.dp)
-                        .background(Color.Blue, shape = CircleShape)
                         .size(45.dp),
+
+                        backgroundColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.secondary
+
+
                 ) {
                     Icon(imageVector = Icons.Default.Create, contentDescription = "")
                 }

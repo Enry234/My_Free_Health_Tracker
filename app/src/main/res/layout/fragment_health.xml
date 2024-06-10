@@ -43,7 +43,7 @@
             android:contentDescription="temp"
             android:focusable="true"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/purple_200"
+            app:backgroundTint="@color/HonoluluBlue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -58,7 +58,7 @@
             android:focusable="true"
             android:src="@drawable/dish"
             android:visibility="invisible"
-            app:backgroundTint="@color/purple_200"
+            app:backgroundTint="@color/HonoluluBlue"
             app:layout_constraintBottom_toTopOf="@id/component_expandable_floating_action_button_expander"
             app:layout_constraintEnd_toEndOf="@id/component_expandable_floating_action_button_expander"
             app:layout_constraintStart_toStartOf="@id/component_expandable_floating_action_button_expander" />
@@ -73,7 +73,7 @@
             android:focusable="true"
             android:src="@drawable/vegetable"
             android:visibility="invisible"
-            app:backgroundTint="@color/purple_200"
+            app:backgroundTint="@color/HonoluluBlue"
             app:layout_constraintBottom_toTopOf="@id/component_expandable_floating_action_button_first_action_child"
             app:layout_constraintEnd_toEndOf="@id/component_expandable_floating_action_button_first_action_child"
             app:layout_constraintStart_toStartOf="@id/component_expandable_floating_action_button_first_action_child" />

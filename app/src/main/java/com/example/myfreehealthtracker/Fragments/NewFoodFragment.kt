@@ -32,6 +32,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
@@ -125,7 +127,10 @@ class NewFoodFragment : Fragment() {
         composeView.apply {
             setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                NewFoodScreen()
+                ApplicationTheme {
+                    NewFoodScreen()
+                }
+
             }
         }
 
@@ -164,7 +169,7 @@ class NewFoodFragment : Fragment() {
 
                 IconButton(
                     modifier = Modifier
-                        .background(Color.Green, CircleShape)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
                         .align(Alignment.End),
                     onClick = {
                         alimentoWrapper = AlimentoWrapper()

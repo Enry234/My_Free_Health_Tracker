@@ -38,6 +38,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -72,6 +73,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
+import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
@@ -148,7 +150,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                AddMealScreen()
+                ApplicationTheme {
+                    AddMealScreen()
+                }
+
             }
         }
     }
@@ -175,7 +180,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     onClick = {
                         showAddFoodDialog = true
                     },
-                    modifier = Modifier.background(Color.Green, CircleShape)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.primary, CircleShape)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                 }
