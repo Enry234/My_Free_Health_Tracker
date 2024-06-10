@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.TweenSpec
@@ -21,33 +22,46 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.ApplicationTheme
+import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
@@ -93,6 +107,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     var fibre = 0f
     var calorie = 0f
 
+
+    private var showUpdateWeightDialog by mutableStateOf(false)
+
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
             mainApplication.alimentoRepository,
@@ -115,87 +132,94 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
             if (mainApplication.userData!!.userData.value != null) {
-            // Update the UI, in this case, a TextView.
-            val bundle = Bundle().apply {
-                putString("id", mainApplication.userData!!.userData.value!!.id)
-            }
-            firebaseAnalytics.logEvent("login", bundle)
-            composeView.setContent {
+                // Update the UI, in this case, a TextView.
+                val bundle = Bundle().apply {
+                    putString("id", mainApplication.userData!!.userData.value!!.id)
+                }
+                firebaseAnalytics.logEvent("login", bundle)
+                composeView.setContent {
 
-                ApplicationTheme {
+                    ApplicationTheme {
 
 
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    ) {
-                        Column(
+                        Surface(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .verticalScroll(rememberScrollState()),
+                                .padding(8.dp),
+                            color = MaterialTheme.colorScheme.primary
                         ) {
 
-                            Surface(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .background(Color.White),
-                                shape = RoundedCornerShape(16.dp),
+                            if (showUpdateWeightDialog) updateWeightDialog()
+
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()),
                             ) {
-                                Box(
-                                    modifier = Modifier.background(Color.White)
+
+                                Surface(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .background(Color.White),
+                                    shape = RoundedCornerShape(16.dp),
                                 ) {
-                                    Row(
-
+                                    Box(
+                                        modifier = Modifier.background(Color.White)
                                     ) {
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                        ) {
-                                            DailyReport()
-                                        }
+                                        Row(
 
-                                        Box(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .background(Color.White),
                                         ) {
-                                            FoodRanking()
+                                            Column(
+                                                modifier = Modifier.weight(1f),
+                                            ) {
+                                                DailyReport()
+                                            }
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .background(Color.White),
+                                            ) {
+                                                FoodRanking()
+                                            }
+
                                         }
 
                                     }
-
                                 }
-                            }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(16.dp))
 
-                            Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                tonalElevation = 8.dp,
-                                shape = RoundedCornerShape(16.dp),
-                            ) {
-                                Box(
-                                    modifier = Modifier.padding(8.dp)
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    tonalElevation = 8.dp,
+                                    shape = RoundedCornerShape(16.dp),
                                 ) {
-                                    DisplayMacros()
+                                    Box(
+                                        modifier = Modifier.padding(8.dp)
+                                    ) {
+                                        DisplayMacros()
 
+                                    }
                                 }
-                            }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(16.dp))
 
-                            Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                tonalElevation = 8.dp,
-                                //shadowElevation = 16.dp,
-                                shape = RoundedCornerShape(16.dp),
-                            ) {
-                                Box(
-                                    modifier = Modifier.padding(8.dp)
-                                    //.fillMaxWidth()
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    tonalElevation = 8.dp,
+                                    //shadowElevation = 16.dp,
+                                    shape = RoundedCornerShape(16.dp),
                                 ) {
-                                    WeightChart()
+                                    Box(
+                                        modifier = Modifier.padding(8.dp)
+                                        //.fillMaxWidth()
+                                    ) {
+                                        WeightChart()
+
+
+                                    }
                                 }
                             }
                         }
@@ -203,7 +227,71 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         }
+    }
+
+
+    @Composable
+    private fun updateWeightDialog() {
+
+        val context = LocalContext.current
+        var peso by remember { mutableStateOf("") }
+
+        AlertDialog(onDismissRequest = { showUpdateWeightDialog = false }, confirmButton = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Button(modifier = Modifier.fillMaxWidth(0.8f),
+                    onClick = {
+                        val parsedPeso = peso.toDoubleOrNull()
+
+                        if (parsedPeso != null) {
+
+                            val bundle = Bundle().apply {
+                                putString(
+                                    "id", mainApplication.userData!!.userData.value!!.id
+                                )
+                            }
+                            firebaseAnalytics.logEvent("hasUpdatePeso", bundle)
+                            mainApplication.userData!!.userData.value!!.peso!!.add(
+                                Pair(
+                                    Date(), parsedPeso
+                                )
+                            )
+                            //mainApplication.applicationScope.launch {
+                            runBlocking {
+                                mainApplication.userRepository.insertUser(
+                                    mainApplication.userData!!.userData.value!!
+                                )//upsert mode
+                            }
+                            //}
+                            mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.USERS)
+                                .child(mainApplication.userData!!.userData.value!!.id)
+                                .setValue(mainApplication.userData!!)
+
+                            showUpdateWeightDialog = false
+                        } else {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.errorPeso),
+                                Toast.LENGTH_SHORT).show()
+                        }
+
+                    }) {
+                    Text(text = stringResource(id = R.string.updatePeso))
+                }
             }
+        },
+            text = {
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = peso,
+                    label = { Text(text = stringResource(id = R.string.inserisciPeso)) },
+                    onValueChange = { peso = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+        )
     }
 
     @Composable
@@ -659,34 +747,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    @Composable
-    fun BulletSpan2(color: Color, label: String, value: Int) {
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "$label: ${value}g"
-            )
-
-            Box(
-                contentAlignment = Alignment.Center, modifier = Modifier
-                    .width(10.dp)
-                    .height(10.dp)
-            ) {
-                //internal circle with icon
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add",
-                    modifier = Modifier
-                        .width(24.dp)
-                        .background(color, CircleShape)
-                        .padding(2.dp),
-                    tint = color
-                )
-            }
-        }
-    }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnrememberedMutableState")
@@ -761,6 +821,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         labels = dates
                     )
                 )
+
+                FloatingActionButton(
+                    onClick = { showUpdateWeightDialog = true },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(8.dp)
+                        .background(Color.Blue, shape = CircleShape)
+                        .size(45.dp),
+                ) {
+                    Icon(imageVector = Icons.Default.Create, contentDescription = "")
+                }
+
             }
         }
 

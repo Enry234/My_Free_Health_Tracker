@@ -94,5 +94,6 @@
     <string name="dbConnectionError">DB Connection Error, try restarting the Application</string>
     <string name="ourPeso">Your Weight</string>
     <string name="dailyRemember">Your Daily Progress</string>
+    <string name="inserisciPeso">New weight</string>
 
 </resources>

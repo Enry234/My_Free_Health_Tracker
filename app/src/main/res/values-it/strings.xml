@@ -94,6 +94,7 @@
     <string name="dbConnectionError">Errore Connessione DB, prova a riaccviare l\'Applicazione</string>
     <string name="ourPeso">Il Tuo Peso</string>
     <string name="dailyRemember">Il Tuo Progresso Giornaliero</string>
+    <string name="inserisciPeso">Nuovo peso</string>
 
 
 </resources>
