@@ -103,7 +103,7 @@ import java.util.Locale
 @Suppress("DEPRECATION")
 class SportFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
             mainApplication.alimentoRepository,
@@ -118,9 +118,9 @@ class SportFragment : Fragment() {
     private var newSportWrapper = SportWrapper()
     private var newActivityWrapper = ActivityWrapper()
 
-    private var pickedYear by mutableStateOf(0)
-    private var pickedMonth by mutableStateOf(0)
-    private var pickedDay by mutableStateOf(0)
+    private var pickedYear by mutableIntStateOf(0)
+    private var pickedMonth by mutableIntStateOf(0)
+    private var pickedDay by mutableIntStateOf(0)
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreateView(
@@ -188,7 +188,7 @@ class SportFragment : Fragment() {
         val date = calendar.time
 
 
-        var filteredAttivita = allAttivita.filter {
+        val filteredAttivita = allAttivita.filter {
             it.date >= date
         }.sortedBy { it.date }
 
@@ -264,7 +264,7 @@ class SportFragment : Fragment() {
 
     @Composable
     private fun ShowActivityList(activityList: List<Attivita>) {
-        LazyColumn() {
+        LazyColumn {
             items(activityList) {
                 ShowActivityItem(it)
             }
@@ -273,9 +273,9 @@ class SportFragment : Fragment() {
 
     @Composable
     private fun ShowActivityItem(activity: Attivita) {
-        var durata: Int = activity.durata
-        var lunghezza: Int = activity.distanza
-        var calorie: Int = activity.calorie
+        val durata: Int = activity.durata
+        val lunghezza: Int = activity.distanza
+        val calorie: Int = activity.calorie
         val sport by dbViewModel.loadSportById(activity.idSport).observeAsState(initial = null)
 
         Box(
@@ -553,8 +553,8 @@ class SportFragment : Fragment() {
                 }
             }
         }, text = {
-            Column(
-            ) {
+            Column()
+            {
                 // SPINNER CON SPORT
                 Box {
                     Button(
@@ -610,7 +610,7 @@ class SportFragment : Fragment() {
                 ) {
                     Text(text = stringResource(id = R.string.newSport))
                 }
-                Box() {
+                Box {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -873,7 +873,7 @@ class SportFragment : Fragment() {
             )
         }
         Text(
-            text = "$label: ${value}+${suffix}"
+            text = "$label: $value $suffix"
         )
     }
 
@@ -883,8 +883,6 @@ class SportFragment : Fragment() {
         var nomeSport: String by mutableStateOf("")
 
         var descrizione: String by mutableStateOf("")
-
-        var enabled by mutableStateOf(true)
 
 
         fun convertToWrapper(sport: Sport) {

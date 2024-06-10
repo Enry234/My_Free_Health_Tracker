@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.myfreehealthtracker.Fragments
 
 import android.os.Bundle
@@ -30,13 +28,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -139,7 +137,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         return view
     }
 
-    fun getLast30Days(): List<Triple<Int, Int, Int>> {
+    private fun getLast30Days(): List<Triple<Int, Int, Int>> {
         val calendar = Calendar.getInstance()
         val last30Days = mutableListOf<Triple<Int, Int, Int>>()
 
@@ -157,8 +155,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         return last30Days
     }
 
-    var selectedData = mutableStateOf(
-        Triple<Int, Int, Int>(
+    private var selectedData = mutableStateOf(
+        Triple(
             getLast30Days()[0].first,
             getLast30Days()[0].second,
             getLast30Days()[0].third
@@ -167,9 +165,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     @Composable
     fun ItemRow(date: Triple<Int, Int, Int>) {
-        Box(
-
-        ) {
+        Box {
             Button(
                 onClick = { selectedData.value = date }, modifier = Modifier
                     .padding(10.dp)
@@ -261,11 +257,11 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         val alimentiPasto: List<Alimento>? by dbViewModel.loadAlimentiByPasto(pasto)
             .observeAsState(initial = null)
-        var calorie: Int = 0
-        var carboidrati: Int = 0
-        var proteine: Int = 0
-        var grassi: Int = 0
-        var fibre: Int = 0
+        var calorie = 0
+        var carboidrati = 0
+        var proteine = 0
+        var grassi = 0
+        var fibre = 0
 
 
         var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -480,8 +476,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     }
 
-    private @Composable
-    fun DisplayAlimento(alimento: Alimento, qta: Float) {
+    @Composable
+    private fun DisplayAlimento(alimento: Alimento, qta: Float) {
 
         Row(
             modifier = Modifier
@@ -508,19 +504,17 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                         )
                     )
 
-                    val amount: String
-
-                    if (alimento.unit.equals("100g")) {
-                        amount = "${(qta * 100).toInt()}g"
+                    val amount: String = if (alimento.unit.equals("100g")) {
+                        "${(qta * 100).toInt()}g"
                     } else {
-                        amount = "$qta" + stringResource(id = R.string.unit)
+                        "$qta" + stringResource(id = R.string.unit)
                     }
 
                     Text(text = stringResource(id = R.string.quantit) + amount)
                 }
             }
 
-            Box() {
+            Box {
                 AsyncImage(
                     model = alimento.immagine,
                     contentDescription = null,

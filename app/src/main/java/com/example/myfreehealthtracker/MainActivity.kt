@@ -21,8 +21,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -50,8 +50,8 @@ import java.util.Date
 
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
-    lateinit var mainApplication: MainApplication
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var mainApplication: MainApplication
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private fun loadUser() {
 
         if (mainApplication.internalFileData.exists()) {
@@ -188,13 +188,13 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                     .padding(10.dp)
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    Box() {
+                    Box {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp)
                         ) {
-                            var peso by remember { mutableStateOf(0.0) }
+                            var peso by remember { mutableDoubleStateOf(0.0) }
                             Button(modifier = Modifier.weight(1f), onClick = {
                                 if (peso != 0.0) {
 
@@ -240,13 +240,13 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 })
                         }
                     }
-                    Box() {
+                    Box {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp)
                         ) {
-                            var calorie by remember { mutableStateOf(0) }
+                            var calorie by remember { mutableIntStateOf(0) }
                             Button(modifier = Modifier.weight(1f), onClick = {
                                 if (calorie != 0) {
                                     val bundle = Bundle().apply {
@@ -287,7 +287,7 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                                 })
                         }
                     }
-                    Box() {
+                    Box {
                         Column {
                             Text(text = stringResource(id = R.string.updateObjective))
                             Row(

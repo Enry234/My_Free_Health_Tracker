@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -289,9 +290,9 @@ class AuthPage {
         }
 
         if (isDatePickerOpened) {
-            var year by remember { mutableStateOf(0) }
-            var month by remember { mutableStateOf(0) }
-            var day by remember { mutableStateOf(0) }
+            var year by remember { mutableIntStateOf(0) }
+            var month by remember { mutableIntStateOf(0) }
+            var day by remember { mutableIntStateOf(0) }
 
             val calendar = Calendar.getInstance()
 
@@ -580,8 +581,7 @@ class AuthPage {
     }
 
 
-
-    private suspend fun getLastKnownLocation(context: Context) {
+    private fun getLastKnownLocation(context: Context) {
         Log.i("main activity", "entro")
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 

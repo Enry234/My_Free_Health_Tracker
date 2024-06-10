@@ -42,7 +42,7 @@ class ExpandableFloatingActionButton(
         }
     }
 
-    fun collapseIfExpanded() {
+    private fun collapseIfExpanded() {
         if (isExpanded) collapse()
     }
     private fun expand() {

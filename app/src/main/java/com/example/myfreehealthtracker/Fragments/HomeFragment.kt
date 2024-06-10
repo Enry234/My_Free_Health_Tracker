@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.myfreehealthtracker.Fragments
 
 import android.annotation.SuppressLint
@@ -75,7 +77,6 @@ import ir.ehsannarmani.compose_charts.models.StrokeStyle
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -84,8 +85,8 @@ import kotlin.math.min
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    lateinit var mainApplication: MainApplication
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var mainApplication: MainApplication
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     var proteine = 0f
     var carboidrati = 0f
     var grassi = 0f
@@ -112,8 +113,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
 
-        if(mainApplication.userData!!.userData.value != null){
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
+            if (mainApplication.userData!!.userData.value != null) {
             // Update the UI, in this case, a TextView.
             val bundle = Bundle().apply {
                 putString("id", mainApplication.userData!!.userData.value!!.id)
@@ -151,7 +152,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                         Column(
                                             modifier = Modifier.weight(1f),
                                         ) {
-                                            dailyReport()
+                                            DailyReport()
                                         }
 
                                         Box(
@@ -159,7 +160,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                                 .weight(1f)
                                                 .background(Color.White),
                                         ) {
-                                            foodRanking()
+                                            FoodRanking()
                                         }
 
                                     }
@@ -177,7 +178,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 Box(
                                     modifier = Modifier.padding(8.dp)
                                 ) {
-                                    displayMacros()
+                                    DisplayMacros()
 
                                 }
                             }
@@ -206,7 +207,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     @Composable
-    private fun foodRanking() {
+    private fun FoodRanking() {
 
         val allQuantities by dbViewModel.allQuantities.observeAsState(initial = emptyList())
 
@@ -308,7 +309,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     @Composable
-    private fun displayMacros() {
+    private fun DisplayMacros() {
 
         val allPastoToCibo by dbViewModel.allPastoToCibo.observeAsState(initial = emptyList())
 
@@ -327,14 +328,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val date = calendar.time
 
 
-        var filteredPastoToCibo = allPastoToCibo?.filter {
+        val filteredPastoToCibo = allPastoToCibo.filter {
             it.date >= date
-        }?.sortedBy { it.date }
+        }.sortedBy { it.date }
 
 
         val listMacro = LinkedHashMap<Int, Macros>()
 
-        filteredPastoToCibo?.forEach {
+        filteredPastoToCibo.forEach {
             val alimento by dbViewModel.loadAlimentoById(it.idAlimento)
                 .observeAsState(initial = null)
 
@@ -450,7 +451,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
     @Composable
-    private fun dailyReport() {
+    private fun DailyReport() {
         val allPastoToCibo by dbViewModel.allPastoToCibo.observeAsState(initial = emptyList())
 
         // Ottenere la data e l'ora corrente
@@ -461,11 +462,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         today.minutes = 0
         today.seconds = 0
 
-        var filterededPastoToCibo = allPastoToCibo?.filter {
-            it.date.compareTo(today) >= 0
+        val filterededPastoToCibo = allPastoToCibo.filter {
+            it.date >= today
         }
 
-        var dailyFoods: MutableList<Pair<Alimento, Float>> = mutableListOf()
+        val dailyFoods: MutableList<Pair<Alimento, Float>> = mutableListOf()
 
         if (filterededPastoToCibo != null) {
             filterededPastoToCibo.forEach {
@@ -698,12 +699,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         if (user != null) {
             val pairList = user!!.peso
 
-            val weights = List<Double>(minOf(pairList!!.size, 7)) { 0.0 }.toMutableList()
+            val weights = List(minOf(pairList!!.size, 7)) { 0.0 }.toMutableList()
             val currentDate = Date()
             val dates =
-                List<String>(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
+                List(minOf(pairList.size, 7)) { currentDate.toString() }.toMutableList()
 
-            val dateTimeFormatter = DateTimeFormatter.ofPattern("d/MM")
             val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
 
             pairList.subList(maxOf(0, pairList.size - 7), pairList.size)

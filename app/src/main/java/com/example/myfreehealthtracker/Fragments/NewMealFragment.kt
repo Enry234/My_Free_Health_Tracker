@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.myfreehealthtracker.Fragments
 
 import android.annotation.SuppressLint
@@ -34,7 +36,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -106,7 +107,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     private val currentMealFoodList = mutableStateListOf<Alimento>()
     private var alimentoWrapper = AlimentoWrapper()
-    val pastoToAlimentoWrapperList = mutableStateListOf<PastoToAlimentoWrapper>()
+    private val pastoToAlimentoWrapperList = mutableStateListOf<PastoToAlimentoWrapper>()
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val dbViewModel: InternalDBViewModel by viewModels {
         InternalViewModelFactory(
@@ -153,7 +154,6 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     }
 
     @SuppressLint("DefaultLocale")
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AddMealScreen() {
         var openInsertDialog by remember { mutableStateOf(false) }
@@ -225,7 +225,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                     ) {
 
 
-                        val calendar = Calendar.getInstance()
+
 
                         DatePicker(
                             onDateSelected = { year, month, day ->
@@ -377,8 +377,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
-    private @Composable
-    fun ItemFoodInList(alimento: Alimento) {
+    @Composable
+    private fun ItemFoodInList(alimento: Alimento) {
         val pastoToCiboWrapper = pastoToAlimentoWrapperList.find {
             it.idAlimento == alimento.id
         }
@@ -446,9 +446,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             animation = simpleChartAnimation(),
                             sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
                         )
-                        Column(
-
-                        ) {
+                        Column() {
 
                             Text(
                                 text = alimento.calorie.toString()
@@ -713,9 +711,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                 }
             },
             text = {
-                Column(
-
-                ) {
+                Column()
+                {
                     // SPINNER CON ALIMENTI ESISTENTI DA
                     Box {
                         Button(
