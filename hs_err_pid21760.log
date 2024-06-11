@@ -18,7 +18,7 @@
 #     to set the Java Heap base and to place the Java Heap above 32GB virtual address.
 # This output file may be truncated or incomplete.
 #
-#  Out of Memory Error (os_windows.cpp:3825), pid=18976, tid=17884
+#  Out of Memory Error (os_windows.cpp:3825), pid=21760, tid=7160
 #
 # JRE version:  (17.0.10) (build )
 # Java VM: OpenJDK 64-Bit Server VM (17.0.10+0--11572160, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
@@ -30,13 +30,13 @@
 Command Line: git4idea.http.GitAskPassApp Username for 'https://github.com': 
 
 Host: AMD Ryzen 5 4600H with Radeon Graphics         , 12 cores, 19G,  Windows 11 , 64 bit Build 22621 (10.0.22621.3527)
-Time: Tue Jun 11 21:35:52 2024 W. Europe Daylight Time elapsed time: 0.014653 seconds (0d 0h 0m 0s)
+Time: Tue Jun 11 21:32:08 2024 W. Europe Daylight Time elapsed time: 0.015744 seconds (0d 0h 0m 0s)
 
 ---------------  T H R E A D  ---------------
 
-Current thread (0x000001f73752ad30):  JavaThread "Unknown thread" [_thread_in_vm, id=17884, stack(0x000000ce18d00000,0x000000ce18e00000)]
+Current thread (0x000001f09171af10):  JavaThread "Unknown thread" [_thread_in_vm, id=7160, stack(0x0000004394a00000,0x0000004394b00000)]
 
-Stack: [0x000000ce18d00000,0x000000ce18e00000]
+Stack: [0x0000004394a00000,0x0000004394b00000]
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 V  [jvm.dll+0x688e89]
 V  [jvm.dll+0x84247a]
@@ -71,16 +71,16 @@ _java_thread_list=0x00007ff9f687ef58, length=0, elements={
 Java Threads: ( => current thread )
 
 Other Threads:
-  0x000001f73759fdd0 GCTaskThread "GC Thread#0" [stack: 0x000000ce18e00000,0x000000ce18f00000] [id=12044]
-  0x000001f7375aa720 ConcurrentGCThread "G1 Main Marker" [stack: 0x000000ce18f00000,0x000000ce19000000] [id=16668]
-  0x000001f7375ab190 ConcurrentGCThread "G1 Conc#0" [stack: 0x000000ce19000000,0x000000ce19100000] [id=13128]
+  0x000001f09178f370 GCTaskThread "GC Thread#0" [stack: 0x0000004394b00000,0x0000004394c00000] [id=19784]
+  0x000001f091799dc0 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000004394c00000,0x0000004394d00000] [id=8256]
+  0x000001f09179a930 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000004394d00000,0x0000004394e00000] [id=21792]
 
 [error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ff9f6033547]
 
 VM state: not at safepoint (not fully initialized)
 
 VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
-[0x000001f737527100] Heap_lock - owner thread: 0x000001f73752ad30
+[0x000001f091716c20] Heap_lock - owner thread: 0x000001f09171af10
 
 Heap address: 0x00000006ca000000, size: 4960 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
 
@@ -98,11 +98,11 @@ Heap:
 
 Heap Regions: E=young(eden), S=young(survivor), O=old, HS=humongous(starts), HC=humongous(continues), CS=collection set, F=free, OA=open archive, CA=closed archive, TAMS=top-at-mark-start (previous, next)
 
-Card table byte_map: [0x000001f74a8d0000,0x000001f74b280000] _byte_map_base: 0x000001f747280000
+Card table byte_map: [0x000001f0a4ac0000,0x000001f0a5470000] _byte_map_base: 0x000001f0a1470000
 
-Marking Bits (Prev, Next): (CMBitMap*) 0x000001f7375a02f0, (CMBitMap*) 0x000001f7375a0330
- Prev Bits: [0x000001f74bc30000, 0x000001f7509b0000)
- Next Bits: [0x000001f7509b0000, 0x000001f755730000)
+Marking Bits (Prev, Next): (CMBitMap*) 0x000001f09178f990, (CMBitMap*) 0x000001f09178f9d0
+ Prev Bits: [0x000001f0a5e20000, 0x000001f0aaba0000)
+ Next Bits: [0x000001f0aaba0000, 0x000001f0af920000)
 
 GC Heap History (0 events):
 No events
@@ -142,8 +142,8 @@ Dynamic libraries:
 0x00007ffaa45b0000 - 0x00007ffaa46c5000 	C:\WINDOWS\System32\RPCRT4.dll
 0x00007ffaa41c0000 - 0x00007ffaa41c8000 	C:\WINDOWS\System32\PSAPI.DLL
 0x00007ffaa2d10000 - 0x00007ffaa2e21000 	C:\WINDOWS\System32\ucrtbase.dll
-0x00007ffa2d5d0000 - 0x00007ffa2d5e7000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\jli.dll
 0x00007ffa5d730000 - 0x00007ffa5d74b000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\VCRUNTIME140.dll
+0x00007ffa2d5d0000 - 0x00007ffa2d5e7000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\jli.dll
 0x00007ffaa4ba0000 - 0x00007ffaa4d4e000 	C:\WINDOWS\System32\USER32.dll
 0x00007ffaa2b80000 - 0x00007ffaa2ba6000 	C:\WINDOWS\System32\win32u.dll
 0x00007ffa8af20000 - 0x00007ffa8b1b3000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.3527_none_270e469b73872a76\COMCTL32.dll
@@ -154,11 +154,11 @@ Dynamic libraries:
 0x00007ffa92350000 - 0x00007ffa9235c000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\vcruntime140_1.dll
 0x00007ff9f70b0000 - 0x00007ff9f713d000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\msvcp140.dll
 0x00007ff9f5d40000 - 0x00007ff9f69c3000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\server\jvm.dll
-0x00007ffa9bbb0000 - 0x00007ffa9bbe4000 	C:\WINDOWS\SYSTEM32\WINMM.dll
-0x00007ffaa1430000 - 0x00007ffaa147d000 	C:\WINDOWS\SYSTEM32\POWRPROF.dll
-0x00007ffaa12b0000 - 0x00007ffaa12ba000 	C:\WINDOWS\SYSTEM32\VERSION.dll
 0x00007ffa88eb0000 - 0x00007ffa88eb9000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffaa1430000 - 0x00007ffaa147d000 	C:\WINDOWS\SYSTEM32\POWRPROF.dll
+0x00007ffa9bbb0000 - 0x00007ffa9bbe4000 	C:\WINDOWS\SYSTEM32\WINMM.dll
 0x00007ffaa4d70000 - 0x00007ffaa4de1000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffaa12b0000 - 0x00007ffaa12ba000 	C:\WINDOWS\SYSTEM32\VERSION.dll
 0x00007ffaa1410000 - 0x00007ffaa1423000 	C:\WINDOWS\SYSTEM32\UMPDC.dll
 0x00007ffaa1660000 - 0x00007ffaa1678000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
 0x00007ffa5f1d0000 - 0x00007ffa5f1da000 	C:\Users\User\AppData\Local\JetBrains\Toolbox\apps\AndroidStudio\ch-0\233.14808.21.2331.11709847\jbr\bin\jimage.dll
@@ -234,15 +234,15 @@ Classloader memory used:
 
 OS:
  Windows 11 , 64 bit Build 22621 (10.0.22621.3527)
-OS uptime: 0 days 7:13 hours
+OS uptime: 0 days 7:09 hours
 Hyper-V role detected
 
 CPU: total 12 (initial active 12) (12 cores per cpu, 2 threads per core) family 23 model 96 stepping 1 microcode 0x0, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4a, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, clmul, bmi1, bmi2, adx, sha, fma, vzeroupper, clflush, clflushopt, hv
 Processor Information for all 12 processors :
   Max Mhz: 3000, Current Mhz: 3000, Mhz Limit: 3000
 
-Memory: 4k page, system-wide physical 19837M (4821M free)
-TotalPageFile size 19837M (AvailPageFile size 70M)
+Memory: 4k page, system-wide physical 19837M (4109M free)
+TotalPageFile size 19837M (AvailPageFile size 136M)
 current process WorkingSet (physical memory assigned to process): 12M, peak: 12M
 current process commit charge ("private bytes"): 65M, peak: 376M
 

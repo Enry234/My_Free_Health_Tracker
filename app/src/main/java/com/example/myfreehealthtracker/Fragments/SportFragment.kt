@@ -39,6 +39,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -50,7 +51,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -215,24 +215,18 @@ class SportFragment : Fragment() {
                                 Text(text = stringResource(id = R.string.noActivityPresent))
                             } else {
                                 BurnedCaloriesChart()
-                                //MovimentChart(activityList)
-                                //BurnCaloriesChart(activityList)
-                                //WorkoutTimeChart(activityList)
                                 ShowActivityList(activityList)
                             }
                             if (openAddActivityDialog) AddActivityDialog()
                             if (openNewSportDialog) NewSportDialog()
                         }
                     }, floatingActionButton = {
-                        IconButton(
+                        FloatingActionButton(
                             onClick = { openAddActivityDialog = true },
                             modifier = Modifier
-                                .size(60.dp),
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.secondary
-                            )
-
+                                .size(56.dp),
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.secondary
                         ) {
                             Icon(imageVector = Icons.Default.Add, contentDescription = "")
                         }
@@ -296,9 +290,9 @@ class SportFragment : Fragment() {
                         Line(
                             label = stringResource(id = R.string.burnCaloriesLastDay),
                             values = list,
-                            color = SolidColor(Color(0xFFDB504A)),
+                            color = SolidColor(MaterialTheme.colorScheme.primary),
                             //color= Brush.radialGradient( 0.3f to Color.Green,1.0f to Color.Red),
-                            firstGradientFillColor = Color(0xFFDB504A).copy(alpha = .7f),
+                            firstGradientFillColor = MaterialTheme.colorScheme.primary.copy(alpha = .7f),
                             secondGradientFillColor = Color.Transparent,
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
@@ -312,7 +306,7 @@ class SportFragment : Fragment() {
                     dotsProperties = DotProperties(
                         enabled = true,
                         radius = 12f,
-                        color = SolidColor(Color(0xFF04724D)),
+                        color = SolidColor(MaterialTheme.colorScheme.primary),
                         strokeWidth = 6f,
                         //strokeColor = Color.White,
                         strokeStyle = StrokeStyle.Normal,

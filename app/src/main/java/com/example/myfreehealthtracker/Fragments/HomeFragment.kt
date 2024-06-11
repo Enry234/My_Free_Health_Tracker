@@ -474,7 +474,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp), data = listOf(
+                        .padding(horizontal = 4.dp, vertical = 12.dp), data = listOf(
                         Line(
                             label = stringResource(id = R.string.protein),
                             values = proteins,
@@ -771,7 +771,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     dates[index] = formatter.format(pair.first)
                 }
 
-
+            val minWeight = weights.minOrNull() ?: 0.0
 
             Box(
                 modifier = Modifier
@@ -785,8 +785,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         Line(
                             label = stringResource(id = R.string.ourPeso),
                             values = weights,
-                            color = SolidColor(Color(0xFF04724D)),
-                            firstGradientFillColor = Color(0xFF04724D).copy(alpha = .7f),
+                            color = SolidColor(MaterialTheme.colorScheme.primary),
+                            firstGradientFillColor = MaterialTheme.colorScheme.primary.copy(alpha = .7f),
                             secondGradientFillColor = Color.Transparent,
                             strokeAnimationSpec = tween(1500, easing = EaseInOutCubic),
                             gradientAnimationDelay = 500,
@@ -813,6 +813,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     gridProperties = GridProperties(
                         enabled = false,
                     ),
+                    minValue = minWeight,
 
                     labelProperties = LabelProperties(
                         enabled = true,
