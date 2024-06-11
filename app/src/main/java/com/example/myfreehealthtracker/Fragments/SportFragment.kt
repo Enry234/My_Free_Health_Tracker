@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -88,10 +89,6 @@ import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewMode
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.SportActivityService
-import com.github.tehras.charts.piechart.PieChart
-import com.github.tehras.charts.piechart.PieChartData
-import com.github.tehras.charts.piechart.animation.simpleChartAnimation
-import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -346,90 +343,57 @@ class SportFragment : Fragment() {
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .height(75.dp)
-                            .width(75.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        //piechart con la somma dei valori nutrizionali
-                        PieChart(
-                            pieChartData = PieChartData(
-                                listOf(
-                                    PieChartData.Slice(
-                                        durata.toFloat(), Color(0xFFE1E289)
-                                    ),
-                                    PieChartData.Slice(lunghezza.toFloat(), Color(0xFFDB504A)),
-                                    PieChartData.Slice(calorie.toFloat(), Color(0xFF59C3C3)),
-                                )
-                            ),
-                            modifier = Modifier.fillMaxSize(),
-                            animation = simpleChartAnimation(),
-                            sliceDrawer = SimpleSliceDrawer(sliceThickness = 15F)
-                        )
-                        Column()
-                        {
-                            Text(
-                                text = stringResource(id = R.string.andamento),
-                            )
-                        }
-                    }
+
                     Box(
                         modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier.weight(.8f)
-                            ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        BulletSpan(
-                                            color = Color(0xFF59C3C3),
-                                            label = stringResource(id = R.string.calories),
-                                            value = calorie,
-                                            suffix = stringResource(id = R.string.kcal)
-                                        )
-                                    }
-                                }
+
+                            Column(
+                                modifier= Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ){
+                                Text(text = stringResource(id = R.string.calories))
+                                Text(text = "$calorie Kcal", fontWeight = FontWeight.Medium)
                             }
-                            Box(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        BulletSpan(
-                                            color = Color(0xFFE1E289),
-                                            label = stringResource(id = R.string.time),
-                                            value = durata,
-                                            suffix = stringResource(id = R.string.min)
-                                        )
-                                    }
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        BulletSpan(
-                                            color = Color(0xFFDB504A),
-                                            label = stringResource(id = R.string.lenght),
-                                            value = lunghezza,
-                                            suffix = stringResource(id = R.string.km)
-                                        )
-                                    }
-                                }
+
+                            Divider(
+                                color = Color.LightGray,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(1.dp)
+                            )
+
+                            Column(
+                                modifier= Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ){
+                                Text(text = stringResource(id = R.string.timeTotal))
+                                Text(text = "$durata min", fontWeight = FontWeight.Medium)
                             }
+
+                            Divider(
+                                color = Color.LightGray,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(1.dp)
+                            )
+
+                            Column(
+                                modifier= Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ){
+                                Text(text = stringResource(id = R.string.totalLenght))
+                                Text(text = "$lunghezza km", fontWeight = FontWeight.Medium)
+                            }
+
+
                         }
                     }
                 }

@@ -565,7 +565,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             }
                         },
                         label = {
-                            Text(text = stringResource(R.string.quantit) + { alimento.unit })
+                            Text(text = "(${alimento.unit})")
                         },
                         keyboardOptions =
                         KeyboardOptions(

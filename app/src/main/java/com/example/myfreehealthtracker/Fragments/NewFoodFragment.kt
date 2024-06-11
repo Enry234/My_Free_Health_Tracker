@@ -560,7 +560,7 @@ class NewFoodFragment : Fragment() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(2.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Row(

@@ -38,8 +38,8 @@
     <string name="registrationComplete">Registrazione Completata</string>
     <string name="selectDateBird">Seleziona la Data di Nascita</string>
     <string name="timeActivity">Durata Allenamento</string>
-    <string name="totalLenght">Distanza Totale</string>
-    <string name="timeTotal">Durata Totale</string>
+    <string name="totalLenght">Distanza</string>
+    <string name="timeTotal">Durata</string>
     <string name="caloriesBurn">Calorie Bruciate</string>
     <string name="newSport">Nuovo Sport</string>
     <string name="noSportSelected">Nessuno Sport Selezionato</string>
@@ -57,7 +57,7 @@
     <string name="app_name">My Free Health Care</string>
     <string name="title_activity_login">Login</string>
     <string name="dummy_content">dummy content</string>
-    <string name="quantit">quantità</string>
+    <string name="quantit">Quantità</string>
     <string name="_100g">100g</string>
     <string name="activity_main_toolbar_initial_title">Menu</string>
     <string name="activity_main_toolbar_profile_picture_content_desc">imagePic</string>

@@ -239,7 +239,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                     LazyColumn(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(16.dp)
+                            .padding(8.dp)
                     ) {
                         val calendar = Calendar.getInstance()
                         items(allPasto) {
@@ -291,7 +291,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(2.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Row(
@@ -486,7 +486,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -499,11 +499,11 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                 ) {
                     Text(text = alimento.nome!!, fontWeight = FontWeight.Bold)
                     Text(
-                        text = stringResource(id = R.string.calories) + {
+                        text = stringResource(id = R.string.calories) + ": ${
                             alimento.calorie?.times(
                                 qta
                             )?.toInt()
-                        } + stringResource(
+                        }" + stringResource(
                             id = R.string.kcal
                         )
                     )
@@ -514,7 +514,7 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
                         "$qta" + stringResource(id = R.string.unit)
                     }
 
-                    Text(text = stringResource(id = R.string.quantit) + amount)
+                    Text(text = stringResource(id = R.string.quantit) + ": $amount")
                 }
             }
 
