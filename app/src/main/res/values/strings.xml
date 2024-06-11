@@ -99,5 +99,6 @@
     <string name="openAddActivity">Or Insert Manually</string>
     <string name="startActivity">Start Activity</string>
     <string name="selectExistedFirebase">Select Existing from other Users</string>
+    <string name="stopActivity">Stop Activity</string>
 
 </resources>

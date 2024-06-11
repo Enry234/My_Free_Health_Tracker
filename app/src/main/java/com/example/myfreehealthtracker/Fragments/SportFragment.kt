@@ -2,9 +2,12 @@ package com.example.myfreehealthtracker.Fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -77,6 +80,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Actions
@@ -110,12 +114,40 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+class ClockViewModel : ViewModel() {
+
+    private val _dataFlow = MutableStateFlow<Int>(0)
+    val dataFlow: Flow<Int> get() = _dataFlow
+
+    fun updateData(newValue: Int) {
+        _dataFlow.value = newValue
+    }
+}
+
+class MyBroadCastReceiver : BroadcastReceiver() {
+    var myvalue: Int = 1
+    override fun onReceive(context: Context?, intent: Intent?) {
+        val counterValue = intent?.getIntExtra(SportActivityService.EXTRA_COUNTER_VALUE, 0) ?: 0
+        myvalue = counterValue
+    }
+
+    fun getValue(): Int {
+        return myvalue
+    }
+
+    override fun toString(): String {
+        super.toString()
+        return myvalue.toString()
+    }
+}
 @Suppress("DEPRECATION")
 class SportFragment : Fragment() {
     private lateinit var mainApplication: MainApplication
@@ -137,7 +169,24 @@ class SportFragment : Fragment() {
     private var pickedYear by mutableIntStateOf(0)
     private var pickedMonth by mutableIntStateOf(0)
     private var pickedDay by mutableIntStateOf(0)
-    private var serviceRunning by mutableStateOf(false)
+
+    val counterUpdateReceiver = MyBroadCastReceiver()
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter(SportActivityService.ACTION_COUNTER_UPDATE)
+        requireActivity().registerReceiver(
+            counterUpdateReceiver,
+            intentFilter,
+            Activity.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireActivity().unregisterReceiver(counterUpdateReceiver)
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -149,7 +198,6 @@ class SportFragment : Fragment() {
         lifecycleScope.launch {
             retriveSportFromFirebase()
         }
-        serviceRunning = isServiceRunning(requireContext(), SportActivityService::class.java)
 
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
@@ -163,13 +211,9 @@ class SportFragment : Fragment() {
                             verticalArrangement = Arrangement.Top
                         ) {
                             val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
-
                             if (activityList.isEmpty()) {
                                 Text(text = stringResource(id = R.string.noActivityPresent))
                             } else {
-                                if (serviceRunning) {
-
-                                }
                                 BurnedCaloriesChart()
                                 //MovimentChart(activityList)
                                 //BurnCaloriesChart(activityList)
@@ -353,10 +397,10 @@ class SportFragment : Fragment() {
                         ) {
 
                             Column(
-                                modifier= Modifier.weight(1f),
+                                modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ){
+                            ) {
                                 Text(text = stringResource(id = R.string.calories))
                                 Text(text = "$calorie Kcal", fontWeight = FontWeight.Medium)
                             }
@@ -369,10 +413,10 @@ class SportFragment : Fragment() {
                             )
 
                             Column(
-                                modifier= Modifier.weight(1f),
+                                modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ){
+                            ) {
                                 Text(text = stringResource(id = R.string.timeTotal))
                                 Text(text = "$durata min", fontWeight = FontWeight.Medium)
                             }
@@ -385,10 +429,10 @@ class SportFragment : Fragment() {
                             )
 
                             Column(
-                                modifier= Modifier.weight(1f),
+                                modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ){
+                            ) {
                                 Text(text = stringResource(id = R.string.totalLenght))
                                 Text(text = "$lunghezza km", fontWeight = FontWeight.Medium)
                             }
@@ -497,12 +541,15 @@ class SportFragment : Fragment() {
             )
         }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
+        var enableInsertDuration by rememberSaveable { mutableStateOf(true) }
+        var enableModify by rememberSaveable { mutableStateOf(true) }
         var isDropDownMenuFirebaseExpanded by rememberSaveable { mutableStateOf(false) }
         var showFirebaseSport by rememberSaveable { mutableStateOf(true) }
         var showInternalSport by rememberSaveable { mutableStateOf(true) }
         var showNewSportButton by rememberSaveable { mutableStateOf(true) }
         var openDetails by rememberSaveable { mutableStateOf(false) }
         var enableConferma by rememberSaveable { mutableStateOf(false) }
+        var enableInsertManually by rememberSaveable { mutableStateOf(true) }
         var pickedHour by rememberSaveable { mutableIntStateOf(0) }
         var pickedMinute by rememberSaveable { mutableIntStateOf(0) }
         var showAddActivity by rememberSaveable {
@@ -536,7 +583,6 @@ class SportFragment : Fragment() {
                         putString("id", mainApplication.userData!!.userData.value!!.id)
                     }
                     firebaseAnalytics.logEvent("hasInsertedActivity", bundle)
-
 
 
                 } else {
@@ -663,33 +709,60 @@ class SportFragment : Fragment() {
                         }
                     }
                 }
+                if (enableModify) {
+                    Button(
+                        onClick = {
+                            openAddActivityDialog = false
 
-                Button(
-                    onClick = {
-                        openAddActivityDialog = false
+                            openNewSportDialog = true
+                        }, enabled = showNewSportButton, modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(id = R.string.newSport))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    var text by rememberSaveable { mutableStateOf(requireContext().getString(R.string.startActivity)) }
+                    Button(
+                        enabled = openDetails,
+                        onClick = {
+                            if (!isServiceRunning(
+                                    requireContext(),
+                                    SportActivityService::class.java
+                                )
+                            ) {
+                                loadService()
+                                text = requireContext().getString(R.string.stopActivity)
+                                showAddActivity = false
+                                enableInsertManually = false
+                            } else {
+                                newActivityWrapper.durata = counterUpdateReceiver.getValue()
+                                val serviceIntent =
+                                    Intent(context, SportActivityService::class.java).also {
+                                        it.action = Actions.STOP.toString()
+                                    }
+                                requireContext().startService(serviceIntent)
+                                showAddActivity = true
+                                enableModify = false
+                                enableInsertDuration = false
+                            }
 
-                        openNewSportDialog = true
-                    }, enabled = showNewSportButton, modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.newSport))
+                        }, modifier = Modifier.fillMaxWidth()
+                    ) {
+
+
+                        Text(text = text)
+                    }
+                    Button(
+                        enabled = openDetails && enableInsertManually,
+                        onClick = {
+                            showAddActivity = true
+                            enableModify = false
+                        }, modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text(text = stringResource(id = R.string.openAddActivity))
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    enabled = openDetails,
-                    onClick = {
-                        //   loadService()
-                    }, modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.startActivity))
-                }
-                Button(
-                    enabled = openDetails,
-                    onClick = {
-                        showAddActivity = true
-                    }, modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.openAddActivity))
-                }
+
                 if (showAddActivity) {
                     Box() {
                         Column(
@@ -772,7 +845,7 @@ class SportFragment : Fragment() {
                                 )
                                 TextField(
                                     modifier = Modifier.weight(1f),
-                                    enabled = openDetails,
+                                    enabled = openDetails && enableInsertDuration,
                                     value = newActivityWrapper.durata.toString(),
                                     onValueChange = {
                                         try {
@@ -842,7 +915,7 @@ class SportFragment : Fragment() {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
-                Manifest.permission.ACTIVITY_RECOGNITION
+                Manifest.permission.POST_NOTIFICATIONS
             )
             != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -857,7 +930,6 @@ class SportFragment : Fragment() {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         arrayOf(
-                            Manifest.permission.ACTIVITY_RECOGNITION,
                             Manifest.permission.FOREGROUND_SERVICE_LOCATION,
                             Manifest.permission.FOREGROUND_SERVICE,
                             Manifest.permission.POST_NOTIFICATIONS
@@ -868,7 +940,14 @@ class SportFragment : Fragment() {
                 }
             }
         } else {
-            startStepCounterService()
+            val sportActivityService = Intent(context, SportActivityService::class.java).also {
+                it.action = Actions.START.toString()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                requireContext().startForegroundService(sportActivityService)
+            } else {
+                requireContext().startService(sportActivityService)
+            }
         }
     }
 
@@ -996,6 +1075,7 @@ class SportFragment : Fragment() {
         )
     }
 
+
     private fun retriveSportFromFirebase() {
         mainApplication.getFirebaseDatabaseRef(FirebaseDBTable.SPORT).addValueEventListener(object :
             ValueEventListener {
@@ -1063,14 +1143,7 @@ class SportFragment : Fragment() {
         var distanza: Int by mutableIntStateOf(0)
     }
 
-    private fun startStepCounterService() {
-        Intent(requireContext(), SportActivityService::class.java).also {
-            it.action = Actions.START.toString()
-            requireContext().startService(it)
-        }
-    }
-
-    fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    private fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {

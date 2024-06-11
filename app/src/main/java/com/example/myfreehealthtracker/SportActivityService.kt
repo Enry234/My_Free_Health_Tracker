@@ -1,60 +1,68 @@
 package com.example.myfreehealthtracker
 
-import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 enum class Actions {
     START, STOP
 }
 
-class SportActivityService : Service(), SensorEventListener {
-
-
-    private lateinit var sensorManager: SensorManager
-    private var stepCounterSensor: Sensor? = null
-    private var stepCount: Int = 0
-
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        when (intent?.action) {
-            Actions.START.toString() -> startForegroundService()
-            Actions.STOP.toString() -> stopSelf()
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
+class SportActivityService : Service() {
+    companion object {
+        const val ACTION_COUNTER_UPDATE = "com.example.servicetest.COUNTER_UPDATE"
+        const val EXTRA_COUNTER_VALUE = "com.example.servicetest.EXTRA_COUNTER_VALUE"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        TODO("Not yet implemented")
+    private val clock = Clock()
+    private var value: Int = 0
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            Actions.START.toString() -> start()
+            Actions.STOP.toString() -> stop()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Handle sensor accuracy changes if needed
+    private fun stop() {
+        clock.stop()
+        stopSelf()
     }
 
-    @SuppressLint("ForegroundServiceType")
-    private fun startForegroundService() {
-        val notification = NotificationCompat.Builder(this, "running_channel")
-            .setSmallIcon(R.drawable.ic_launcher_foreground).setContentTitle("Running")
-            .setContentText("Elapsed Time : 00:00").build()
-        startForeground(1, notification)
-
+    private fun start() {
+        CoroutineScope(Dispatchers.Default).launch {
+            clock.start().collect { counterValue ->
+                Log.i("counter", counterValue.toString())
+                value = counterValue
+                if (value % 60 == 0) {
+                    notification(counterValue.toString())
+                }
+                sendCounterUpdate(counterValue)
+            }
+        }
     }
+
+    private fun sendCounterUpdate(counterValue: Int) {
+        val intent = Intent(ACTION_COUNTER_UPDATE).apply {
+            putExtra(EXTRA_COUNTER_VALUE, counterValue)
+        }
+        sendBroadcast(intent)
+    }
+
+    private fun notification(counterValue: String) {
+        val counterNotification = NotificationCompat.Builder(this, "counter_channel")
+            .setSmallIcon(R.drawable.ic_launcher_foreground).setContentText("Attivita' in Corso")
+            .setContentTitle("Tempo trascorso: " + counterValue.toString() + "min").build()
+        startForeground(1, counterNotification)
+    }
+
 }

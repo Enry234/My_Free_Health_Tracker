@@ -98,6 +98,7 @@
     <string name="openAddActivity">Oppure Inserisci Manualmente</string>
     <string name="startActivity">Avvia Attivita\'</string>
     <string name="selectExistedFirebase">Seleziona Esistenti da altri Utenti</string>
+    <string name="stopActivity">Ferma Attivita\'</string>
 
 
 </resources>

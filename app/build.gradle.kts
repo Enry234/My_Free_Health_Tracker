@@ -129,8 +129,7 @@ dependencies {
     implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
 
 
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-perf")
-
 
 }

@@ -1,6 +1,10 @@
 package com.example.myfreehealthtracker
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
 import com.example.myfreehealthtracker.LocalDatabase.Repositories.AttivitaRepository
@@ -51,12 +55,19 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-//        {
-//            val channel = NotificationChannel("running_channel","Running Notification", NotificationManager.IMPORTANCE_HIGH)
-//            val notificationManager= getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val counterChannel = NotificationChannel(
+                "counter_channel",
+                "Counter Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationManager.createNotificationChannel(counterChannel)
+            }
+        }
+
     }
     override fun onTerminate() {
         super.onTerminate()
