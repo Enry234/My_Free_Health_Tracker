@@ -70,8 +70,9 @@ class MainApplication : Application() {
 
     }
     override fun onTerminate() {
-        super.onTerminate()
         internalDatabaseRef.close()
+        super.onTerminate()
+
     }
 }
 

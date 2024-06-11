@@ -113,7 +113,9 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
         try {
             fileInputStream.close()
         } catch (e: IOException) {
+            Log.e("MainActivity", "Error closing file input stream", e)
         }
+
 
     }
 

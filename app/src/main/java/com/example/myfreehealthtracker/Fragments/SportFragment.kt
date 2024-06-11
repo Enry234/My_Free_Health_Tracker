@@ -604,7 +604,16 @@ class SportFragment : Fragment() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = stringResource(id = R.string.addActivity))
-                IconButton(onClick = { openAddActivityDialog = false }) {
+                IconButton(onClick = {
+                    openAddActivityDialog = false
+                    if (isServiceRunning(requireContext(), SportActivityService::class.java)) {
+                        val serviceIntent =
+                            Intent(context, SportActivityService::class.java).also {
+                                it.action = Actions.STOP.toString()
+                            }
+                        requireContext().startService(serviceIntent)
+                    }
+                }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(id = R.string.closeDrawer)
