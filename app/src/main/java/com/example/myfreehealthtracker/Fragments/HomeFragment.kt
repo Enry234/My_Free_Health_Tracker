@@ -125,9 +125,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         mainApplication = requireActivity().application as MainApplication
-
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
-
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
 
         mainApplication.userData!!.userData.observe(viewLifecycleOwner) {

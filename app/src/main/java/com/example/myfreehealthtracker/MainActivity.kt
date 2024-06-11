@@ -31,7 +31,7 @@ import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity(R.layout.layout_main) {
     private lateinit var mainApplication: MainApplication
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var firebaseAnalytics: FirebaseAnalytics //singleton
     private lateinit var fileInputStream: FileInputStream
     private lateinit var locationManager: LocationManager
     private fun loadUser() {
@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity(R.layout.layout_main) {
                             if (mainApplication.userData!!.userData.value!!.id != "") {
                                 Log.i("MAIN", mainApplication.userData.toString())
                                 firebaseAnalytics = FirebaseAnalytics.getInstance(this@MainActivity)
+                                firebaseAnalytics.setUserId(mainApplication.userData!!.userData.value!!.id)
+
                                 initializeMainActivityLayout()
                             } else {
 

@@ -128,14 +128,17 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         view.findViewById<TextView>(R.id.fragment_health_tv).apply {
             if (content != "") text = content
         }
+        mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
+            if (mainApplication.userData!!.userData.value != null) {
+                composeView.apply {
+                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                    setContent {
+                        ApplicationTheme {
+                            ShowMeal()
+                        }
 
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                ApplicationTheme {
-                    ShowMeal()
+                    }
                 }
-
             }
         }
         return view

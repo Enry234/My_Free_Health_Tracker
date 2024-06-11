@@ -137,6 +137,7 @@ class MyBroadCastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val counterValue = intent?.getIntExtra(SportActivityService.EXTRA_COUNTER_VALUE, 0) ?: 0
         myvalue = counterValue
+        Log.i("test", myvalue.toString())
     }
 
     fun getValue(): Int {
@@ -201,36 +202,42 @@ class SportFragment : Fragment() {
 
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
-            setContent {
-                ApplicationTheme {
-                    Scaffold(content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            val activityList by dbViewModel.allAttivita.observeAsState(initial = emptyList())
-                            if (activityList.isEmpty()) {
-                                Text(text = stringResource(id = R.string.noActivityPresent))
-                            } else {
-                                BurnedCaloriesChart()
-                                ShowActivityList(activityList)
-                            }
-                            if (openAddActivityDialog) AddActivityDialog()
-                            if (openNewSportDialog) NewSportDialog()
+            mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
+                if (mainApplication.userData!!.userData.value != null) {
+                    setContent {
+                        ApplicationTheme {
+                            Scaffold(content = {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Top
+                                ) {
+                                    val activityList by dbViewModel.allAttivita.observeAsState(
+                                        initial = emptyList()
+                                    )
+                                    if (activityList.isEmpty()) {
+                                        Text(text = stringResource(id = R.string.noActivityPresent))
+                                    } else {
+                                        BurnedCaloriesChart()
+                                        ShowActivityList(activityList)
+                                    }
+                                    if (openAddActivityDialog) AddActivityDialog()
+                                    if (openNewSportDialog) NewSportDialog()
+                                }
+                            }, floatingActionButton = {
+                                FloatingActionButton(
+                                    onClick = { openAddActivityDialog = true },
+                                    modifier = Modifier
+                                        .size(56.dp),
+                                    backgroundColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.secondary
+                                ) {
+                                    Icon(imageVector = Icons.Default.Add, contentDescription = "")
+                                }
+                            })
                         }
-                    }, floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { openAddActivityDialog = true },
-                            modifier = Modifier
-                                .size(56.dp),
-                            backgroundColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        ) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = "")
-                        }
-                    })
+                    }
                 }
             }
         }

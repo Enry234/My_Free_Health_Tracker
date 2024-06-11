@@ -123,14 +123,18 @@ class NewFoodFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
         }
-        val composeView = view.findViewById<ComposeView>(R.id.fragment_new_food_ComposeView)
-        composeView.apply {
-            setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                ApplicationTheme {
-                    NewFoodScreen()
-                }
+        mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
+            if (mainApplication.userData!!.userData.value != null) {
+                val composeView = view.findViewById<ComposeView>(R.id.fragment_new_food_ComposeView)
+                composeView.apply {
+                    setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                    setContent {
+                        ApplicationTheme {
+                            NewFoodScreen()
+                        }
 
+                    }
+                }
             }
         }
 

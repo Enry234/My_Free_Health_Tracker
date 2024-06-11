@@ -152,14 +152,17 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
 
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
+        mainApplication.userData!!.userData.observe(viewLifecycleOwner) {
+            if (mainApplication.userData!!.userData.value != null) {
+                composeView.apply {
+                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                    setContent {
+                        ApplicationTheme {
+                            AddMealScreen()
+                        }
 
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                ApplicationTheme {
-                    AddMealScreen()
+                    }
                 }
-
             }
         }
     }
