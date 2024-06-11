@@ -23,7 +23,7 @@ private val DarkColorPalette = darkColorScheme(
     primary = Blue800,
     onPrimary = Color.White,
     secondary = Orange800,
-    background = Color.Black
+    background = Color.Black,
 )
 
 private val LightColorPalette = lightColorScheme(
