@@ -3,19 +3,19 @@
 
     <item
         android:id="@+id/Home"
-        android:icon="@drawable/rounded_add_home_24"
+        android:icon="@drawable/home"
         android:title="@string/homeText"
         android:iconTint="@color/white"
         android:textColor="@android:color/white" />
     <item
         android:id="@+id/Sport"
-        android:icon="@drawable/baseline_agriculture_24"
+        android:icon="@drawable/sport"
         android:title="@string/sportText"
         android:iconTint="@color/white"
         android:textColor="@color/white" />
     <item
         android:id="@+id/Health"
-        android:icon="@drawable/baseline_accessible_forward_24"
+        android:icon="@drawable/health"
         android:title="@string/healthText"
         android:iconTint="@color/white"
         android:textColor="@color/white" />
