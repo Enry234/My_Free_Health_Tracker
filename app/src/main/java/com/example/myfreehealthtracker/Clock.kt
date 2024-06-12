@@ -7,8 +7,12 @@ import kotlinx.coroutines.flow.flow
 
 class Clock {
     private var counterValue: Int = 0
-    private var isRunning: Boolean = true
-    fun start(): Flow<Int> = flow {
+    private var isRunning: Boolean = false
+    fun start() {
+        isRunning = true
+    }
+
+    fun getValue(): Flow<Int> = flow {
         while (isRunning) {
             emit(counterValue)
             delay(1000)
@@ -18,6 +22,5 @@ class Clock {
 
     fun stop() {
         isRunning = false
-        counterValue = 0
     }
 }

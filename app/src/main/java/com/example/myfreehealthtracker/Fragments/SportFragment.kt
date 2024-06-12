@@ -83,10 +83,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.Actions
 import com.example.myfreehealthtracker.ApplicationTheme
+import com.example.myfreehealthtracker.Clock
 import com.example.myfreehealthtracker.FirebaseDBTable
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
 import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
@@ -169,7 +171,7 @@ class SportFragment : Fragment() {
     private var pickedYear by mutableIntStateOf(0)
     private var pickedMonth by mutableIntStateOf(0)
     private var pickedDay by mutableIntStateOf(0)
-
+    private var clock = Clock()
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var counterUpdateReceiver: MyBroadCastReceiver
 
@@ -557,8 +559,16 @@ class SportFragment : Fragment() {
         var showAddActivity by rememberSaveable {
             mutableStateOf(false)
         }
-        val counterValue by sharedViewModel.getValue().observeAsState(
-            initial = 1
+        var clockEnable by rememberSaveable {
+            mutableStateOf(false)
+        }
+        if (clockEnable) {
+            clock.start()
+        } else {
+            clock.stop()
+        }
+        val counterValue by clock.getValue().asLiveData().observeAsState(
+            initial = 0
         )
         Log.i("test", "internal class value" + counterValue.toString())
         if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
@@ -751,23 +761,26 @@ class SportFragment : Fragment() {
                                     SportActivityService::class.java
                                 )
                             ) {
-                                loadService()
+                                clockEnable = true
                                 Toast.makeText(
                                     requireContext(),
                                     requireContext().getString(R.string.startIncoming),
                                     Toast.LENGTH_LONG
                                 ).show()
+
                                 text = requireContext().getString(R.string.stopActivity)
                                 showAddActivity = false
                                 enableInsertManually = false
+                                loadService()
                             } else {
 
 
-                                newActivityWrapper.durata = counterValue
+                                newActivityWrapper.durata = counterValue / 360
                                 val serviceIntent =
                                     Intent(context, SportActivityService::class.java).also {
                                         it.action = Actions.STOP.toString()
                                     }
+                                clockEnable = false
                                 requireContext().startService(serviceIntent)
                                 showAddActivity = true
                                 enableModify = false

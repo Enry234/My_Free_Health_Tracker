@@ -40,7 +40,8 @@ class SportActivityService : Service() {
 
     private fun start() {
         CoroutineScope(Dispatchers.Default).launch {
-            clock.start().collect { counterValue ->
+            clock.start()
+            clock.getValue().collect { counterValue ->
                 Log.i("counter", counterValue.toString())
                 value = counterValue
                 if (value % 60 == 0) {
