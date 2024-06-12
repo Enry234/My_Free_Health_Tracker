@@ -44,7 +44,7 @@ class SportActivityService : Service() {
                 Log.i("counter", counterValue.toString())
                 value = counterValue
                 if (value % 60 == 0) {
-                    notification(counterValue.toString())
+                    notification((value / 60).toString())
                 }
                 sendCounterUpdate(counterValue)
             }

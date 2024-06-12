@@ -100,5 +100,6 @@
     <string name="selectExistedFirebase">Seleziona Esistenti da altri Utenti</string>
     <string name="stopActivity">Ferma Attivita\'</string>
 
+    <string name="startIncoming">Avvio Attivita\' in corso, Attendere</string>
 
 </resources>

@@ -147,7 +147,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         ) {
 
                             if (showUpdateWeightDialog) updateWeightDialog()
-
+                            5
 
                             Column(
                                 modifier = Modifier

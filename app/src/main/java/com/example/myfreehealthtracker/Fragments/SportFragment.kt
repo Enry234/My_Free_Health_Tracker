@@ -80,6 +80,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
@@ -114,40 +116,37 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class ClockViewModel : ViewModel() {
+class SharedViewModel : ViewModel() {
+    private val _counterValue = MutableLiveData(1) // Initial value
+    val counterValue: LiveData<Int> = _counterValue
 
-    private val _dataFlow = MutableStateFlow<Int>(0)
-    val dataFlow: Flow<Int> get() = _dataFlow
+    fun updateCounterValue(newValue: Int) {
+        _counterValue.value = newValue
 
-    fun updateData(newValue: Int) {
-        _dataFlow.value = newValue
+    }
+
+    fun getValue(): LiveData<Int> {
+        Log.i("test", counterValue.value.toString())
+        return counterValue
     }
 }
 
-class MyBroadCastReceiver : BroadcastReceiver() {
-    var myvalue: Int = 1
+class MyBroadCastReceiver(private val sharedViewModel: SharedViewModel) : BroadcastReceiver() {
+    companion object {
+        var myvalue: Int = 1
+    }
     override fun onReceive(context: Context?, intent: Intent?) {
         val counterValue = intent?.getIntExtra(SportActivityService.EXTRA_COUNTER_VALUE, 0) ?: 0
-        myvalue = counterValue
-        Log.i("test", myvalue.toString())
+        sharedViewModel.updateCounterValue(counterValue)
+
     }
 
-    fun getValue(): Int {
-        return myvalue
-    }
-
-    override fun toString(): String {
-        super.toString()
-        return myvalue.toString()
-    }
 }
 @Suppress("DEPRECATION")
 class SportFragment : Fragment() {
@@ -171,13 +170,14 @@ class SportFragment : Fragment() {
     private var pickedMonth by mutableIntStateOf(0)
     private var pickedDay by mutableIntStateOf(0)
 
-    val counterUpdateReceiver = MyBroadCastReceiver()
+    private val sharedViewModel: SharedViewModel by viewModels()
+    private lateinit var counterUpdateReceiver: MyBroadCastReceiver
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter(SportActivityService.ACTION_COUNTER_UPDATE)
-        requireActivity().registerReceiver(
+        requireContext().registerReceiver(
             counterUpdateReceiver,
             intentFilter,
             Activity.RECEIVER_NOT_EXPORTED
@@ -186,7 +186,7 @@ class SportFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        requireActivity().unregisterReceiver(counterUpdateReceiver)
+        requireContext().unregisterReceiver(counterUpdateReceiver)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -199,6 +199,7 @@ class SportFragment : Fragment() {
         lifecycleScope.launch {
             retriveSportFromFirebase()
         }
+        counterUpdateReceiver = MyBroadCastReceiver(sharedViewModel)
 
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
@@ -556,10 +557,21 @@ class SportFragment : Fragment() {
         var showAddActivity by rememberSaveable {
             mutableStateOf(false)
         }
+        val counterValue by sharedViewModel.getValue().observeAsState(
+            initial = 1
+        )
+        Log.i("test", "internal class value" + counterValue.toString())
         if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
             enableConferma = true
         AlertDialog(onDismissRequest = {
             openAddActivityDialog = false
+            if (isServiceRunning(requireContext(), SportActivityService::class.java)) {
+                val serviceIntent =
+                    Intent(context, SportActivityService::class.java).also {
+                        it.action = Actions.STOP.toString()
+                    }
+                requireContext().startService(serviceIntent)
+            }
         }, confirmButton = {
             Button(modifier = Modifier.fillMaxWidth(), enabled = enableConferma, onClick = {
                 val selectedSport = existingSportList.find {
@@ -740,11 +752,18 @@ class SportFragment : Fragment() {
                                 )
                             ) {
                                 loadService()
+                                Toast.makeText(
+                                    requireContext(),
+                                    requireContext().getString(R.string.startIncoming),
+                                    Toast.LENGTH_LONG
+                                ).show()
                                 text = requireContext().getString(R.string.stopActivity)
                                 showAddActivity = false
                                 enableInsertManually = false
                             } else {
-                                newActivityWrapper.durata = counterUpdateReceiver.getValue()
+
+
+                                newActivityWrapper.durata = counterValue
                                 val serviceIntent =
                                     Intent(context, SportActivityService::class.java).also {
                                         it.action = Actions.STOP.toString()
