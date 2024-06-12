@@ -133,6 +133,7 @@ class SharedViewModel : ViewModel() {
 
     }
 
+    //for some reason don't work
     fun getValue(): LiveData<Int> {
         Log.i("test", counterValue.value.toString())
         return counterValue
@@ -140,13 +141,10 @@ class SharedViewModel : ViewModel() {
 }
 
 class MyBroadCastReceiver(private val sharedViewModel: SharedViewModel) : BroadcastReceiver() {
-    companion object {
-        var myvalue: Int = 1
-    }
+
     override fun onReceive(context: Context?, intent: Intent?) {
         val counterValue = intent?.getIntExtra(SportActivityService.EXTRA_COUNTER_VALUE, 0) ?: 0
         sharedViewModel.updateCounterValue(counterValue)
-
     }
 
 }
@@ -562,6 +560,7 @@ class SportFragment : Fragment() {
         var clockEnable by rememberSaveable {
             mutableStateOf(false)
         }
+
         if (clockEnable) {
             clock.start()
         } else {
@@ -775,7 +774,9 @@ class SportFragment : Fragment() {
                             } else {
 
 
-                                newActivityWrapper.durata = counterValue / 360
+                                newActivityWrapper.durata =
+                                    ((counterValue + 16) / 6) / 60 //compensate for time error
+                                Log.i("test", "durata" + (counterValue + 16) / 6)
                                 val serviceIntent =
                                     Intent(context, SportActivityService::class.java).also {
                                         it.action = Actions.STOP.toString()
