@@ -61,12 +61,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
-import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.utils.ExpandableFloatingActionButton
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData

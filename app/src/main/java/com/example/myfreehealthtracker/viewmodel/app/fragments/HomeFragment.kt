@@ -62,11 +62,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.github.tehras.charts.bar.BarChart
 import com.github.tehras.charts.bar.BarChartData
 import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
@@ -363,7 +363,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
-                            .padding(start = 5.dp, top = 8.dp, bottom = 8.dp, end=25.dp),
+                            .padding(start = 5.dp, top = 8.dp, bottom = 8.dp, end = 25.dp),
                         animation = TweenSpec(500),
                         barDrawer = SimpleBarDrawer(),
                         xAxisDrawer = SimpleXAxisDrawer(

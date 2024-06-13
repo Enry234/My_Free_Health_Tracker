@@ -88,12 +88,12 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
+import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
-import com.example.myfreehealthtracker.localdatabase.Entities.Sport
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.utils.Actions
 import com.example.myfreehealthtracker.utils.Clock
 import com.example.myfreehealthtracker.utils.SportActivityService

@@ -60,7 +60,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.localdatabase.Entities.UserData
+import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.viewmodel.app.MainActivity
