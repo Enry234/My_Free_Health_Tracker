@@ -71,7 +71,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -484,9 +486,6 @@ class AuthPage {
                     LoginScreen.HEIGHT_WEIGHT -> weightHeightError = true
                     else -> {}
                 }
-
-
-
                 Toast.makeText(
                     context, context.getString(R.string.errorInsertData), Toast.LENGTH_SHORT
                 ).show()
@@ -511,6 +510,7 @@ class AuthPage {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun onLoginSuccess(context: Context, lifecycleOwner: LifecycleOwner) {
         val mainApplication = context.applicationContext as MainApplication
         mainApplication.userData!!.setUserData(user)
@@ -534,18 +534,20 @@ class AuthPage {
 
 
                     // Log a custom event
-                    val bundle = Bundle().apply {
-                        putString("id", user.id)
-                    }
-                    firebaseAnalytics.logEvent("hasCompleteRegistration", bundle)
-                    lifecycleOwner.lifecycleScope.launch {
+
+                    GlobalScope.launch {
                         val imageController = ImageController()
+                        Log.i("loginpage", "Launch upload Image Firebase")
                         uploadImage(
                             imageController.getImageFromInternalStorage(
                                 context, "pictureProfile.png"
                             )!!, user.id
                         )
                     }
+                    val bundle = Bundle().apply {
+                        putString("id", user.id)
+                    }
+                    firebaseAnalytics.logEvent("hasCompleteRegistration", bundle)
                     val intent = Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
                     (context as? ComponentActivity)?.finish()
@@ -564,18 +566,22 @@ class AuthPage {
 
         val auth = Firebase.auth
         try {
+            //get User
             val userCredential = auth.signInAnonymously().await()
             val user = userCredential.user //dummy
+            Log.i("Firebase", "anonymous user success")
+
             val storage = FirebaseStorage.getInstance()
             val storageRef = storage.reference
-            val imageRef = storageRef.child("images/altroTest/${uri.lastPathSegment}")
+            val imageRef = storageRef.child("images/${id}/${uri.lastPathSegment}")
+            Log.i("Firebase", "imageRef sucess")
             imageRef.putFile(uri).addOnSuccessListener { _ ->
-                Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
+                Log.e("Firebase", "Image Profile upload into Firebase Storage ")
             }.addOnFailureListener { _ ->
                 Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
             }
         } catch (e: Exception) {
-            Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
+            Log.i("Firebase", "Image Profile catch error ", e)
         }
 
     }
