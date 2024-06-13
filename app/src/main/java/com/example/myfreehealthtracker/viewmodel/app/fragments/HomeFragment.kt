@@ -29,14 +29,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -236,12 +237,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val context = LocalContext.current
         var peso by remember { mutableStateOf("") }
 
-        AlertDialog(onDismissRequest = { showUpdateWeightDialog = false }, confirmButton = {
+        AlertDialog(
+            modifier = Modifier.fillMaxWidth(0.7f),
+            onDismissRequest = { showUpdateWeightDialog = false }, confirmButton = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
-                Button(modifier = Modifier.fillMaxWidth(0.8f),
+                Button(modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         val parsedPeso = peso.toDoubleOrNull()
 
@@ -278,18 +281,40 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
 
                     }) {
-                    Text(text = stringResource(id = R.string.updatePeso))
+                    Text(text = stringResource(id = R.string.confirm))
                 }
             }
         },
             text = {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = peso,
-                    label = { Text(text = stringResource(id = R.string.inserisciPeso)) },
-                    onValueChange = { peso = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.updatePeso),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = peso,
+                            label = { Text(text = stringResource(id = R.string.inserisciPeso)) },
+                            onValueChange = { peso = it },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            suffix = {
+                                Text(text = stringResource(id = R.string.kg))
+                            }
+                        )
+                    }
+                }
             }
         )
     }
