@@ -20,13 +20,13 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
-        versionNameSuffix = "PizzoSbirroEdition"
+        versionNameSuffix = "ReleaseEdition"
     }
 
     buildTypes {
@@ -59,10 +59,7 @@ android {
 }
 
 dependencies {
-    //noinspection UseTomlInstead
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-    //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-analytics")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -77,7 +74,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.view)
-    implementation(libs.firebase.database.ktx)
     implementation(libs.volley)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.fragment)
@@ -87,49 +83,51 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
-    implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.core)
     implementation(libs.androidx.junit)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.android)
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.storage.ktx)
-    implementation(libs.firebase.storage)
+
     //noinspection KaptUsageInsteadOfKsp
-    kapt("androidx.room:room-compiler:2.6.1")
+    kapt(libs.androidx.room.compiler)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.google.zxing:core:3.5.3")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("androidx.compose.ui:ui:1.6.7")
-    implementation("androidx.compose.material:material:1.6.7")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1") // Ensure you have the correct version
-    implementation("androidx.activity:activity-ktx:1.9.0") // Ensure you have the correct version
-
-    implementation("io.ktor:ktor-client-core:1.6.3")
-    implementation("io.ktor:ktor-client-android:1.6.3")
-    implementation("io.ktor:ktor-client-logging:1.6.3")
-    implementation("io.ktor:ktor-client-serialization:1.6.3")
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-
-    implementation("com.github.tehras:charts:0.2.4-alpha")
-    implementation("com.github.vsnappy1:ComposeDatePicker:2.2.0")
+    implementation(libs.core)
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.ui)
+    implementation(libs.androidx.material)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.activity.ktx)
 
 
+    //do not update
+    //client http
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.logback.classic)
 
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
 
-    implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
+    //charts
+    implementation(libs.charts)
+    implementation(libs.composedatepicker)
+    implementation(libs.composecharts)
 
-
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-    implementation("com.google.firebase:firebase-perf")
-
+    //Firebase
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.database.ktx)
 }
