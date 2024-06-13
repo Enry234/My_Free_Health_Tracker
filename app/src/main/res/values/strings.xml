@@ -102,5 +102,6 @@
     <string name="stopActivity">Stop Activity</string>
     <string name="startIncoming">Wait for Activity Start</string>
     <string name="stopServiceBefore">Before Closing Stop the Activity</string>
+    <string name="yourFood">Your Foods</string>
 
 </resources>

@@ -63,13 +63,13 @@ import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.foodopenfacts.ClientFoodOpenFact
 import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.utils.PortraitCaptureActivity
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
@@ -169,6 +169,8 @@ class NewFoodFragment : Fragment() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                Text(text = stringResource(id = R.string.yourFood), fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f),
