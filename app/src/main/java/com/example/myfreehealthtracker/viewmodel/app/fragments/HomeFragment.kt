@@ -62,9 +62,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.github.tehras.charts.bar.BarChart

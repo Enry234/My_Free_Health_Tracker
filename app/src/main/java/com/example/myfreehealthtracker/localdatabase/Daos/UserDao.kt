@@ -1,9 +1,9 @@
-package com.example.myfreehealthtracker.LocalDatabase.Daos
+package com.example.myfreehealthtracker.localdatabase.Daos
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
+import com.example.myfreehealthtracker.localdatabase.Entities.UserData
 import kotlinx.coroutines.flow.Flow
 
 @Dao

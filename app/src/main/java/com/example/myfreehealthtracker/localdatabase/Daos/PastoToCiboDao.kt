@@ -1,11 +1,11 @@
-package com.example.myfreehealthtracker.LocalDatabase.Daos
+package com.example.myfreehealthtracker.localdatabase.Daos
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 

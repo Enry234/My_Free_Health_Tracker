@@ -1,10 +1,10 @@
-package com.example.myfreehealthtracker.LocalDatabase.Repositories
+package com.example.myfreehealthtracker.localdatabase.Repositories
 
 import androidx.annotation.WorkerThread
-import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoToCiboDao
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
+import com.example.myfreehealthtracker.localdatabase.Daos.PastoToCiboDao
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
 
 class PastoToCiboRepository(private val pastoToCiboDao: PastoToCiboDao) {
 

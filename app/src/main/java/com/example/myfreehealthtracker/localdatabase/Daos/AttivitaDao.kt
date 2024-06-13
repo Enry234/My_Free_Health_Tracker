@@ -1,11 +1,11 @@
-package com.example.myfreehealthtracker.LocalDatabase.Daos
+package com.example.myfreehealthtracker.localdatabase.Daos
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
+import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
 import kotlinx.coroutines.flow.Flow
 
 @Dao
