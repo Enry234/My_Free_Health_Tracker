@@ -236,12 +236,13 @@ class MealFragment : Fragment(R.layout.fragment_health) {
 
         Surface(
             modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
 
-        ) {
+
+            ) {
             Column(
-
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
             ) {
 
                 LazyRow(

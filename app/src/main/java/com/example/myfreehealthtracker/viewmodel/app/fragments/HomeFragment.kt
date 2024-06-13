@@ -143,9 +143,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         Surface(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(8.dp),
-                        ) {
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(16.dp),
 
+                        ) {
                             if (showUpdateWeightDialog) updateWeightDialog()
 
                             Column(

@@ -66,7 +66,7 @@
     <string name="fragment_new_meal_add_food_new">New</string>
     <string name="fragment_new_meal_add_food_cancel">Close</string>
     <string name="profile_name">Your Name</string>
-    <string name="activity_main_toolbar_initial_title">Menu</string>
+    <string name="activity_main_toolbar_initial_title">Home</string>
     <string name="activity_main_toolbar_profile_picture_content_desc">imagePic</string>
     <string name="loadBarcode">Loading Data in Progress</string>
     <string name="salt">Salt</string>

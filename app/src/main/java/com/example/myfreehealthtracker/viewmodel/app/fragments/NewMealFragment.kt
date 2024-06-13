@@ -41,6 +41,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -176,10 +177,18 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
     @Composable
     private fun AddMealScreen() {
         var openInsertDialog by remember { mutableStateOf(false) }
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+
 
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
+
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -348,6 +357,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
             AddFoodDialog()
         } else if (showNewFoodDialog) {
             NewFoodDialog()
+        }
         }
     }
 

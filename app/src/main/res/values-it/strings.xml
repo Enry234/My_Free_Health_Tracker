@@ -59,7 +59,7 @@
     <string name="dummy_content">dummy content</string>
     <string name="quantit">Quantità</string>
     <string name="_100g">100g</string>
-    <string name="activity_main_toolbar_initial_title">Menu</string>
+    <string name="activity_main_toolbar_initial_title">Home</string>
     <string name="activity_main_toolbar_profile_picture_content_desc">imagePic</string>
     <string name="fragment_new_meal_add_existing_food_dialog_cancel">Chiudi</string>
     <string name="fragment_new_meal_add_existing_food_dialog_confirm">Conferma</string>

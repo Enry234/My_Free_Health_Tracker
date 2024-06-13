@@ -157,8 +157,11 @@ class NewFoodFragment : Fragment() {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
 
-        ) {
+
+            ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
