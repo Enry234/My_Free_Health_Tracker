@@ -60,9 +60,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.localdatabase.Entities.UserData
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.localdatabase.Entities.UserData
 import com.example.myfreehealthtracker.viewmodel.app.MainActivity
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -72,7 +72,6 @@ import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -142,7 +141,9 @@ class AuthPage {
     private val userState = UserState()
 
     private var currentScreen: LoginScreen by mutableStateOf(LoginScreen.FIRST_LAST_NAME)
-    private var internalStorageImageUri by mutableStateOf("")
+    private var nameError by mutableStateOf(false)
+    private var weightHeightError by mutableStateOf(false)
+
 
     @Composable
     fun LoginForm() {
@@ -224,6 +225,7 @@ class AuthPage {
     private fun FirstLastNameForm() {
         LoginHeader()
         OutlinedTextField(
+            isError = nameError,
             value = userState.firstName,
             onValueChange = { userState.firstName = it },
             label = { Text(stringResource(id = R.string.insertName)) },
@@ -237,6 +239,7 @@ class AuthPage {
             singleLine = true
         )
         OutlinedTextField(
+            isError = nameError,
             value = userState.lastName,
             onValueChange = { userState.lastName = it },
             label = { Text(stringResource(id = R.string.insertCognome)) },
@@ -356,6 +359,7 @@ class AuthPage {
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             OutlinedTextField(
+                isError = weightHeightError,
                 modifier = Modifier.weight(1f),
                 value = userState.height,
                 onValueChange = { userState.height = it },
@@ -366,6 +370,7 @@ class AuthPage {
             )
             Spacer(modifier = Modifier.width(16.dp))
             OutlinedTextField(
+                isError = weightHeightError,
                 modifier = Modifier.weight(1f),
                 value = userState.weight,
                 onValueChange = { userState.weight = it },
@@ -474,6 +479,14 @@ class AuthPage {
             if (userState.isValidInput(current)) {
                 currentScreen = next
             } else {
+                when (currentScreen) {
+                    LoginScreen.FIRST_LAST_NAME -> nameError = true
+                    LoginScreen.HEIGHT_WEIGHT -> weightHeightError = true
+                    else -> {}
+                }
+
+
+
                 Toast.makeText(
                     context, context.getString(R.string.errorInsertData), Toast.LENGTH_SHORT
                 ).show()
@@ -525,7 +538,7 @@ class AuthPage {
                         putString("id", user.id)
                     }
                     firebaseAnalytics.logEvent("hasCompleteRegistration", bundle)
-                    GlobalScope.launch {
+                    lifecycleOwner.lifecycleScope.launch {
                         val imageController = ImageController()
                         uploadImage(
                             imageController.getImageFromInternalStorage(
@@ -555,13 +568,14 @@ class AuthPage {
             val user = userCredential.user //dummy
             val storage = FirebaseStorage.getInstance()
             val storageRef = storage.reference
-            val imageRef = storageRef.child("images/$id/${uri.lastPathSegment}")
+            val imageRef = storageRef.child("images/altroTest/${uri.lastPathSegment}")
             imageRef.putFile(uri).addOnSuccessListener { _ ->
                 Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
             }.addOnFailureListener { _ ->
                 Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
             }
         } catch (e: Exception) {
+            Log.e("Firebase", "Image Profile upload Error into Firebase Storage ")
         }
 
     }
