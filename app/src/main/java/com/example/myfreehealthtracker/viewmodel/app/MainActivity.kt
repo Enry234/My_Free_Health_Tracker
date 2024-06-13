@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.UserDataViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.UserDataViewModel
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.viewmodel.login.ImageController

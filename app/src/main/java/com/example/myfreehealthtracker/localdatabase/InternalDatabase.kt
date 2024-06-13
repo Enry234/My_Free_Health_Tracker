@@ -1,22 +1,22 @@
-package com.example.myfreehealthtracker.LocalDatabase
+package com.example.myfreehealthtracker.localdatabase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.myfreehealthtracker.LocalDatabase.Daos.AlimentoDao
-import com.example.myfreehealthtracker.LocalDatabase.Daos.AttivitaDao
-import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoDao
-import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoToCiboDao
-import com.example.myfreehealthtracker.LocalDatabase.Daos.SportDao
-import com.example.myfreehealthtracker.LocalDatabase.Daos.UserDao
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
-import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
+import com.example.myfreehealthtracker.localdatabase.Daos.AlimentoDao
+import com.example.myfreehealthtracker.localdatabase.Daos.AttivitaDao
+import com.example.myfreehealthtracker.localdatabase.Daos.PastoDao
+import com.example.myfreehealthtracker.localdatabase.Daos.PastoToCiboDao
+import com.example.myfreehealthtracker.localdatabase.Daos.SportDao
+import com.example.myfreehealthtracker.localdatabase.Daos.UserDao
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
+import com.example.myfreehealthtracker.localdatabase.Entities.Sport
+import com.example.myfreehealthtracker.localdatabase.Entities.UserData
 
 @Database(
     entities = [Alimento::class, Attivita::class, Pasto::class, PastoToCibo::class, Sport::class, UserData::class],

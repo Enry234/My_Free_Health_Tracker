@@ -1,8 +1,8 @@
-package com.example.myfreehealthtracker.LocalDatabase.Repositories
+package com.example.myfreehealthtracker.localdatabase.Repositories
 
 import androidx.annotation.WorkerThread
-import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoDao
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.Daos.PastoDao
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 

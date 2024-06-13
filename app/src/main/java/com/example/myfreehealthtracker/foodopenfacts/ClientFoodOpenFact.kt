@@ -1,6 +1,6 @@
-package com.example.myfreehealthtracker.foodOpenFacts
+package com.example.myfreehealthtracker.foodopenfacts
 
-import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.JsonFeature

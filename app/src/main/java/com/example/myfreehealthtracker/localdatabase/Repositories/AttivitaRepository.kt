@@ -1,8 +1,8 @@
-package com.example.myfreehealthtracker.LocalDatabase.Repositories
+package com.example.myfreehealthtracker.localdatabase.Repositories
 
 import androidx.annotation.WorkerThread
-import com.example.myfreehealthtracker.LocalDatabase.Daos.AttivitaDao
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
+import com.example.myfreehealthtracker.localdatabase.Daos.AttivitaDao
+import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
 import kotlinx.coroutines.flow.Flow
 
 class AttivitaRepository(private val attivitaDao: AttivitaDao) {

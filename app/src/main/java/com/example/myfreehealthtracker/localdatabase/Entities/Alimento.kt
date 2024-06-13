@@ -1,9 +1,9 @@
-package com.example.myfreehealthtracker.LocalDatabase.Entities
+package com.example.myfreehealthtracker.localdatabase.Entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
 
 @Entity
 data class Alimento(

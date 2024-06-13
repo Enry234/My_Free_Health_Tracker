@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker.LocalDatabase
+package com.example.myfreehealthtracker.localdatabase
 
 import androidx.room.TypeConverter
 import java.util.Date

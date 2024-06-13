@@ -1,21 +1,21 @@
-package com.example.myfreehealthtracker.LocalDatabase.ViewModels
+package com.example.myfreehealthtracker.localdatabase.ViewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myfreehealthtracker.LocalDatabase.Daos.PastoToCiboDao
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Attivita
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Sport
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.AlimentoRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.AttivitaRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.PastoToCiboRepository
-import com.example.myfreehealthtracker.LocalDatabase.Repositories.SportRepository
+import com.example.myfreehealthtracker.localdatabase.Daos.PastoToCiboDao
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
+import com.example.myfreehealthtracker.localdatabase.Entities.Sport
+import com.example.myfreehealthtracker.localdatabase.Repositories.AlimentoRepository
+import com.example.myfreehealthtracker.localdatabase.Repositories.AttivitaRepository
+import com.example.myfreehealthtracker.localdatabase.Repositories.PastoRepository
+import com.example.myfreehealthtracker.localdatabase.Repositories.PastoToCiboRepository
+import com.example.myfreehealthtracker.localdatabase.Repositories.SportRepository
 import kotlinx.coroutines.launch
 
 class InternalDBViewModel(

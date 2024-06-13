@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker.foodOpenFacts.model
+package com.example.myfreehealthtracker.foodopenfacts.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
