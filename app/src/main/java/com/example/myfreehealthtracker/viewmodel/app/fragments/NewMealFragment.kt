@@ -829,7 +829,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                             },
                             modifier = Modifier.fillMaxHeight(0.5f)
                         ) {
-                            firebaseAlimenti.forEach {
+                            val alimentiFiltered = firebaseAlimenti - existingAllAlimentList
+                            alimentiFiltered.forEach {
                                 DropdownMenuItem(
                                     modifier = Modifier.fillMaxWidth(),
                                     text = {

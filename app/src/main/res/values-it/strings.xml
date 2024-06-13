@@ -99,7 +99,6 @@
     <string name="startActivity">Avvia Attivita\'</string>
     <string name="selectExistedFirebase">Seleziona da altri Utenti</string>
     <string name="stopActivity">Ferma Attivita\'</string>
-
     <string name="startIncoming">Avvio Attivita\' in corso, Attendere</string>
-
+    <string name="stopServiceBefore">Prima di Chiudere termina l\'Attivita</string>
 </resources>

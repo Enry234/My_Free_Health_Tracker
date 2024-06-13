@@ -101,5 +101,6 @@
     <string name="selectExistedFirebase">Select from other Users</string>
     <string name="stopActivity">Stop Activity</string>
     <string name="startIncoming">Wait for Activity Start</string>
+    <string name="stopServiceBefore">Before Closing Stop the Activity</string>
 
 </resources>

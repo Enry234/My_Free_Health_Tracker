@@ -542,6 +542,8 @@ class SportFragment : Fragment() {
                 )
             )
         }
+        val sportFiltered = fireBaseSport - existingSportList
+        var blockDate by rememberSaveable { mutableStateOf(false) }
         var isDropDownMenuExpanded by rememberSaveable { mutableStateOf(false) }
         var enableInsertDuration by rememberSaveable { mutableStateOf(true) }
         var enableModify by rememberSaveable { mutableStateOf(true) }
@@ -573,13 +575,15 @@ class SportFragment : Fragment() {
         if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
             enableConferma = true
         AlertDialog(onDismissRequest = {
-            openAddActivityDialog = false
+
             if (isServiceRunning(requireContext(), SportActivityService::class.java)) {
-                val serviceIntent =
-                    Intent(context, SportActivityService::class.java).also {
-                        it.action = Actions.STOP.toString()
-                    }
-                requireContext().startService(serviceIntent)
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getString(R.string.stopServiceBefore),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                openAddActivityDialog = false
             }
         }, confirmButton = {
             Button(modifier = Modifier.fillMaxWidth(), enabled = enableConferma, onClick = {
@@ -626,13 +630,15 @@ class SportFragment : Fragment() {
             ) {
                 Text(text = stringResource(id = R.string.addActivity))
                 IconButton(onClick = {
-                    openAddActivityDialog = false
+
                     if (isServiceRunning(requireContext(), SportActivityService::class.java)) {
-                        val serviceIntent =
-                            Intent(context, SportActivityService::class.java).also {
-                                it.action = Actions.STOP.toString()
-                            }
-                        requireContext().startService(serviceIntent)
+                        Toast.makeText(
+                            requireContext(),
+                            requireContext().getString(R.string.stopServiceBefore),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        openAddActivityDialog = false
                     }
                 }) {
                     Icon(
@@ -715,7 +721,7 @@ class SportFragment : Fragment() {
                             isDropDownMenuFirebaseExpanded = false
                         }, modifier = Modifier.fillMaxHeight(0.5f)
                     ) {
-                        fireBaseSport.forEach {
+                        sportFiltered.forEach {
                             DropdownMenuItem(modifier = Modifier.fillMaxWidth(), text = {
                                 ItemSportSpinnerMenu(it)
                             }, onClick = {
@@ -786,6 +792,7 @@ class SportFragment : Fragment() {
                                 showAddActivity = true
                                 enableModify = false
                                 enableInsertDuration = false
+                                blockDate = true
                             }
 
                         }, modifier = Modifier.fillMaxWidth()
@@ -816,52 +823,66 @@ class SportFragment : Fragment() {
 
                             val calendar = Calendar.getInstance()
 
+                            if (!blockDate) {
+                                DatePicker(
 
-                            DatePicker(
-                                onDateSelected = { year, month, day ->
-                                    pickedYear = year
-                                    pickedMonth = month
-                                    pickedDay = day
+                                    onDateSelected = { year, month, day ->
+                                        pickedYear = year
+                                        pickedMonth = month
+                                        pickedDay = day
 
-                                },
-                                configuration = DatePickerConfiguration.Builder()
-                                    .height(height = 300.dp)
-                                    .dateTextStyle(
-                                        DefaultDatePickerConfig.dateTextStyle.copy(
-                                            color = Color(
-                                                0xFF333333
+                                    },
+
+                                    configuration = DatePickerConfiguration.Builder()
+                                        .height(height = 300.dp)
+                                        .dateTextStyle(
+                                            DefaultDatePickerConfig.dateTextStyle.copy(
+                                                color = Color(
+                                                    0xFF333333
+                                                )
                                             )
                                         )
-                                    )
-                                    .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
-                                    .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
-                                    .numberOfMonthYearRowsDisplayed(5)
-                                    .build(),
-                                selectionLimiter = SelectionLimiter(
+                                        .selectedDateTextStyle(
+                                            textStyle = TextStyle(
+                                                Color(
+                                                    0xFFFFFFFF
+                                                )
+                                            )
+                                        )
+                                        .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
+                                        .numberOfMonthYearRowsDisplayed(5)
+                                        .build(),
+                                    selectionLimiter = SelectionLimiter(
 
-                                    toDate = DatePickerDate(
-                                        year = calendar.get(Calendar.YEAR),
-                                        month = calendar.get(Calendar.MONTH),
-                                        day = calendar.get(Calendar.DAY_OF_MONTH)
+                                        toDate = DatePickerDate(
+                                            year = calendar.get(Calendar.YEAR),
+                                            month = calendar.get(Calendar.MONTH),
+                                            day = calendar.get(Calendar.DAY_OF_MONTH)
+                                        )
                                     )
                                 )
-                            )
+                                TimePicker(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .background(Color.Transparent, RoundedCornerShape(8.dp))
+                                        .height(100.dp),
 
-                            TimePicker(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .background(Color.Transparent, RoundedCornerShape(8.dp))
-                                    .height(100.dp),
-
-                                onTimeSelected = { hour, minute ->
-                                    pickedMinute = minute
-                                    pickedHour = hour
-                                },
-                                configuration = TimePickerConfiguration.Builder()
-                                    .numberOfTimeRowsDisplayed(count = 3)
-                                    .selectedTimeScaleFactor(scaleFactor = 1.5f).build(),
-                                is24Hour = true
-                            )
+                                    onTimeSelected = { hour, minute ->
+                                        pickedMinute = minute
+                                        pickedHour = hour
+                                    },
+                                    configuration = TimePickerConfiguration.Builder()
+                                        .numberOfTimeRowsDisplayed(count = 3)
+                                        .selectedTimeScaleFactor(scaleFactor = 1.5f).build(),
+                                    is24Hour = true
+                                )
+                            } else {
+                                pickedYear = calendar.get(Calendar.YEAR)
+                                pickedMonth = calendar.get(Calendar.MONTH)
+                                pickedDay = calendar.get(Calendar.DAY_OF_MONTH)
+                                pickedHour = calendar.get(Calendar.HOUR_OF_DAY)
+                                pickedMinute = calendar.get(Calendar.MINUTE)
+                            }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
