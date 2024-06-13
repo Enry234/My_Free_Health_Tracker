@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.utils
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

@@ -3,8 +3,8 @@ package com.example.myfreehealthtracker.ViewModel
 import androidx.room.Room.inMemoryDatabaseBuilder
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.myfreehealthtracker.LocalDatabase.InternalConverter
-import com.example.myfreehealthtracker.LocalDatabase.InternalDatabase
+import com.example.myfreehealthtracker.localdatabase.InternalConverter
+import com.example.myfreehealthtracker.localdatabase.InternalDatabase
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before

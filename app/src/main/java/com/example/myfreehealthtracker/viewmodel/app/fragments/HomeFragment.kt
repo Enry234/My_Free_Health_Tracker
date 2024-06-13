@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.myfreehealthtracker.Fragments
+package com.example.myfreehealthtracker.viewmodel.app.fragments
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -62,11 +62,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
 import com.github.tehras.charts.bar.BarChart
 import com.github.tehras.charts.bar.BarChartData
 import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
@@ -147,7 +147,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         ) {
 
                             if (showUpdateWeightDialog) updateWeightDialog()
-                            5
 
                             Column(
                                 modifier = Modifier
@@ -158,11 +157,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 Surface(
                                     Modifier
                                         .fillMaxWidth()
-                                        .background(Color.White),
+                                        .background(MaterialTheme.colorScheme.background),
                                     shape = RoundedCornerShape(16.dp),
                                 ) {
                                     Box(
-                                        modifier = Modifier.background(Color.White)
+                                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
                                     ) {
                                         Row(
 
@@ -176,7 +175,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                             Box(
                                                 modifier = Modifier
                                                     .weight(1f)
-                                                    .background(Color.White),
+                                                    .background(MaterialTheme.colorScheme.background),
                                             ) {
                                                 FoodRanking()
                                             }
@@ -227,6 +226,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
 
+    /**
+     * Gestisce attraverso un AlertDialog l'aggiornamento del peso
+     */
     @Composable
     private fun updateWeightDialog() {
 
@@ -291,6 +293,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         )
     }
 
+
+    /**
+     * Costruisce un ColumnChart con la top3 degli alimenti piu' consumati
+     * dall'utente
+     */
     @Composable
     private fun FoodRanking() {
 
@@ -328,9 +335,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                 Surface(
                     modifier = Modifier
-                        .height(325.dp)
+                        .height(330.dp)
                         .width(200.dp)
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(8.dp),
                 ) {
 
@@ -355,8 +362,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         // Optional properties.
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White)
-                            .padding(start = 30.dp, top = 8.dp, bottom = 8.dp),
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(start = 5.dp, top = 8.dp, bottom = 8.dp, end=25.dp),
                         animation = TweenSpec(500),
                         barDrawer = SimpleBarDrawer(),
                         xAxisDrawer = SimpleXAxisDrawer(
@@ -364,9 +371,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         ),
                         yAxisDrawer = SimpleYAxisDrawer(
                             axisLineColor = Color.Transparent,
+                            labelTextColor = Color.Transparent
                         ),
                         labelDrawer = SimpleValueDrawer(
                             labelTextColor = Color.Transparent,
+
                         )
                     )
 
@@ -379,6 +388,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+
+    /**
+     * classe interna a HomeFragment per il calcolo dei macronutrienti giornalieri
+     * del LineChart
+     */
     class Macros(
         var proteine: Float = 0f,
         var carboidrati: Float = 0f,
@@ -393,6 +407,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+
+    /**
+     * Calcola i macronutrienti relativi agli ultimi 5 giorni
+     * e li plotta in un LineChart per mostrare gli andamenti
+     */
     @Composable
     private fun DisplayMacros() {
 
@@ -535,6 +554,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
 
+    /**
+     * Attraverso un PieChart visualizza i macronutrienti giornalieri
+     * e le calorie consumate della giornata odierna
+     */
     @Composable
     private fun DailyReport() {
         val allPastoToCibo by dbViewModel.allPastoToCibo.observeAsState(initial = emptyList())
@@ -618,7 +641,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     ) {
 
                         Text(
-                            text = calorie.toString(), fontSize = 18.sp
+                            text = calorie.toInt().toString(), fontSize = 18.sp
                         )
 
                         Text(
@@ -745,6 +768,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
 
+    /**
+     * monstra un grafico di tipo LineChart con le ultime
+     * sette pesate inserite dall'utente
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnrememberedMutableState")
     @Composable
@@ -815,7 +842,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                     labelProperties = LabelProperties(
                         enabled = true,
-                        textStyle = MaterialTheme.typography.labelSmall,
                         labels = dates
                     )
                 )

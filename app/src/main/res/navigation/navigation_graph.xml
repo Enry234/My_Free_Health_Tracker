@@ -6,12 +6,12 @@
     app:startDestination="@id/homeFragment">
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.HomeFragment"
+        android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/healthFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.HealthFragment"
+        android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.MealFragment"
         android:label="fragment_health"
         tools:layout="@layout/fragment_health" >
         <action
@@ -20,21 +20,21 @@
     </fragment>
     <fragment
         android:id="@+id/sportFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.SportFragment"
+        android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.SportFragment"
         android:label="fragment_sport"
         tools:layout="@layout/fragment_sport" />
     <fragment
         android:id="@+id/barcodeFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.BarcodeFragment"
+        android:name="com.example.myfreehealthtracker.fragments.BarcodeFragment"
         android:label="fragment_barcode"
         tools:layout="@layout/fragment_barcode" />
     <fragment
         android:id="@+id/newFoodFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.NewFoodFragment"
+        android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.NewFoodFragment"
         android:label="fragment_new_food"
         tools:layout="@layout/fragment_new_food" />
     <fragment
         android:id="@+id/addMealFragment"
-        android:name="com.example.myfreehealthtracker.Fragments.NewMealFragment"
+        android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.NewMealFragment"
         android:label="AddMealFragment" />
 </navigation>

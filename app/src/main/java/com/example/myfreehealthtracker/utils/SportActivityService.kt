@@ -1,10 +1,11 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.utils
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.myfreehealthtracker.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.myfreehealthtracker.Fragments
+package com.example.myfreehealthtracker.viewmodel.app.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -75,17 +75,17 @@ import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
-import com.example.myfreehealthtracker.LocalDatabase.Entities.PastoToCibo
-import com.example.myfreehealthtracker.LocalDatabase.Entities.TipoPasto
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.PortraitCaptureActivity
 import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
-import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.example.myfreehealthtracker.foodopenfacts.ClientFoodOpenFact
+import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
+import com.example.myfreehealthtracker.localdatabase.Entities.TipoPasto
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
+import com.example.myfreehealthtracker.utils.PortraitCaptureActivity
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -167,6 +167,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
+
+    /**
+     * Funzione che mostra a schermo tutti gli alimenti
+     * inseriti in un pasto dall'utente in fase di composizione
+     */
     @SuppressLint("DefaultLocale")
     @Composable
     private fun AddMealScreen() {
@@ -253,8 +258,8 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                         )
                                     )
                                 )
-                                .selectedDateTextStyle(textStyle = TextStyle(Color(0xFFFFFFFF)))
-                                .selectedDateBackgroundColor(color = Color(0xFF64DD17))
+                                .selectedDateTextStyle(textStyle = TextStyle(MaterialTheme.colorScheme.secondary))
+                                .selectedDateBackgroundColor(color = MaterialTheme.colorScheme.primary)
                                 .numberOfMonthYearRowsDisplayed(5)
                                 .build(),
                             selectionLimiter = SelectionLimiter(
@@ -402,6 +407,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         }
     }
 
+
+    /**
+     * Statistiche del singolo alimento all'interno della
+     * lista di alimenti di un pasto in "costruzione"
+     */
     @Composable
     private fun ItemFoodInList(alimento: Alimento) {
         val pastoToCiboWrapper = pastoToAlimentoWrapperList.find {
@@ -597,6 +607,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
 
     }
 
+
+    /**
+     * Lista di alimenti da scegliere nell'inserimento di un pasto
+     */
     @Composable
     fun ItemFoodSpinnerMenu(alimento: Alimento) {
         Box(
@@ -674,6 +688,10 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         )
     }
 
+
+    /**
+     * Dialog di aggiunta di un nuovo alimento al pasto
+     */
     @Composable
     private fun AddFoodDialog() {
         val existingAllAlimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
@@ -851,7 +869,9 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
         )
     }
 
-
+    /**
+     * Dialog che permette di aggiungere un nuovo alimento durante la composizione di un pasto
+     */
     @Composable
     private fun NewFoodDialog() {
 

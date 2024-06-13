@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.myfreehealthtracker.Fragments
+package com.example.myfreehealthtracker.viewmodel.app.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -63,14 +63,14 @@ import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.PortraitCaptureActivity
 import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.foodOpenFacts.ClientFoodOpenFact
-import com.example.myfreehealthtracker.foodOpenFacts.model.ProductResponse
+import com.example.myfreehealthtracker.foodopenfacts.ClientFoodOpenFact
+import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
+import com.example.myfreehealthtracker.utils.PortraitCaptureActivity
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -142,6 +142,10 @@ class NewFoodFragment : Fragment() {
     }
 
 
+    /**
+     * Utilizza una LazyColumn per visualizzare
+     * tutti gli alimenti aggiunti dall'utente nella applicazione
+     */
     @Preview(showBackground = true)
     @Composable
     fun NewFoodScreen() {
@@ -168,7 +172,7 @@ class NewFoodFragment : Fragment() {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(alimentList.size) {
-                        ItemFood2(alimento = alimentList[it])
+                        ItemFood(alimento = alimentList[it])
                     }
                 }
 
@@ -492,17 +496,22 @@ class NewFoodFragment : Fragment() {
     }
 
 
-    @Deprecated("Deprecated in Java")
+    /**
+     * Gestisce la scansione del codice a barre:
+     * quando viene riconosciuto un codice a barre, viene
+     * gestita la chiamata al client foodopenfacts e viene
+     * serializzato l'oggetto ricevuto dal client. Infine viene
+     * utilizzato un oggetto di tipo AlimentoWrapper con proprieta' mutable,
+     * per riempire automaticamente i campi che descrivono un alimento
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //val outputBarcode = view?.findViewById<TextView>(R.id.output_barcode)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
-            if (result.contents == null) {
-                //outputBarcode?.text = "Scansione fallita"
-            } else {
+            if (result.contents != null) {
                 barcode = result.contents
-                // Il codice a barre è stato trovato
+
                 val toast = Toast.makeText(
                     requireContext(),
                     barcode + requireContext().getString(R.string.loadBarcode),
@@ -554,8 +563,12 @@ class NewFoodFragment : Fragment() {
     }
 
 
+    /**
+     *Oggetto che viene utilizzato nella LazyColumn
+     * per elencare tutti gli alimenti e le poro proprieta'
+     */
     @Composable
-    fun ItemFood2(alimento: Alimento) {
+    fun ItemFood(alimento: Alimento) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -741,6 +754,10 @@ class NewFoodFragment : Fragment() {
         return ClientFoodOpenFact().getFoodOpenFacts(s)
     }
 
+
+    /**
+     * Oggetto AlimentoWrapper con proprieta' mutableStateOf
+     */
     private class AlimentoWrapper {
 
         var id: String by mutableStateOf("")

@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.viewmodel.app
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -17,6 +17,12 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.viewmodel.login.ImageController
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.localdatabase.ViewModels.UserDataViewModel
+import com.example.myfreehealthtracker.viewmodel.login.LoginActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics

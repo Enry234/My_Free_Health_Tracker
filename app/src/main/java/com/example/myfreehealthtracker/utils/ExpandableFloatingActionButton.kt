@@ -1,9 +1,10 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.utils
 
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.example.myfreehealthtracker.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ExpandableFloatingActionButton(
@@ -23,7 +24,9 @@ class ExpandableFloatingActionButton(
         AnimationUtils.loadAnimation(expander.context, R.anim.fab_expander_icon_rotate_clock_wise)
     }
     private val rotateAntiClockWise: Animation by lazy {
-        AnimationUtils.loadAnimation(expander.context, R.anim.fab_expander_icon_rotate_anti_clock_wise)
+        AnimationUtils.loadAnimation(expander.context,
+            R.anim.fab_expander_icon_rotate_anti_clock_wise
+        )
     }
 
     init {

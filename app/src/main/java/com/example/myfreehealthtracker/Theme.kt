@@ -6,9 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.example.myfreehealthtracker.ColorPalette.Blue800
 import com.example.myfreehealthtracker.ColorPalette.HonoluluBlue
-import com.example.myfreehealthtracker.ColorPalette.Orange800
 
 
 object ColorPalette {
@@ -20,10 +18,9 @@ object ColorPalette {
 }
 
 private val DarkColorPalette = darkColorScheme(
-    primary = Blue800,
+    primary = HonoluluBlue,
     onPrimary = Color.White,
-    secondary = Orange800,
-    background = Color.Black,
+    background = Color(0xFF1B1A1F),
 )
 
 private val LightColorPalette = lightColorScheme(

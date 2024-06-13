@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.viewmodel.login
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

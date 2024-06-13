@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.viewmodel.login
 
 import android.content.Context
 import android.content.Intent
@@ -59,7 +59,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
-import com.example.myfreehealthtracker.LocalDatabase.Entities.UserData
+import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.localdatabase.Entities.UserData
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.viewmodel.app.MainActivity
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.auth

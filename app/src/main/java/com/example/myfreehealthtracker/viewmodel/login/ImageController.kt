@@ -1,4 +1,4 @@
-package com.example.myfreehealthtracker
+package com.example.myfreehealthtracker.viewmodel.login
 
 import android.content.Context
 import android.graphics.Bitmap

@@ -1,5 +1,6 @@
-package com.example.myfreehealthtracker.Fragments
+package com.example.myfreehealthtracker.viewmodel.app.fragments
 
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,13 +61,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
-import com.example.myfreehealthtracker.ExpandableFloatingActionButton
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Alimento
-import com.example.myfreehealthtracker.LocalDatabase.Entities.Pasto
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalDBViewModel
-import com.example.myfreehealthtracker.LocalDatabase.ViewModels.InternalViewModelFactory
 import com.example.myfreehealthtracker.MainApplication
 import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
+import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
+import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
+import com.example.myfreehealthtracker.utils.ExpandableFloatingActionButton
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -76,7 +77,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class HealthFragment : Fragment(R.layout.fragment_health) {
+class MealFragment : Fragment(R.layout.fragment_health) {
 
     private lateinit var expandableFloatingActionButton: ExpandableFloatingActionButton
     private lateinit var mainApplication: MainApplication
@@ -144,6 +145,11 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         return view
     }
 
+
+    /**
+     * funzione interna alla classe che restituisce le date
+     * degli ultimi 30 giorni
+     */
     private fun getLast30Days(): List<Triple<Int, Int, Int>> {
         val calendar = Calendar.getInstance()
         val last30Days = mutableListOf<Triple<Int, Int, Int>>()
@@ -170,6 +176,10 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         )
     )
 
+
+    /**
+     * Costruisce un bottone a cui e' associata una data specifica
+     */
     @Composable
     fun ItemRow(date: Triple<Int, Int, Int>) {
         Box {
@@ -210,6 +220,13 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
             else -> "Invalid month"
         }
     }
+
+
+    /**
+     * Contiene una LazyRow per selezionare il giorno
+     * di cui si vogliono vedere i pasti e una LazyColumn
+     * che mostra i singoli pasti di quella giornata
+     */
     @Composable
     private fun ShowMeal() {
         val allPasto2 by dbViewModel.allPasto.observeAsState(initial = emptyList())
@@ -219,7 +236,8 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
         Surface(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
 
         ) {
             Column(
@@ -259,6 +277,12 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
         }
     }
 
+
+    /**
+     * Item utilizzato nella LazyColumn di ShowMeal()
+     * Contiene un PieChart e le statistiche di ogni singolo alimento
+     * inserito nei vari pasti
+     */
     @Composable
     private fun PastoItem(pasto: Pasto) {
 
@@ -483,6 +507,12 @@ class HealthFragment : Fragment(R.layout.fragment_health) {
 
     }
 
+
+    /**
+     * Definisce le proprieta' di un alimento di uno
+     * specifico pasto, che sono mostrate sotto forma di
+     * lista espandibile in PastoItem
+     */
     @Composable
     private fun DisplayAlimento(alimento: Alimento, qta: Float) {
 
