@@ -40,7 +40,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -63,11 +62,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
-import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.R
 import com.github.tehras.charts.bar.BarChart
 import com.github.tehras.charts.bar.BarChartData
 import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
@@ -248,7 +247,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     onClick = {
                         val parsedPeso = peso.toDoubleOrNull()
 
-                        if (parsedPeso != null) {
+                        if (parsedPeso != null && parsedPeso >= 0) {
 
                             val bundle = Bundle().apply {
                                 putString(
