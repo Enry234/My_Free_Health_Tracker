@@ -536,14 +536,21 @@ class AuthPage {
                     // Log a custom event
 
                     GlobalScope.launch {
-                        val imageController = ImageController()
-                        Log.i("loginpage", "Launch upload Image Firebase")
-                        uploadImage(
-                            imageController.getImageFromInternalStorage(
-                                context, "pictureProfile.png"
-                            )!!, user.id
-                        )
+                        try {
+
+
+                            val imageController = ImageController()
+                            Log.i("loginpage", "Launch upload Image Firebase")
+                            uploadImage(
+                                imageController.getImageFromInternalStorage(
+                                    context, "pictureProfile.png"
+                                )!!, user.id
+                            )
+                        } catch (e: Exception) {
+
+                        }
                     }
+
                     val bundle = Bundle().apply {
                         putString("id", user.id)
                     }
