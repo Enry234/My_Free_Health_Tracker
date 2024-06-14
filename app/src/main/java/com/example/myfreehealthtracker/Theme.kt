@@ -19,14 +19,15 @@ object ColorPalette {
 
 private val DarkColorPalette = darkColorScheme(
     primary = HonoluluBlue,
+    secondary = Color.White,
     onPrimary = Color.White,
     background = Color(0xFF1B1A1F),
 )
 
 private val LightColorPalette = lightColorScheme(
     primary = HonoluluBlue,
-    onPrimary = Color.White,
-    secondary = Color.White,
+    onPrimary = Color(0xFF1B1A1F),
+    secondary = Color(0xFF1B1A1F),
     background = Color.Transparent,
 
     )

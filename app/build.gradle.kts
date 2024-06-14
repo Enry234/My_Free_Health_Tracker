@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.coil.compose)
     implementation(libs.androidx.camera.core)
+
     implementation(libs.androidx.camera.view)
     implementation(libs.volley)
     implementation(libs.androidx.room.common)

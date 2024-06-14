@@ -823,7 +823,7 @@ class NewFoodFragment : Fragment() {
             grassi = alimento.grassi ?: 0f
             sale = alimento.sale ?: 0f
             calorie = alimento.calorie ?: 0
-            descrizione = alimento.descrizione ?: ""
+            descrizione = ""
         }
 
         fun convertToFood(): Alimento {

@@ -76,16 +76,16 @@ import androidx.navigation.findNavController
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
+import com.example.myfreehealthtracker.foodopenfacts.ClientFoodOpenFact
+import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
 import com.example.myfreehealthtracker.localdatabase.Entities.Alimento
 import com.example.myfreehealthtracker.localdatabase.Entities.Pasto
 import com.example.myfreehealthtracker.localdatabase.Entities.PastoToCibo
 import com.example.myfreehealthtracker.localdatabase.Entities.TipoPasto
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
-import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.R
-import com.example.myfreehealthtracker.foodopenfacts.ClientFoodOpenFact
-import com.example.myfreehealthtracker.foodopenfacts.model.ProductResponse
 import com.example.myfreehealthtracker.utils.PortraitCaptureActivity
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
@@ -98,7 +98,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.zxing.integration.android.IntentIntegrator
 import com.vsnappy1.datepicker.DatePicker
 import com.vsnappy1.datepicker.data.DefaultDatePickerConfig
-import com.vsnappy1.datepicker.data.model.DatePickerDate
 import com.vsnappy1.datepicker.data.model.SelectionLimiter
 import com.vsnappy1.datepicker.ui.model.DatePickerConfiguration
 import com.vsnappy1.timepicker.TimePicker
@@ -262,9 +261,7 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 .height(height = 300.dp)
                                 .dateTextStyle(
                                     DefaultDatePickerConfig.dateTextStyle.copy(
-                                        color = Color(
-                                            0xFF333333
-                                        )
+                                        color = MaterialTheme.colorScheme.secondary
                                     )
                                 )
                                 .selectedDateTextStyle(textStyle = TextStyle(MaterialTheme.colorScheme.secondary))
@@ -273,11 +270,11 @@ class NewMealFragment : Fragment(R.layout.fragment_new_meal) {
                                 .build(),
                             selectionLimiter = SelectionLimiter(
 
-                                toDate = DatePickerDate(
-                                    year = calendar.get(Calendar.YEAR),
-                                    month = calendar.get(Calendar.MONTH),
-                                    day = calendar.get(Calendar.DAY_OF_MONTH)
-                                )
+//                                toDate = DatePickerDate(
+//                                    year = calendar.get(Calendar.YEAR),
+//                                    month = calendar.get(Calendar.MONTH),
+//                                    day = calendar.get(Calendar.DAY_OF_MONTH)
+//                                )
                             )
                         )
 
