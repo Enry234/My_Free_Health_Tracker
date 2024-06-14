@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -155,7 +157,7 @@ class AuthPage {
                 .padding(16.dp),
         ) {
             Surface(
-                modifier = Modifier.padding(top = 64.dp),
+                modifier = Modifier.padding(top = 32.dp),
                 tonalElevation = 16.dp,
                 shadowElevation = 16.dp,
                 shape = RoundedCornerShape(16.dp)
@@ -207,18 +209,25 @@ class AuthPage {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(180.dp)
                 .padding(top = 32.dp),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Image(
+                    painter = painterResource(R.mipmap.unhealth),
+                    contentDescription = "Unhelath",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(id = R.string.welcome),
                     fontSize = 40.sp,
                 )
-                Text(text = stringResource(id = R.string.insertDataCompleteAccess))
+                Text(text = stringResource(id = R.string.insertDataCompleteAccess), textAlign = TextAlign.Center)
             }
         }
     }
