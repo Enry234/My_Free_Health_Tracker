@@ -83,19 +83,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.myfreehealthtracker.ApplicationTheme
 import com.example.myfreehealthtracker.FirebaseDBTable
+import com.example.myfreehealthtracker.MainApplication
+import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.localdatabase.Entities.Attivita
 import com.example.myfreehealthtracker.localdatabase.Entities.Sport
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalDBViewModel
 import com.example.myfreehealthtracker.localdatabase.ViewModels.InternalViewModelFactory
-import com.example.myfreehealthtracker.MainApplication
-import com.example.myfreehealthtracker.R
 import com.example.myfreehealthtracker.utils.Actions
-import com.example.myfreehealthtracker.utils.Clock
 import com.example.myfreehealthtracker.utils.SportActivityService
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.DataSnapshot
@@ -169,7 +167,6 @@ class SportFragment : Fragment() {
     private var pickedYear by mutableIntStateOf(0)
     private var pickedMonth by mutableIntStateOf(0)
     private var pickedDay by mutableIntStateOf(0)
-    private var clock = Clock()
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var counterUpdateReceiver: MyBroadCastReceiver
 
@@ -532,7 +529,9 @@ class SportFragment : Fragment() {
     @Composable
     fun AddActivityDialog() {
         val existingSportList by dbViewModel.allSport.observeAsState(initial = emptyList())
-
+        var startDate by rememberSaveable {
+            mutableStateOf(Calendar.getInstance())
+        }
         var selectedSportId by rememberSaveable { mutableStateOf("") }
         var selectedSportName by rememberSaveable { mutableStateOf(requireContext().getString(R.string.selectExisted)) }
         var selectedSportNameFirebase by rememberSaveable {
@@ -559,19 +558,7 @@ class SportFragment : Fragment() {
         var showAddActivity by rememberSaveable {
             mutableStateOf(false)
         }
-        var clockEnable by rememberSaveable {
-            mutableStateOf(false)
-        }
 
-        if (clockEnable) {
-            clock.start()
-        } else {
-            clock.stop()
-        }
-        val counterValue by clock.getValue().asLiveData().observeAsState(
-            initial = 0
-        )
-        Log.i("test", "internal class value" + counterValue.toString())
         if (newActivityWrapper.calorie > 0 && newActivityWrapper.durata > 0 && newActivityWrapper.distanza >= 0)
             enableConferma = true
         AlertDialog(onDismissRequest = {
@@ -766,28 +753,23 @@ class SportFragment : Fragment() {
                                     SportActivityService::class.java
                                 )
                             ) {
-                                clockEnable = true
                                 Toast.makeText(
                                     requireContext(),
                                     requireContext().getString(R.string.startIncoming),
                                     Toast.LENGTH_LONG
                                 ).show()
-
+                                startDate = Calendar.getInstance()
                                 text = requireContext().getString(R.string.stopActivity)
                                 showAddActivity = false
                                 enableInsertManually = false
                                 loadService()
                             } else {
-
-
                                 newActivityWrapper.durata =
-                                    ((counterValue + 16) / 6) / 60 //compensate for time error
-                                Log.i("test", "durata" + (counterValue + 16) / 6)
+                                    ((Calendar.getInstance().timeInMillis - startDate.timeInMillis) / 60000).toInt()
                                 val serviceIntent =
                                     Intent(context, SportActivityService::class.java).also {
                                         it.action = Actions.STOP.toString()
                                     }
-                                clockEnable = false
                                 requireContext().startService(serviceIntent)
                                 showAddActivity = true
                                 enableModify = false
@@ -990,6 +972,7 @@ class SportFragment : Fragment() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
@@ -1001,7 +984,17 @@ class SportFragment : Fragment() {
 
                         100
                     )
+                } else {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(
+                            Manifest.permission.FOREGROUND_SERVICE,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ),
+                        100
+                    )
                 }
+
             }
         } else {
             val sportActivityService = Intent(context, SportActivityService::class.java).also {

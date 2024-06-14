@@ -23,11 +23,7 @@
         android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.SportFragment"
         android:label="fragment_sport"
         tools:layout="@layout/fragment_sport" />
-    <fragment
-        android:id="@+id/barcodeFragment"
-        android:name="com.example.myfreehealthtracker.fragments.BarcodeFragment"
-        android:label="fragment_barcode"
-        tools:layout="@layout/fragment_barcode" />
+
     <fragment
         android:id="@+id/newFoodFragment"
         android:name="com.example.myfreehealthtracker.viewmodel.app.fragments.NewFoodFragment"
