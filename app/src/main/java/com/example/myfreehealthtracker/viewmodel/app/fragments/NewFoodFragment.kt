@@ -158,14 +158,14 @@ class NewFoodFragment : Fragment() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
+                .padding(8.dp),
 
 
             ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 8.dp, end = 8.dp),
+                    .padding(bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -606,8 +606,8 @@ class NewFoodFragment : Fragment() {
                             contentDescription = null,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .height(56.dp)
-                                .width(56.dp),
+                                .height(48.dp)
+                                .width(48.dp),
                             contentScale = ContentScale.Fit
                         )
                     }
