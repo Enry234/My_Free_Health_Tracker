@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -34,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -154,46 +157,31 @@ class NewFoodFragment : Fragment() {
             mutableStateOf(false)
         }
         val alimentList by dbViewModel.allAlimento.observeAsState(initial = emptyList())
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp),
-
-
-            ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = stringResource(id = R.string.yourFood), fontSize = 24.sp)
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(alimentList.size) {
-                        ItemFood(alimento = alimentList[it])
-                    }
-                }
-
-                IconButton(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
-                        .align(Alignment.End),
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
                     onClick = {
                         alimentoWrapper = AlimentoWrapper()
                         showDialog = true
-                    }) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                    },
+                    modifier = Modifier
+                        .size(56.dp),
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.secondary
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "")
                 }
-
             }
-
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(it),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(alimentList.size) {
+                    ItemFood(alimento = alimentList[it])
+                }
+            }
         }
         if (showDialog) {
             var error by rememberSaveable {
